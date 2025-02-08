@@ -5,9 +5,11 @@ import {
   logout,
   register,
   resetPassword,
+  updateProfile,
   verifyEmail,
 } from "../controllers/userController.js";
 import upload from "../upload/upload.js";
+import verifyToken from "../middleware/protected/verifyToken.js";
 
 const userRouter = express.Router();
 
@@ -17,6 +19,7 @@ userRouter.post("/login", login);
 userRouter.post("/logout", logout);
 userRouter.post("/forgotpassword", forgotPassword);
 userRouter.post("/resetpassword", resetPassword);
-// userRouter.put("/update", protect, upload.single("image"), updateProfile);
+userRouter.put("/update", verifyToken, upload.single("image"), updateProfile);
+
 
 export default userRouter;

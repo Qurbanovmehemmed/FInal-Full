@@ -7,6 +7,8 @@ import RegisterValidationSchema from "../middleware/validation/RegisterValidatio
 import LoginValidationSchema from "../middleware/validation/LoginValidation.js";
 import ForgotValidationSchema from "../middleware/validation/ForgotValidation.js";
 import ResetValidationSchema from "../middleware/validation/ResetValidation.js";
+import path from "path";
+import fs from "fs";
 
 export const register = async (req, res) => {
   try {
@@ -188,24 +190,31 @@ export const resetPassword = async (req, res) => {
 };
 
 
-// export const updateProfile = async (req, res) => {
-//   try {
-//     const existUser = await user.findById(req.user.id);
 
-//     if (!existUser) {
-//       return res.status(404).json({ message: 'User not found' });
-//     }
 
-//     existUser.username = req.body.username || existUser.username;
-//     existUser.email = req.body.email || existUser.email;
-//     if (req.file) {
-//       existUser.image = req.file.path;
-//     }
+export const updateProfile = async (req, res) => {
+  try {
+    const userId = req.user.id; // AuthMiddleware-dən gələn istifadəçi ID
+    const { name, username, email } = req.body;
+    let updatedData = { name, username, email };
 
-//     const updatedUser = await existUser.save();
-//     res.status(200).json(updatedUser);
-//   } catch (error) {
-//     console.error('Error updating profile:', error);
-//     res.status(500).json({ message: 'Server error' });
-//   }
-// };
+    // Əgər şəkil yüklənibsə, onu əlavə et
+    if (req.file) {
+      const imageUrl = `images/${req.file.filename}`.replace(/\\/g, "/");
+      updatedData.image = imageUrl;
+    }
+
+    // Yeni məlumatları DB-də yenilə
+    const updatedUser = await user.findByIdAndUpdate(userId, updatedData, {
+      new: true,
+    });
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    return res.status(200).json(updatedUser);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};

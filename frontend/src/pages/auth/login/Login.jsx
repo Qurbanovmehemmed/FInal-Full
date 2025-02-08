@@ -13,7 +13,9 @@ const Login = () => {
 
   const submitForm = async (values, actions) => {
     try {
-      const res = await axios.post(`${baseUrl}/login`, values);
+      const res = await axios.post(`${baseUrl}/login`, values, {
+        withCredentials: true,
+      });
 
       if (res.status === 200) {
         dispatch(setUser(res.data));

@@ -73,10 +73,10 @@ const Navbar = () => {
                   <div>
                     <img
                       style={{ width: "30px", height: "30px" }}
-                      src={`http://localhost:5000/${user?.existUser.image}`}
+                      src={`http://localhost:5000/${user?.existUser?.image}`}
                       alt=""
                     />
-                    {user?.existUser.username}
+                    {user?.existUser?.username}
                   </div>
                 ) : (
                   "Daxil ol"
