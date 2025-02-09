@@ -92,7 +92,7 @@ const Navbar = () => {
                     </li>
                     <li >
                       <Link className="dropdown-item logout " to="/profile">
-                        Settings
+                        Manage Account
                       </Link>
                     </li>
                   </>

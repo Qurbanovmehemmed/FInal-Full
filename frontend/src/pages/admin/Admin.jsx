@@ -1,27 +1,34 @@
-import React, { useState } from "react";
-import "./Admin.scss";
-import Table from "react-bootstrap/Table";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useFormik } from "formik";
 import {
-  addProduct,
+  getProducts,
   deleteProduct,
   searchProduct,
-  sortProductHigest,
   sortProductLowest,
+  sortProductHigest,
+  addProduct,
 } from "../../redux/features/ProductSlice";
+import CategorySelect from "../../components/catSelect/CategorySelect";
+import RatingInput from "../../components/catSelect/RatingInput";
 import { productSchema } from "../../schema/ProductCreateSchema";
+import Table from "react-bootstrap/Table";
+import "./Admin.scss";
 
 const Admin = () => {
   const { products } = useSelector((state) => state.products);
   const dispatch = useDispatch();
-
+  const [selectedCategories, setSelectedCategories] = useState([]);
+  const [rating, setRating] = useState(0);
   const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    dispatch(getProducts());
+  }, [dispatch]);
 
   const {
     values,
     handleChange,
-    handleSubmit,
     setFieldValue,
     errors,
     resetForm,
@@ -29,36 +36,44 @@ const Admin = () => {
     initialValues: {
       image: null,
       title: "",
-      category: "",
+      description: "",
+      author: "",
+      categories: [],
       price: "",
-    },
-    onSubmit: (values) => {
-      const formData = new FormData();
-
-      formData.append("image", values.image);
-      formData.append("title", values.title);
-      formData.append("category", values.category);
-      formData.append("price", values.price);
-      
-      dispatch(addProduct(formData));
-      resetForm();
-      setOpen(false);
+      rating: 0,
     },
     validationSchema: productSchema,
   });
 
+  const handleFormSubmit = async (e) => {
+    e.preventDefault();
+    console.log("🟢 Form Submit oldu!");
+
+    const formData = new FormData();
+    formData.append("image", values.image);
+    formData.append("title", values.title);
+    formData.append("description", values.description);
+    formData.append("author", values.author);
+    formData.append("categories", JSON.stringify(selectedCategories.map(cat => cat.value)));
+    formData.append("price", values.price);
+    formData.append("rating", rating);
+
+    console.log("📩 Göndərilən FormData:", Object.fromEntries(formData));
+
+    try {
+      const response = await dispatch(addProduct(formData));
+      console.log("✅ Product əlavə edildi:", response);
+      resetForm();
+      setOpen(false);
+    } catch (error) {
+      console.error("❌ Error:", error);
+    }
+  };
+
   return (
     <div className="container">
       {open && (
-        <form
-          encType="multipart/form-data"
-          action=""
-          className="form"
-          onSubmit={(e) => {
-            e.preventDefault();
-            handleSubmit();
-          }}
-        >
+        <form encType="multipart/form-data" className="form" onSubmit={handleFormSubmit}>
           <h3>Create Product</h3>
           <div className="form-group">
             <label htmlFor="image">Image</label>
@@ -82,14 +97,33 @@ const Admin = () => {
             />
           </div>
           <div className="form-group">
-            <label htmlFor="category">Category</label>
-            <div className="text-danger">{errors.category}</div>
-            <input
-              type="text"
-              id="category"
+            <label htmlFor="description">Description</label>
+            <div className="text-danger">{errors.description}</div>
+            <textarea
+              id="description"
               className="form-control"
               onChange={handleChange}
-              value={values.category}
+              value={values.description}
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="author">Author</label>
+            <div className="text-danger">{errors.author}</div>
+            <input
+              type="text"
+              id="author"
+              className="form-control"
+              onChange={handleChange}
+              value={values.author}
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="categories">Categories</label>
+            <div className="text-danger">{errors.category}</div>
+            <CategorySelect
+              categories={["Elektronika", "Moda", "Ev və Bağça"]}
+              selectedCategories={selectedCategories}
+              setSelectedCategories={setSelectedCategories}
             />
           </div>
           <div className="form-group">
@@ -103,12 +137,17 @@ const Admin = () => {
               value={values.price}
             />
           </div>
-
-          <button className="btn btn-primary">Add</button>
+          <div className="form-group">
+            <label>Rating</label>
+            <RatingInput rating={rating} setRating={setRating} />
+          </div>
+          <button type="submit" className="btn btn-primary">
+            Add
+          </button>
         </form>
       )}
       <h2 className="text-center my-3">Admin Panel</h2>
-      <div className=" mb-2 d-flex justify-content-between">
+      <div className="mb-2 d-flex justify-content-between">
         <button className="btn btn-success" onClick={() => setOpen(!open)}>
           Create
         </button>
@@ -138,6 +177,8 @@ const Admin = () => {
             <th>Title</th>
             <th>Category</th>
             <th>Price</th>
+            <th>Rating</th>
+            <th>Description</th>
             <th>Setting</th>
           </tr>
         </thead>
@@ -153,8 +194,16 @@ const Admin = () => {
                   />
                 </td>
                 <td>{item.title}</td>
-                <td>{item.category}</td>
+                <td>
+                  {item.categories?.map((cat, index) => (
+                    <button className="d-flex " key={index}>
+                      {cat}
+                    </button>
+                  ))}
+                </td>
                 <td>{item.price}</td>
+                <td>{item.rating}</td>
+                <td>{item.description}</td>
                 <td>
                   <button
                     className="btn btn-danger"

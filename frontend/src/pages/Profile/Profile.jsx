@@ -3,6 +3,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { setLogout, setUser } from "../../redux/features/userSlice";
+import { FaEye } from "react-icons/fa";
+import { FaEyeSlash } from "react-icons/fa";
+import "./Profile.scss";
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -60,8 +63,7 @@ const Profile = () => {
 
   console.log("Redux-dan gələn user:", user);
   return (
-    <div className="container">
-      <h2>User Profile</h2>
+    <div className="profile-container">
       <div className="profile-details">
         <div className="profile-info">
           <div className="profile-image">
@@ -72,7 +74,6 @@ const Profile = () => {
                   : "/default-avatar.png"
               }
               alt={user?.existUser?.username}
-              style={{ width: "150px", height: "150px", borderRadius: "50%" }}
             />
           </div>
           <div className="profile-text">
@@ -85,9 +86,33 @@ const Profile = () => {
             </p>
           </div>
         </div>
+        <div className="d-flex">
+          <div>Password: </div>
+          <div className="d-flex">
+            <div>********</div>
+          </div>
+          <div className="password-reset">
+            <button
+            className="btn btn-primary"
+              onClick={() => {
+                navigate("/resetpassword");
+              }}
+            >
+              Reset Password
+            </button>
+          </div>
+        </div>
+
         <div className="profile-update">
           <h3>Update Profile</h3>
           <form onSubmit={handleUpdateProfile}>
+            <div>
+              <label>Profile Image:</label>
+              <input
+                type="file"
+                onChange={(e) => setImage(e.target.files[0])}
+              />
+            </div>
             <div>
               <label>Name:</label>
               <input
@@ -112,15 +137,21 @@ const Profile = () => {
                 onChange={(e) => setEmail(e.target.value)}
               />
             </div>
-            <div>
-              <label>Profile Image:</label>
-              <input
-                type="file"
-                onChange={(e) => setImage(e.target.files[0])}
-              />
-            </div>
+
             <button type="submit">Update Profile</button>
           </form>
+        </div>
+
+        <div className="logout ">
+          <button
+          className="btn btn-danger"  
+            onClick={() => {
+              dispatch(setLogout());
+              navigate("/login");
+            }}
+          >
+            Logout
+          </button>
         </div>
       </div>
     </div>

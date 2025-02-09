@@ -11,13 +11,18 @@ export const getProducts = createAsyncThunk("product/getProducts", async () => {
   const { data } = await axios.get(baseURL);
   return data;
 });
-
 export const addProduct = createAsyncThunk(
   "product/addProduct",
-  async (product) => {
-    console.log(product)
-    const { data } = await axios.post(baseURL, product);
-    return data;
+  async (product, { rejectWithValue }) => {
+    try {
+      const { data } = await axios.post(baseURL, product, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      return data;
+    } catch (error) {
+      console.error("Error adding product:", error.response?.data);
+      return rejectWithValue(error.response?.data || "Xəta baş verdi");
+    }
   }
 );
 

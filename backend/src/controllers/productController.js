@@ -2,14 +2,17 @@ import product from "../models/productModel.js";
 
 export const addProduct = async (req, res) => {
   try {
-    const { title, category, price } = req.body;
+    const { title, description, author, categories, price, rating } = req.body;
 
     const imageUrl = `images/${req.file.filename}`.replace(/\\/g, "/");
 
     const newProduct = new product({
       title,
-      category,
+      description,
+      author,
+      categories,
       price,
+      rating,
       image: imageUrl,
     });
 
@@ -20,6 +23,27 @@ export const addProduct = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 };
+
+// export const addProduct = async (req, res) => {
+//   try {
+//     const { title, category, price } = req.body;
+
+//     const imageUrl = `images/${req.file.filename}`.replace(/\\/g, "/");
+
+//     const newProduct = new product({
+//       title,
+//       category,
+//       price,
+//       image: imageUrl,
+//     });
+
+//     await newProduct.save();
+
+//     return res.status(201).json(newProduct);
+//   } catch (error) {
+//     return res.status(500).json({ message: error.message });
+//   }
+// };
 export const getProducts = async (req, res) => {
   try {
     const products = await product.find();
