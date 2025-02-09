@@ -54,7 +54,10 @@ const Admin = () => {
     formData.append("title", values.title);
     formData.append("description", values.description);
     formData.append("author", values.author);
-    formData.append("categories", JSON.stringify(selectedCategories.map(cat => cat.value)));
+    // formData.append("categories", selectedCategories.map(cat => cat.value));
+    selectedCategories.forEach(cat => {
+      formData.append("categories[]", cat.value);
+    });
     formData.append("price", values.price);
     formData.append("rating", rating);
 

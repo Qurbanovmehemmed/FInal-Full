@@ -12,7 +12,7 @@ const Mens = () => {
   const { products } = useSelector((state) => state.products);
 
   const mensProducts = products
-    .filter((pro) => pro.category === "Food")
+    .filter((pro) => pro.categories.map  === "idris")
     .slice(0, 4);
 
   useEffect(() => {
@@ -31,8 +31,8 @@ const Mens = () => {
           <p>Who are in extremely love with eco friendly system.</p>
         </Title>
         <div className="row">
-          {mensProducts &&
-            mensProducts.map((product) => {
+          {products &&
+            products.map((product) => {
               return <Card key={product._id} product={product} />;
             })}
         </div>

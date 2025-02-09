@@ -26,6 +26,8 @@ const Navbar = () => {
       alert("Logout failed");
     }
   };
+  const isAdmin = user?.existUser?.email === "mahammadag-af106@code.edu.az";
+  console.log(isAdmin)
 
   const totalWishlistCount = wishlist.length;
   return (
@@ -51,9 +53,9 @@ const Navbar = () => {
             <li className="navlist-item">
               <Link to="/latest">Latest</Link>
             </li>
-            <li className="navlist-item">
+            {isAdmin ? (<li className="navlist-item">
               <Link to="/admin">Admin</Link>
-            </li>
+            </li>):("")}
           </ul>
           <div className="wrapper">
             <div className="heart">
@@ -62,6 +64,7 @@ const Navbar = () => {
                 <sup>{totalWishlistCount}</sup>
               </Link>
             </div>
+            
             <div className="dropdown">
               <button
                 className="btn btn-light"
@@ -95,6 +98,7 @@ const Navbar = () => {
                         Manage Account
                       </Link>
                     </li>
+                   
                   </>
                 ) : (
                   <>

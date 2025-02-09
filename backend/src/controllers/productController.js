@@ -2,9 +2,13 @@ import product from "../models/productModel.js";
 
 export const addProduct = async (req, res) => {
   try {
-    const { title, description, author, categories, price, rating } = req.body;
+    const { title, description, author,  price, rating } = req.body;
 
     const imageUrl = `images/${req.file.filename}`.replace(/\\/g, "/");
+
+    const categories = req.body.categories
+  ? (Array.isArray(req.body.categories) ? req.body.categories : [req.body.categories])
+  : [];
 
     const newProduct = new product({
       title,

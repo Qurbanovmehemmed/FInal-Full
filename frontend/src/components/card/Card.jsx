@@ -41,6 +41,11 @@ const Card = ({ product }) => {
         <div className="content">
           <div className="card-title">{product?.title}</div>
           <div className="card-price">${product?.price}</div>
+          <div className="card-rating d-flex">
+            {product?.categories.map((cat, index) => (
+              <span key={index}>{cat}</span>
+            ))}
+          </div>
           <button
             className="btn btn-primary mybtn"
             onClick={(e) => {
