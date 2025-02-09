@@ -7,6 +7,8 @@ import { CiHeart } from "react-icons/ci";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { setLogout } from "../../redux/features/userSlice";
+import DropdownButton from "react-bootstrap/DropdownButton";
+import Dropdown from "react-bootstrap/Dropdown";
 
 const Navbar = () => {
   const baseUrl = "http://localhost:5000/auth";
@@ -27,7 +29,7 @@ const Navbar = () => {
     }
   };
   const isAdmin = user?.existUser?.email === "mahammadag-af106@code.edu.az";
-  console.log(isAdmin)
+  console.log(isAdmin);
 
   const totalWishlistCount = wishlist.length;
   return (
@@ -53,18 +55,47 @@ const Navbar = () => {
             <li className="navlist-item">
               <Link to="/latest">Latest</Link>
             </li>
-            {isAdmin ? (<li className="navlist-item">
-              <Link to="/admin">Admin</Link>
-            </li>):("")}
+            {isAdmin ? (
+              <li className="navlist-item">
+                <Link to="/admin">Admin</Link>
+              </li>
+            ) : (
+              ""
+            )}
           </ul>
           <div className="wrapper">
+            <DropdownButton
+              align="end"
+              title="Write"
+              id="dropdown-menu-align-end"
+              variant="light"
+            >
+              <Dropdown.Item eventKey="1">
+                <Link to="/create" className="d-flex gap-1">
+                  <img
+                    src="https://www.wattpad.com/wp-web-assets/images/icons/create-story.svg"
+                    alt=""
+                  />
+                  Create a new story
+                </Link>
+              </Dropdown.Item>
+              <Dropdown.Item eventKey="2">
+                <Link to="/create" className="d-flex gap-1">
+                  
+                  My stories
+                </Link>
+              </Dropdown.Item>
+
+              <Dropdown.Divider />
+              <Dropdown.Item eventKey="4">Helpful for writers</Dropdown.Item>
+            </DropdownButton>
             <div className="heart">
               <Link to="/wishlist">
                 <CiHeart />
                 <sup>{totalWishlistCount}</sup>
               </Link>
             </div>
-            
+
             <div className="dropdown">
               <button
                 className="btn btn-light"
@@ -93,12 +124,11 @@ const Navbar = () => {
                         Logout
                       </Link>
                     </li>
-                    <li >
+                    <li>
                       <Link className="dropdown-item logout " to="/profile">
                         Manage Account
                       </Link>
                     </li>
-                   
                   </>
                 ) : (
                   <>

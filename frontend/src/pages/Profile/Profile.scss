@@ -3,6 +3,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
+      
   
       .profile-info {
         display: flex;
@@ -34,13 +35,13 @@
       }
   
       .password-reset {
-        margin-top: 10px;
       }
   
       .profile-update {
         margin-top: 20px;
         width: 100%;
         max-width: 500px;
+        
   
         form {
           display: flex;
@@ -49,14 +50,20 @@
   
           input[type="text"],
           input[type="email"] {
-            padding: 10px;
+            width: 100%;
+            padding:  10px;
+            border: none;
+            border-bottom: 1px solid #777;
+          }
+         
+        
+        .custom-file-upload {
+            display: inline-block;
+            padding: 10px 15px;
+            cursor: pointer;
             border-radius: 5px;
-            border: 1px solid #ddd;
-          }
-  
-          input[type="file"] {
-            padding: 10px;
-          }
+        }
+        
   
           button[type="submit"] {
             padding: 10px 20px;
@@ -74,7 +81,9 @@
       }
   
       .logout {
-        margin-top: 20px;
+        display: flex;
+        align-items: start;
+        justify-content: start;
       }
     }
   }

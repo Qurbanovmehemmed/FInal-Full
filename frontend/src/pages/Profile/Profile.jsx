@@ -15,6 +15,7 @@ const Profile = () => {
   const [username, setUsername] = useState(user?.existUser?.username || "");
   const [email, setEmail] = useState(user?.existUser?.email || "");
   const [image, setImage] = useState(null);
+  const [open, setOpen] = useState(false);
 
   if (!user) {
     navigate("/login");
@@ -64,94 +65,133 @@ const Profile = () => {
   console.log("Redux-dan gələn user:", user);
   return (
     <div className="profile-container">
-      <div className="profile-details">
-        <div className="profile-info">
-          <div className="profile-image">
-            <img
-              src={
-                user?.existUser?.image
-                  ? `http://localhost:5000/${user.existUser.image}`
-                  : "/default-avatar.png"
-              }
-              alt={user?.existUser?.username}
-            />
-          </div>
-          <div className="profile-text">
-            <h3>Name: {user?.existUser?.name}</h3>
-            <h3>Username: {user?.existUser?.username}</h3>
-            <p>Email: {user?.existUser?.email}</p>
-            <p>
-              Joined:{" "}
-              {new Date(user?.existUser?.createdAt).toLocaleDateString()}
-            </p>
-          </div>
-        </div>
-        <div className="d-flex">
-          <div>Password: </div>
-          <div className="d-flex">
-            <div>********</div>
-          </div>
-          <div className="password-reset">
-            <button
-            className="btn btn-primary"
-              onClick={() => {
-                navigate("/resetpassword");
-              }}
-            >
-              Reset Password
-            </button>
-          </div>
-        </div>
+      <div className="container">
+        <div className="profile-details">
+          {/* <div className="profile-info">
+            <div className="profile-image">
+              <img
+                src={
+                  user?.existUser?.image
+                    ? `http://localhost:5000/${user.existUser.image}`
+                    : "/default-avatar.png"
+                }
+                alt={user?.existUser?.username}
+              />
+            </div>
+            <div className="profile-text">
+              <h3>Name: {user?.existUser?.name}</h3>
+              <h3>Username: {user?.existUser?.username}</h3>
+              <p>Email: {user?.existUser?.email}</p>
+              <p>
+                Joined:{" "}
+                {new Date(user?.existUser?.createdAt).toLocaleDateString()}
+              </p>
+            </div>
+          </div> */}
+         
 
-        <div className="profile-update">
-          <h3>Update Profile</h3>
-          <form onSubmit={handleUpdateProfile}>
-            <div>
-              <label>Profile Image:</label>
-              <input
-                type="file"
-                onChange={(e) => setImage(e.target.files[0])}
-              />
-            </div>
-            <div>
-              <label>Name:</label>
-              <input
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-              />
-            </div>
-            <div>
-              <label>Username:</label>
-              <input
-                type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-              />
-            </div>
-            <div>
-              <label>Email:</label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-            </div>
+          <div className="profile-update">
+            <h3 className="text-center">Profile</h3>
+            <form onSubmit={handleUpdateProfile}>
+              <div className="profileDeatils">
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    position: "relative",
+                    justifyContent: "center",
+                  }}
+                >
+                  <label htmlFor="fileUpload" style={{ cursor: "pointer" }}>
+                    <img
+                      src={
+                        user?.existUser?.image
+                          ? `http://localhost:5000/${user.existUser.image}`
+                          : "/default-avatar.png"
+                      }
+                      alt={user?.existUser?.username}
+                      style={{
+                        width: "100px",
+                        height: "100px",
+                        borderRadius: "50%",
+                      }}
+                    />
+                  </label>
 
-            <button type="submit">Update Profile</button>
-          </form>
+                  <input
+                    type="file"
+                    id="fileUpload"
+                    style={{ display: "none" }}
+                    onChange={(e) => setImage(e.target.files[0])}
+                  />
+                 
+                </div>
+                <div className="d-flex gap-2 justify-content-center">
+                <div onClick={()=>setOpen(!open)} style={{color:"blue ",cursor:"pointer",textAlign:"center"}}>Change Image</div>
+                {open ? (<div>click image</div>) : ("")}
+                </div>
+              </div>
+              <div>
+                <div className="profilText">Name</div>
+                <input
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="profilInput"
+                />
+              </div>
+              <div>
+                <div className="profilText">Username</div>
+                <input
+                  type="text"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  className="profilInput"
+                />
+              </div>
+              <div>
+                <div className="profilText">Email</div>
+
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="profilInput"
+                />
+              </div>
+
+              <button type="submit">Update Profile</button>
+            </form>
+          </div>
+
+
+        <div className="d-flex gap-2 justify-content-between align-items-center mt-2">
+        <div style={{}}>
+           
+           <div className="password-reset">
+             <button
+               className="btn btn-primary"
+               onClick={() => {
+                 navigate("/resetpassword");
+               }}
+             >
+               Reset Password
+             </button>
+           </div>
+         </div>
+
+         <div className="logout ">
+           <button
+             className="btn btn-danger"
+             onClick={() => {
+               dispatch(setLogout());
+               navigate("/login");
+             }}
+           >
+             Logout
+           </button>
+         </div>
         </div>
-
-        <div className="logout ">
-          <button
-          className="btn btn-danger"  
-            onClick={() => {
-              dispatch(setLogout());
-              navigate("/login");
-            }}
-          >
-            Logout
-          </button>
         </div>
       </div>
     </div>
