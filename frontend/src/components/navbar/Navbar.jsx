@@ -18,7 +18,7 @@ const Navbar = () => {
   const dispatch = useDispatch();
 
   const handleLogout = async () => {
-    const res = await axios.post(`${baseUrl}/logout`);
+    const res = await axios.post(`${baseUrl}/logout`,{}, { withCredentials: true });
 
     dispatch(setLogout());
 
@@ -29,7 +29,6 @@ const Navbar = () => {
     }
   };
   const isAdmin = user?.existUser?.email === "mahammadag-af106@code.edu.az";
-  console.log(isAdmin);
 
   const totalWishlistCount = wishlist.length;
   return (

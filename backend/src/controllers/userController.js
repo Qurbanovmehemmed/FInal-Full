@@ -23,6 +23,7 @@ export const register = async (req, res) => {
       username,
       email,
       password,
+      
     });
 
     if (error) {
@@ -35,6 +36,9 @@ export const register = async (req, res) => {
       return res.status(400).json({ message: "User already exists" });
     }
 
+    const userCount = await user.countDocuments();
+    const isAdmin = userCount === 0;
+
     const hasedPassword = await bcrypt.hash(password, 10);
 
     const newUser = new user({
@@ -43,6 +47,7 @@ export const register = async (req, res) => {
       username,
       email,
       password: hasedPassword,
+      isAdmin: isAdmin,
     });
 
     await newUser.save();
@@ -105,6 +110,10 @@ export const login = async (req, res) => {
 
     generateToken(existUser._id, res);
 
+    existUser.isLogin = true;
+    await existUser.save();
+
+
     return res.status(200).json({
       message: "User logged in successfully",
       existUser,
@@ -114,9 +123,24 @@ export const login = async (req, res) => {
   }
 };
 
-export const logout = (req, res) => {
-  res.clearCookie("token");
-  return res.status(200).json({ message: "User logged out successfully" });
+export const logout = async (req, res) => {
+  try {
+    console.log(req.user); // req.user-in düzgün gəldiyini yoxlayın
+    const existUser = await user.findById(req.user.id);
+
+    if (!existUser) {
+      console.log("User not found");
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    existUser.isLogin = false;
+    await existUser.save();
+    res.clearCookie("token");
+    return res.status(200).json({ message: "User logged out successfully" });
+  } catch (error) {
+    console.error("Logout error:", error);
+    return res.status(500).json({ message: error.message });
+  }
 };
 
 export const forgotPassword = async (req, res) => {

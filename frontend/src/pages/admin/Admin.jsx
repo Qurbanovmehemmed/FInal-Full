@@ -207,6 +207,7 @@ const Admin = () => {
                 <td>{item.price}</td>
                 <td>{item.rating}</td>
                 <td>{item.description}</td>
+                <td>{item.author}</td>
                 <td>
                   <button
                     className="btn btn-danger"

@@ -28,6 +28,9 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+
+    isLogin: { type: Boolean, default: false },
+    isAdmin: { type: Boolean, default: false },
   },
   { collection: "Users", timestamps: true }
 );

@@ -16,6 +16,7 @@ import ForgotPassword from "./pages/auth/forgotpassword/ForgotPassword";
 import Resetpassword from "./pages/auth/resetpassword/Resetpassword";
 import Profile from "./pages/Profile/Profile";
 import Create from "./pages/Create/Create";
+import ProtectAdmin from "./routes/protect/ProtectAdmin";
 
 const router = createBrowserRouter([
   {
@@ -44,7 +45,13 @@ const router = createBrowserRouter([
       },
       {
         path: "/admin",
-        element: <Admin />,
+        element: <ProtectAdmin />, 
+        children: [
+          {
+            path: "/admin",
+            element: <Admin />,
+          },
+        ],
       },
       {
         path: "/basket",
