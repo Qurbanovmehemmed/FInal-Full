@@ -21,40 +21,21 @@ const Card = ({ product }) => {
   }, [wishlist, color]);
 
   return (
-    <div className="col-3">
+    <div className="col-md-2">
       <div
         className="cards"
         onClick={() => navigate(`/productdetail/${product._id}`)}
       >
-        <div className="heart-icon">
-          <FaHeart
-            style={{ color: color ? "red" : "black" }}
-            onClick={(e) => {
-              e.stopPropagation();
-              dispatch(addWishlist(product));
-            }}
-          />
-        </div>
+        <div className="heart-icon"></div>
         <div className="image">
           <img src={`http://localhost:5000/${product.image}`} alt="" />
         </div>
         <div className="content">
-          <div className="card-title">{product?.title}</div>
-          <div className="card-price">${product?.price}</div>
-          <div className="card-rating d-flex">
+          <div className="card-rating d-flex gap-2">
             {product?.categories.map((cat, index) => (
               <span key={index}>{cat}</span>
             ))}
           </div>
-          <button
-            className="btn btn-primary mybtn"
-            onClick={(e) => {
-              e.stopPropagation();
-              dispatch(addBasket(product));
-            }}
-          >
-            Add to Card
-          </button>
         </div>
       </div>
     </div>

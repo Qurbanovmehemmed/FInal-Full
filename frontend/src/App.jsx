@@ -17,6 +17,7 @@ import Resetpassword from "./pages/auth/resetpassword/Resetpassword";
 import Profile from "./pages/Profile/Profile";
 import Create from "./pages/Create/Create";
 import ProtectAdmin from "./routes/protect/ProtectAdmin";
+import UserProfile from "./pages/Profile/userProfile/UserProfile";
 
 const router = createBrowserRouter([
   {
@@ -89,7 +90,12 @@ const router = createBrowserRouter([
         path: "/create",
         element: <Create />,
       },
+      {
+        path:"userprofile",
+        element: <UserProfile/>
+      }
     ],
+ 
   },
 ]);
 

@@ -242,3 +242,35 @@ export const updateProfile = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 };
+
+
+
+export const updateFavoriteCategories = async (req, res) => {
+  try {
+
+    const { favCategories } = req.body;
+    const userId = req.user.id;
+
+    if (!Array.isArray(favCategories)) {
+      return res.status(400).json({ message: "Categories must be an array" });
+    }
+
+    const updatedUser = await user.findByIdAndUpdate(
+      userId,
+      { favCategories }, // 🔹 favCategories-i yenilə
+      { new: true } // 🔹 Yenilənmiş user-i qaytar
+    );
+    if (!updatedUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    return res.status(200).json({
+      success: true,
+      updatedFavorites: updatedUser.favCategories,
+    });
+  } catch (error) {
+    console.error("Xəta:", error);
+    return res.status(500).json({ message: error.message });
+  }
+};
+

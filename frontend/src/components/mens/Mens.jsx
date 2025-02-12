@@ -1,6 +1,5 @@
 import React, { useEffect } from "react";
 import "./Mens.scss";
-import Title from "../title/Title";
 import Card from "../card/Card";
 import mensBg from "../../assets/images/men-bg.jpg.webp";
 import { useDispatch, useSelector } from "react-redux";
@@ -26,10 +25,7 @@ const Mens = () => {
     >
       <div className="overlay"></div>
       <div className="container">
-        <Title>
-          <h2>New realeased Products for Men</h2>
-          <p>Who are in extremely love with eco friendly system.</p>
-        </Title>
+       
         <div className="row">
           {products &&
             products.map((product) => {

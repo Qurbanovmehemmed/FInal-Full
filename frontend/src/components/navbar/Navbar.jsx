@@ -36,7 +36,7 @@ const Navbar = () => {
       <div className="container">
         <div className="navbar">
           <div className="logo">
-            <img src={logoImg} alt="" />
+            <img src="https://www.wattpad.com/wp-web-assets/images/wattpad-logo.svg" alt="" />
           </div>
           <ul className="navlist">
             <li className="navlist-item">
@@ -118,14 +118,19 @@ const Navbar = () => {
               <ul className="dropdown-menu">
                 {user ? (
                   <>
-                    <li onClick={handleLogout}>
-                      <Link className="dropdown-item logout " to="/">
-                        Logout
+                    <li>
+                      <Link className="dropdown-item logout " to="/userprofile">
+                        Profile
                       </Link>
                     </li>
                     <li>
                       <Link className="dropdown-item logout " to="/profile">
                         Manage Account
+                      </Link>
+                    </li>
+                    <li onClick={handleLogout}>
+                      <Link className="dropdown-item logout " to="/">
+                        Logout
                       </Link>
                     </li>
                   </>

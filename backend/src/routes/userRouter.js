@@ -5,6 +5,7 @@ import {
   logout,
   register,
   resetPassword,
+  updateFavoriteCategories,
   updateProfile,
   verifyEmail,
 } from "../controllers/userController.js";
@@ -20,6 +21,7 @@ userRouter.post("/logout", verifyToken, logout);
 userRouter.post("/forgotpassword", forgotPassword);
 userRouter.post("/resetpassword", resetPassword);
 userRouter.put("/update", verifyToken, upload.single("image"), updateProfile);
+userRouter.put("/update-favorites", verifyToken, updateFavoriteCategories);
 
 
 export default userRouter;

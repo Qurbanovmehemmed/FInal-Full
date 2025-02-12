@@ -21,7 +21,7 @@ const ProductDetail = () => {
         <div className="col-6">
           <div className="detail-content">
             <div className="detail-title">{findProduct?.title}</div>
-            <div className="detail-category">{findProduct?.category}</div>
+            <div className="detail-category">{findProduct?.description}</div>
             <div className="detail-price">{findProduct?.price}</div>
             <button
               className="btn btn-primary mybtn"

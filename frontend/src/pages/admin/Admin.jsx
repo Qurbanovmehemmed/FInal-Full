@@ -124,7 +124,7 @@ const Admin = () => {
             <label htmlFor="categories">Categories</label>
             <div className="text-danger">{errors.category}</div>
             <CategorySelect
-              categories={["Elektronika", "Moda", "Ev və Bağça"]}
+              categories={["Romance", "Fantasy", "Horror","Mystery"]}
               selectedCategories={selectedCategories}
               setSelectedCategories={setSelectedCategories}
             />

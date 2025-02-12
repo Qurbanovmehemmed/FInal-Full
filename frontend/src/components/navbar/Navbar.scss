@@ -1,6 +1,14 @@
 .navbar-section {
   .navbar {
     padding: 20px 0;
+    .logo{
+      width: 191px;
+      height: 50px;
+      img{
+        width: 100%;
+        height: 100%;
+      }
+    }
     .navlist {
       display: flex;
       justify-content: space-between;

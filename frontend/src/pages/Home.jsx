@@ -1,14 +1,22 @@
 import React from "react";
 import Hero from "../components/hero/Hero";
-import Categories from "../components/categories/Categories";
 import Mens from "../components/mens/Mens";
-import Womens from "../components/womens/Womens";
+import Romance from "../components/romancebook/Romance";
+import Fantasy from "../components/fantasy/Fantasy";
+import Horror from "../components/Horror/Horror";
+import Mystery from "../components/Mystery/Mystery";
+import Releated from "../components/Releated/Releated";
 
 const Home = () => {
   return (
     <div>
       <Hero />
-    <Mens />
+    
+    <Releated/>
+    <Romance/>
+    <Fantasy/>
+    <Horror/>
+    <Mystery/>
     </div>
   );
 };
