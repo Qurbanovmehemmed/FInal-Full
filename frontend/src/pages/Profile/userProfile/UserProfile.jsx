@@ -111,7 +111,6 @@ const UserProfile = () => {
               )}
             </p>
 
-            {/* Edit Profile Button */}
             <button
               className="btn btn-primary"
               onClick={() => (window.location.href = "/profile")}
@@ -142,7 +141,6 @@ const UserProfile = () => {
         </div>
       </div>
 
-      {/* Modal for adding/removing categories */}
       {showModal && (
         <div className="modal">
           <div className="modal-content">

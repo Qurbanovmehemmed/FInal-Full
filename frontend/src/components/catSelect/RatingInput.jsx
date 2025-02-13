@@ -14,8 +14,5 @@ const RatingInput = ({ rating, setRating }) => {
     />
   );
 };
-  {/* <div className="form-group">
-            <label>Rating</label>
-            <RatingInput rating={rating} setRating={setRating} />
-          </div> */}
+ 
 export default RatingInput;

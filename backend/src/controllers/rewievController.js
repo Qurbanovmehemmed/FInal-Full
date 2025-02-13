@@ -1,0 +1,73 @@
+import Review from "../models/reviewModel.js";
+
+export const createReview = async (req, res) => {
+  try {
+    const { bookId, content, rating } = req.body;
+    const userId = req.user.id; // AuthMiddleware-dən gələn user ID
+
+    const newReview = new Review({
+      bookId,
+      userId,
+      content,
+      rating,
+    });
+
+    await newReview.save();
+    res.status(201).json({ success: true, message: "Review added successfully", review: newReview });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// Kitabın bütün rəylərini gətir
+export const getReviewsByBook = async (req, res) => {
+  try {
+    const { bookId } = req.params;
+    const reviews = await Review.find({ bookId }).populate("userId", "username image");
+    
+    res.status(200).json({ success: true, reviews });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// Rəyi redaktə et
+export const updateReview = async (req, res) => {
+  try {
+    const { reviewId } = req.params;
+    const { content, rating } = req.body;
+    const userId = req.user.id;
+
+    const review = await Review.findOne({ _id: reviewId, userId });
+
+    if (!review) {
+      return res.status(404).json({ success: false, message: "Review not found" });
+    }
+
+    review.content = content;
+    review.rating = rating;
+    await review.save();
+
+    res.status(200).json({ success: true, message: "Review updated", review });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// Rəyi sil
+export const deleteReview = async (req, res) => {
+  try {
+    const { reviewId } = req.params;
+    const userId = req.user.id;
+
+    const review = await Review.findOneAndDelete({ _id: reviewId, userId });
+
+    if (!review) {
+      return res.status(404).json({ success: false, message: "Review not found" });
+    }
+
+    res.status(200).json({ success: true, message: "Review deleted" });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
