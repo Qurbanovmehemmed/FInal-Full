@@ -153,3 +153,52 @@
   color: #6f6f6f;
   max-width: 188px;
 }
+.comments {
+  margin-top: 10px;
+  border-top: 1px solid #21212147;
+}
+.comment{
+  padding: 30px 0px 20px 50px;  
+  border-top: 1px solid #21212147;
+  .commentImg{
+    width: 50px;
+    height: 50px;
+    img{
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+    }
+  }
+  .commentContent{
+    margin-top: 20px;
+    max-width: 850px;
+  }
+}
+.deleteComment{
+  color: #DF4244;
+  cursor: pointer;
+  display: flex;
+  width: 100%;
+  justify-content: flex-end;
+  :hover{
+    text-decoration: underline;
+  }
+}
+.add-comment{
+  padding: 0px 0px 20px 50px;
+  display: flex;
+  align-items: center;
+  input{
+    padding: 10px;
+    border-radius: 30px 0px 0px 30px;
+    border: 1px solid #21212147;
+  }
+  button{
+    padding: 10px 20px;
+    border-radius: 0px 30px 30px 0px;
+    border: none;
+    color: white;
+    cursor: pointer;
+  }
+
+}

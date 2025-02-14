@@ -1,4 +1,5 @@
 import Review from "../models/reviewModel.js";
+import user from "../models/userModel.js";
 
 export const createReview = async (req, res) => {
   try {
@@ -13,7 +14,13 @@ export const createReview = async (req, res) => {
     });
 
     await newReview.save();
-    res.status(201).json({ success: true, message: "Review added successfully", review: newReview });
+    res
+      .status(201)
+      .json({
+        success: true,
+        message: "Review added successfully",
+        review: newReview,
+      });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
@@ -23,8 +30,11 @@ export const createReview = async (req, res) => {
 export const getReviewsByBook = async (req, res) => {
   try {
     const { bookId } = req.params;
-    const reviews = await Review.find({ bookId }).populate("userId", "username image");
-    
+    const reviews = await Review.find({ bookId }).populate(
+      "userId",
+      "username image"
+    );
+
     res.status(200).json({ success: true, reviews });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
@@ -41,7 +51,9 @@ export const updateReview = async (req, res) => {
     const review = await Review.findOne({ _id: reviewId, userId });
 
     if (!review) {
-      return res.status(404).json({ success: false, message: "Review not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Review not found" });
     }
 
     review.content = content;
@@ -63,10 +75,131 @@ export const deleteReview = async (req, res) => {
     const review = await Review.findOneAndDelete({ _id: reviewId, userId });
 
     if (!review) {
-      return res.status(404).json({ success: false, message: "Review not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Review not found" });
     }
 
     res.status(200).json({ success: true, message: "Review deleted" });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+export const toggleLikeReview = async (req, res) => {
+  try {
+    const { reviewId } = req.params;
+    const userId = req.user.id;
+
+    const review = await Review.findById(reviewId);
+    if (!review)
+      return res
+        .status(404)
+        .json({ success: false, message: "Review not found" });
+
+    const likedIndex = review.likes.indexOf(userId);
+
+    if (likedIndex === -1) {
+      review.likes.push(userId);
+    } else {
+      review.likes.splice(likedIndex, 1);
+    }
+
+    await review.save();
+    res.status(200).json({ success: true, likes: review.likes.length });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+export const addComment = async (req, res) => {
+  try {
+    const { reviewId } = req.params;
+    const { text } = req.body;
+    const userId = req.user.id;
+
+    // Review-ı tapırıq
+    const review = await Review.findById(reviewId);
+    if (!review)
+      return res
+        .status(404)
+        .json({ success: false, message: "Review not found" });
+
+    // User məlumatlarını tapırıq
+    const cuser = await user.findById(userId); // Burada istifadəçi məlumatları tapılır
+    if (!cuser)
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
+
+    const username = cuser.username; // cuser istifadə edilməlidir
+    const image = cuser.image; // cuser istifadə edilməlidir
+
+    // Yeni şərhi yaradıb review-a əlavə edirik
+    const newComment = { userId, username, text, image };
+    review.comments.push(newComment);
+
+    // Review-u yeniləyirik
+    await review.save();
+    res.status(201).json({ success: true, comments: review.comments });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+
+export const editComment = async (req, res) => {
+  try {
+    const { reviewId, commentId } = req.params;
+    const { text } = req.body;
+    const userId = req.user.id;
+
+    const review = await Review.findById(reviewId);
+    if (!review)
+      return res
+        .status(404)
+        .json({ success: false, message: "Review not found" });
+
+    const comment = review.comments.find(
+      (c) => c._id.toString() === commentId && c.userId.toString() === userId
+    );
+    if (!comment)
+      return res
+        .status(403)
+        .json({ success: false, message: "Unauthorized or comment not found" });
+
+    comment.text = text;
+    await review.save();
+
+    res.status(200).json({ success: true, comments: review.comments });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+export const deleteComment = async (req, res) => {
+  try {
+    const { reviewId, commentId } = req.params;
+    const userId = req.user.id;
+
+    const review = await Review.findById(reviewId);
+    if (!review)
+      return res
+        .status(404)
+        .json({ success: false, message: "Review not found" });
+
+    const commentIndex = review.comments.findIndex(
+      (c) => c._id.toString() === commentId && c.userId.toString() === userId
+    );
+    if (commentIndex === -1)
+      return res
+        .status(403)
+        .json({ success: false, message: "Unauthorized or comment not found" });
+
+    review.comments.splice(commentIndex, 1);
+    await review.save();
+
+    res.status(200).json({ success: true, comments: review.comments });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }

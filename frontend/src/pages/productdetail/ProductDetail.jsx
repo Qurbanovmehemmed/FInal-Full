@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import "./ProductDetail.scss";
-import { useParams } from "react-router-dom";
+import { data, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { HiUser } from "react-icons/hi2";
 import axios from "axios";
 import RatingInput from "../../components/catSelect/RatingInput";
+import WishlistButtons from "../wishlist/wishlistbutton/Wishlistbutton";
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -15,6 +16,7 @@ const ProductDetail = () => {
   const [reviewText, setReviewText] = useState("");
   const [rating, setRating] = useState(5);
   const [editingReview, setEditingReview] = useState(null);
+  const [editingComment, setEditingComment] = useState(null);
 
   const findProduct = products.find((product) => product._id === id);
 
@@ -23,6 +25,18 @@ const ProductDetail = () => {
       .get(`http://localhost:5000/api/reviews/${id}`, { withCredentials: true })
       .then((response) => {
         setReviews(response.data.reviews);
+      });
+  }, [id]);
+
+  useEffect(() => {
+    axios
+      .get(`http://localhost:5000/api/reviews/${id}`, { withCredentials: true })
+      .then((response) => {
+        const updatedReviews = response.data.reviews.map((review) => ({
+          ...review,
+          comments: review.comments || [], // Ensure comments is always an array
+        }));
+        setReviews(updatedReviews);
       });
   }, [id]);
 
@@ -91,19 +105,158 @@ const ProductDetail = () => {
   };
 
   const calculateAverageRating = (reviews) => {
-    // Rəylərin ümumi sayını tapmaq
     const totalReviews = reviews.length;
 
-    // Bütün rəylərin cəmindən rating-ləri toplamaq
     const totalRating = reviews.reduce((acc, review) => acc + review.rating, 0);
 
-    // Orta qiymətləndirməni tapmaq
-    return totalReviews > 0 ? (totalRating / totalReviews).toFixed(1) : 0; // 1 ondalıklı dəqiqlik ilə göstərmək
+    return totalReviews > 0 ? (totalRating / totalReviews).toFixed(1) : 0;
   };
 
-  // Misal olaraq istifadə
   const averageRating = calculateAverageRating(reviews);
-  console.log(`Ortalama Rating: ${averageRating}`);
+
+  const [commentText, setCommentText] = useState("");
+  const [openCommentSection, setOpenCommentSection] = useState(null);
+
+  const toggleComments = (reviewId) => {
+    setOpenCommentSection(openCommentSection === reviewId ? null : reviewId);
+  };
+
+  const handleLikeReview = async (reviewId) => {
+    try {
+      // Like əməliyyatını serverə göndəririk
+      const { data } = await axios.put(
+        `http://localhost:5000/api/reviews/like/${reviewId}`,
+        {},
+        { withCredentials: true }
+      );
+
+      // Serverdən yenilənmiş like sayını alırıq
+      const { data: reviewsData } = await axios.get(
+        `http://localhost:5000/api/reviews/${id}`, // Müvafiq review'ların olduğu yeri almaq
+        { withCredentials: true }
+      );
+
+      // Yenilənmiş review-ları set edirik
+      setReviews(reviewsData.reviews);
+    } catch (error) {
+      console.error("Error liking review:", error);
+    }
+  };
+
+  const handleAddComment = async (reviewId) => {
+    if (!commentText.trim()) return;
+
+    try {
+      const { data } = await axios.post(
+        `http://localhost:5000/api/reviews/comment/${reviewId}`,
+        { text: commentText },
+        { withCredentials: true }
+      );
+
+      console.log("Server response:", data);
+
+      if (data?.review?.comments) {
+        setReviews((prevReviews) =>
+          prevReviews.map((review) =>
+            review._id === reviewId
+              ? { ...review, comments: [...data.review.comments] }
+              : review
+          )
+        );
+      } else {
+        console.error("No comment data received from the server.");
+      }
+
+      setCommentText("");
+    } catch (error) {
+      console.error("Error adding comment:", error);
+    }
+    window.location.reload();
+  };
+
+  // const handleEditComment = async (reviewId) => {
+  //   // Şərh mətni boşsa və ya editingComment mövcud deyilsə, əməliyyat etməməliyik
+  //   if (!editingComment?.text.trim() || !editingComment) return;
+
+  //   // Cookies-dən tokeni alırıq
+  //   const token = cookies.get('token');
+  //   if (!token) {
+  //     console.error("Token not found in cookies!");
+  //     return;
+  //   }
+
+  //   try {
+  //     // PUT sorğusunu göndəririk
+  //     const response = await axios.put(
+  //       `http://localhost:5000/api/reviews/comment/${reviewId}/${editingComment._id}`,
+  //       { text: editingComment.text },
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${token}`, // Tokeni header-da göndəririk
+  //         },
+  //         withCredentials: true, // Cookies göndərmək üçün bu seçimi saxlayırıq
+  //       }
+  //     );
+
+  //     console.log("Response after editing comment:", response.data);
+
+  //     // Yenilənmiş şərhləri tətbiq edirik
+  //     setCommentText(""); // Şərh mətni təmizlənir
+  //     setReviews((prevReviews) =>
+  //       prevReviews.map((review) =>
+  //         review._id === reviewId
+  //           ? {
+  //               ...review,
+  //               comments: review.comments.map((c) =>
+  //                 c._id === editingComment._id
+  //                   ? { ...c, text: editingComment.text } // Redaktə olunmuş şərh
+  //                   : c
+  //               ),
+  //             }
+  //           : review
+  //       )
+  //     );
+
+  //     setEditingComment(null); // Redaktə bitdi, resetləyirik
+  //   } catch (error) {
+  //     console.error("Error editing comment:", error);
+  //   }
+
+  //   // Konsol log ilə reviewId və editingComment._id-yi yoxlaya bilərsiniz
+  //   console.log("Review ID:", reviewId);
+  //   console.log("Comment ID:", editingComment?._id);
+  // };
+
+  useEffect(() => {}, [reviews]);
+
+  const handleDeleteComment = async (reviewId, commentId) => {
+    try {
+      await axios.delete(
+        `http://localhost:5000/api/reviews/comment/${reviewId}/${commentId}`,
+        { withCredentials: true }
+      );
+
+      setReviews(
+        reviews.map((r) =>
+          r._id === reviewId
+            ? { ...r, comments: r.comments.filter((c) => c._id !== commentId) }
+            : r
+        )
+      );
+    } catch (error) {
+      console.error("Error deleting comment:", error);
+    }
+  };
+
+  const commentUser = (comment) => {
+    const isUserComment = user?.existUser?._id === comment.userId;
+
+    if (isUserComment) {
+      return user.existUser.username;
+    } else {
+      return comment.userId !== user?.existUser?._id ? comment.username : "";
+    }
+  };
 
   return (
     <>
@@ -141,10 +294,13 @@ const ProductDetail = () => {
                   <p>{averageRating}</p>
                 </div>
 
-                <div>
-                  <button className="btn btn-success customGreenBtn">
+                <div className="d-flex gap-2 flex-wrap ">
+                  {/* <button className="btn btn-success customGreenBtn">
                     I want to read
-                  </button>
+                  </button> */}
+                  <WishlistButtons userId={user.existUser._id} productId={id} />
+
+                  {/* <button className="btn btn-secondary customGreenBtn">Already read this book</button> */}
                 </div>
               </div>
             </div>
@@ -233,6 +389,87 @@ const ProductDetail = () => {
                             </div>
 
                             <p className="rewContent">{review.content}</p>
+
+                            <div className="d-flex gap-2">
+                              <button
+                                className="btn btn-light"
+                                onClick={() => handleLikeReview(review?._id)}
+                              >
+                                👍 {review?.likes?.length} Like
+                              </button>
+                              <button
+                                className="btn btn-light"
+                                onClick={() => toggleComments(review?._id)}
+                              >
+                                💬 Comments ({review?.comments?.length})
+                              </button>
+                            </div>
+                            {openCommentSection === review?._id && (
+                              <div className="comments mt-2">
+                                {review.comments?.length > 0 &&
+                                  review.comments.map((comment) => (
+                                    <div key={comment._id} className="comment ">
+                                      <div className="">
+                                     <div className="d-flex gap-2 align-items-center">
+                                     <div className="commentImg">
+                                          <img
+                                            src={`http://localhost:5000/${comment.image}`}
+                                            alt=""
+                                          />
+                                        </div>
+                                        <strong>{comment?.username}</strong>
+                                     </div>
+                                        <div className="commentContent">
+                                        
+                                        <div>
+                                          {comment.text}
+                                        </div>
+
+                                      </div>
+                                      </div>
+                                     
+                                      
+                                      {user &&
+                                      user.existUser?._id ===
+                                        comment?.userId ? (
+                                        <>
+                                       <div className="deleteComment">
+                                       <p 
+                                            onClick={() =>
+                                              handleDeleteComment(
+                                                review._id,
+                                                comment._id
+                                              )
+                                            }
+                                          >
+                                            Delete
+                                          </p>
+                                       </div>
+                                        </>
+                                      ) : (
+                                        ""
+                                      )}
+                                    </div>
+                                  ))}
+                                <div className="add-comment mt-2">
+                                  <input
+                                    type="text"
+                                    value={commentText}
+                                    onChange={(e) =>
+                                      setCommentText(e.target.value)
+                                    }
+                                    placeholder="Write a comment..."
+                                  />
+                                  <button
+                                    type="button"
+                                    className="btn btn-success"
+                                    onClick={() => handleAddComment(review._id)}
+                                  >
+                                    Add Comment
+                                  </button>
+                                </div>
+                              </div>
+                            )}
                           </div>
                         </div>
 
@@ -291,7 +528,14 @@ const ProductDetail = () => {
               </div>
             )}
           </div>
-          <div className="col-md-3 shadow p-4 " style={{background:"#fff" ,borderRadius:"10px"}}>
+          <div
+            className="col-md-3 shadow p-4 "
+            style={{
+              background: "#fff",
+              borderRadius: "10px",
+              maxHeight: "885px",
+            }}
+          >
             <h5>You may also like</h5>
             <div className="similar-products ">
               {products
@@ -302,24 +546,29 @@ const ProductDetail = () => {
                       findProduct?.categories.includes(category)
                     )
                 )
-                .slice(0, 5 )
+                .slice(0, 5)
                 .map((product) => (
                   <div key={product._id} className="similar-product-card  mt-4">
                     <div className="d-flex gap-2">
-                    <div className=" similarImage">
-                      <img
-                        src={`http://localhost:5000/${product.image}`}
-                        alt={product.title}
-                      />
-                    </div>
-                    <div>
-                    <h6 style={{
-                      fontWeight: "700",
-                      maxWidth:"180px"
-                    }}>{product.title}</h6>
-                    <p className="similarDescription">{product.description.slice(0,110)+ " ..."}</p>
-                    </div>
-                    
+                      <div className=" similarImage">
+                        <img
+                          src={`http://localhost:5000/${product.image}`}
+                          alt={product.title}
+                        />
+                      </div>
+                      <div>
+                        <h6
+                          style={{
+                            fontWeight: "700",
+                            maxWidth: "180px",
+                          }}
+                        >
+                          {product.title}
+                        </h6>
+                        <p className="similarDescription">
+                          {product.description.slice(0, 110) + " ..."}
+                        </p>
+                      </div>
                     </div>
                   </div>
                 ))}

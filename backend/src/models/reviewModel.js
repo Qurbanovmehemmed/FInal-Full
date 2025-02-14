@@ -22,6 +22,16 @@ const reviewSchema = new mongoose.Schema(
       min: 1,
       max: 5,
     },
+    likes: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }], 
+    comments: [
+      {
+        userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+        username: { type: String },
+        image: { type: String },
+        text: { type: String },
+        _id: { type: mongoose.Schema.Types.ObjectId, auto: true }, 
+      },
+    ], 
   },
   { timestamps: true }
 );

@@ -1,10 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./Card.scss";
-import { FaHeart } from "react-icons/fa6";
-import { addBasket } from "../../redux/features/BasketSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { addWishlist } from "../../redux/features/WishlistSlice";
 
 const Card = ({ product }) => {
   const navigate = useNavigate();

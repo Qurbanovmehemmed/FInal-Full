@@ -7,6 +7,7 @@ import userRouter from "./src/routes/userRouter.js";
 import cookieParser from "cookie-parser";
 import verifyToken from "./src/middleware/protected/verifyToken.js";
 import reviewRoutes from "./src/routes/reviewRouters.js";
+import wishlistRouter from "./src/routes/wishlistRouter.js";
 
 const port = process.env.PORT || 5001;
 const app = express();
@@ -27,6 +28,7 @@ app.use("/auth", userRouter);
 app.use("/api/user", userRouter);
 app.use("/images", express.static("src/images"));
 app.use("/api/reviews", reviewRoutes);
+app.use("/api/wishlist", wishlistRouter);
 
 app.get("/", (req, res) => {
   res.send("Hello World");

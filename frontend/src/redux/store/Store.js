@@ -3,8 +3,8 @@ import { persistStore, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import productSlice from "../features/ProductSlice";
 import basketSlice from "../features/BasketSlice";
-import wishlistSlice from "../features/WishlistSlice";
 import userSlice from "../features/userSlice";
+import wishlistSlice from "../features/WishlistSlice";
 
 const persistProductConfig = {
   key: "product",
@@ -35,7 +35,7 @@ const persistedProductReducer = persistReducer(
 
 const persistedWishlistReducer = persistReducer(
   persistWishlistConfig,
-  wishlistSlice
+  wishlistSlice.reducer
 );
 
 const persistedBasketReducer = persistReducer(persistBasketConfig, basketSlice);
