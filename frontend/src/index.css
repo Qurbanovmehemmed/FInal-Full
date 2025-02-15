@@ -11,9 +11,18 @@ body {
 a {
   font-weight: 500;
   text-decoration: none;
-  /* color: rgb(23, 23, 23); */
+  color: black  ;
 }
 
 ul li {
   list-style: none;
+}
+p {
+  margin-bottom: 10px !important;
+}
+.backHover{
+  cursor: pointer;
+  &:hover{
+    text-decoration: underline;
+  }
 }

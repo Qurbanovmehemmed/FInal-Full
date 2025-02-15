@@ -1,98 +1,120 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { addToWishlist, updateWishlistStatus } from "../../../redux/features/WishlistSlice";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import {
+  addToWishlist,
+  removeFromWishlist,
+  updateWishlistStatus,
+} from "../../../redux/features/WishlistSlice";
 import "./Wishlistbutton.css";
 
 const WishlistButtons = ({ productId }) => {
   const dispatch = useDispatch();
-  const { user } = useSelector((state) => state.user); // Redux-dan istifadəçi məlumatlarını alırıq
-  const { wishlist } = useSelector((state) => state.wishlist); // Wishlist məlumatlarını alırıq
-  const userId = user?.existUser?._id; // İstifadəçi ID-si
+  const { user } = useSelector((state) => state.user);
+  const { wishlist } = useSelector((state) => state.wishlist);
+  const userId = user?.existUser?._id;
 
-  const [showModal, setShowModal] = useState(false); // Modalın açılıb-çıxma vəziyyəti
-  const [selectedStatus, setSelectedStatus] = useState(null); // Seçilmiş status
-  const [message, setMessage] = useState(""); // Mesajı idarə edən state
+  const [showModal, setShowModal] = useState(false);
+  const [selectedStatus, setSelectedStatus] = useState(null);
 
-  // Wishlist-də kitabın mövcud statusunu tapmaq (default olaraq null)
-  const currentStatus = wishlist.find(item => item.product._id === productId)?.status || null;
+  const wishlistItem = wishlist.find((item) => item.product._id === productId);
+  const currentStatus = wishlistItem?.status || null;
+  const wishlistItemId = wishlistItem?._id;
 
   useEffect(() => {
     if (showModal) {
-      setSelectedStatus(currentStatus); // Modal açıldığında seçili statusu göstər
+      setSelectedStatus(currentStatus);
     }
   }, [showModal, currentStatus]);
 
-  if (!userId) return null; // İstifadəçi yoxdursa, butonları göstərmirik
+  if (!userId) return null;
 
-  // Modal açmaq və ya bağlamaq
   const handleModalToggle = () => {
     setShowModal(!showModal);
-    console.log( currentStatus);
   };
 
-  // Wishlist-ə kitab əlavə etmək və ya statusu dəyişdirmək
   const handleStatusChange = (status) => {
     if (currentStatus && currentStatus === status) {
-      setMessage("This book is already in your wishlist with the selected status.");
-      return; // Əgər artıq eyni statusdadırsa, heç bir əməliyyat etmirik
+      toast.info("This book is already in your shelf with the selected status.");
+      return;
     }
+
     if (currentStatus) {
-      // Yeniləmə əməliyyatı
       dispatch(updateWishlistStatus({ userId, productId, status }));
-      setMessage("Wishlist status updated!");
+      toast.success("Book status updated!");
     } else {
-      // Yeni əlavə etmə əməliyyatı
       dispatch(addToWishlist({ userId, productId, status }));
-      setMessage("Book added to wishlist!");
+      toast.success("Book added to Shelf!");
     }
-    setSelectedStatus(status); // Seçimi yadda saxla
-    setShowModal(false); // Modalı bağla
-  
-    // Mesajı bir müddət sonra silmək
-    setTimeout(() => setMessage(""), 1000);
+
+    setSelectedStatus(status);
+    setShowModal(false);
   };
-  
+
+  const handleRemove = () => {
+    if (wishlistItemId) {
+      dispatch(removeFromWishlist(wishlistItemId));
+      toast.success("Book removed from Shelf!");
+    }
+  };
 
   return (
     <>
-      {/* Wishlist modalı */}
       {showModal && (
         <div className="Wishlistmodal">
           <div className="modal-contentWishlist">
-            <h2>Select a Status</h2>
-            <button
-              onClick={() => handleStatusChange("wantToRead")}
-              className={selectedStatus === "wantToRead" ? "btn-selected" : ""}
-            >
-              Want to Read
-            </button>
-            <button
-              onClick={() => handleStatusChange("alreadyRead")}
-              className={selectedStatus === "alreadyRead" ? "btn-selected" : ""}
-            >
-              Already Read
-            </button>
-            <button onClick={handleModalToggle}>Close</button>
+            <h2 className="mt-4">Choose a shelf for this book</h2>
+            <div className="d-flex flex-column gap-4 p-3">
+              <button
+                onClick={() => handleStatusChange("wantToRead")}
+                className={selectedStatus === "wantToRead"
+                  ? "customAdd btn btn-success"
+                  : "customAdd btn btn-outline-success"}
+              >
+                {selectedStatus === "wantToRead" ? "✅ Want to Read" : "Want to Read"}
+              </button>
+              <button
+                onClick={() => handleStatusChange("alreadyRead")}
+                className={selectedStatus === "alreadyRead"
+                  ? "customAdd btn btn-success"
+                  : "customAdd btn btn-outline-success"}
+              >
+                {selectedStatus === "alreadyRead" ? "✅ Already Read" : "Already Read"}
+              </button>
+
+              {wishlistItem && (
+                <button className="btn btn-light customRemove customAdd" onClick={handleRemove}>
+                   Remove from Shelf
+                </button>
+              )}
+
+              <button className="customClose " onClick={handleModalToggle}>
+                X
+              </button>
+            </div>
           </div>
         </div>
       )}
 
-      {/* Wishlist buttonları */}
       <div className="d-flex gap-2 flex-wrap">
         <button
-          className={`btn ${currentStatus === "wantToRead" ? "btn-success" : "btn-outline-success"}`}
+          className={`btn wishlistbtn ${
+            currentStatus === "wantToRead"
+              ? "btn-outline-danger"
+              : currentStatus === "alreadyRead"
+              ? "btn-outline-primary"
+              : "btn-danger"
+          }`}
           onClick={handleModalToggle}
         >
-          I want to read
+          {currentStatus === "wantToRead"
+            ? "Want to read"
+            : currentStatus === "alreadyRead"
+            ? "You already read"
+            : "Add to Shelf"}
         </button>
       </div>
-
-      {/* Mesaj */}
-      {message && (
-        <div className="alert alert-info mt-3">
-          {message}
-        </div>
-      )}
     </>
   );
 };

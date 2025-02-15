@@ -9,6 +9,7 @@ import axios from "axios";
 import { setLogout } from "../../redux/features/userSlice";
 import DropdownButton from "react-bootstrap/DropdownButton";
 import Dropdown from "react-bootstrap/Dropdown";
+import { clearWishlist } from "../../redux/features/WishlistSlice";
 
 const Navbar = () => {
   const baseUrl = "http://localhost:5000/auth";

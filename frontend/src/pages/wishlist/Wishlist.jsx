@@ -1,46 +1,235 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getUserWishlist, removeFromWishlist, updateWishlistStatus } from "../../redux/features/WishlistSlice";
-import WishlistButtons from "./wishlistbutton/Wishlistbutton";
+import {
+  getUserWishlist,
+  removeFromWishlist,
+} from "../../redux/features/WishlistSlice";
 import ButtonWishlist from "./wishlistbutton/ButtonWishlist";
+import "./Wishlist.css";
+import axios from "axios";
+import RatingStars from "../../components/ratingStarts/RatingStars";
+import { Link, useNavigate } from "react-router-dom";
+import { MdNavigateNext } from "react-icons/md";
 
 const Wishlist = () => {
   const dispatch = useDispatch();
-  const { wishlist, loading, error } = useSelector((state) => state.wishlist);
+  const navigate = useNavigate();
+  const { wishlist, loading } = useSelector((state) => state.wishlist);
+  const [filter, setFilter] = useState("all");
+  const [reviews, setReviews] = useState({}); // Rəyləri saxlamaq üçün state
 
   useEffect(() => {
-    dispatch(getUserWishlist()); // Wishlist məlumatlarını çəkirik
+    dispatch(getUserWishlist());
   }, [dispatch]);
 
-  const handleStatusChange = (productId, status) => {
-    dispatch(updateWishlistStatus({ productId, status }));
-  };
+  // Hər kitab üçün rəyləri və ortalama reytinqi əldə edirik
+  useEffect(() => {
+    wishlist.forEach(async (item) => {
+      try {
+        const response = await axios.get(
+          `http://localhost:5000/api/reviews/${item.product._id}`,
+          { withCredentials: true } // withCredentials əlavə etdik
+        );
+        const reviewData = response.data;
+
+        // Ortalama reytinq hesablanması
+        const averageRating =
+          reviewData.reviews && reviewData.reviews.length > 0
+            ? reviewData.reviews.reduce(
+                (acc, review) => acc + review.rating,
+                0
+              ) / reviewData.reviews.length
+            : 0;
+
+        setReviews((prevReviews) => ({
+          ...prevReviews,
+          [item.product._id]: {
+            rating: averageRating,
+            reviewCount: reviewData.reviews.length,
+          },
+        }));
+      } catch (error) {
+        console.error("Error fetching reviews:", error);
+      }
+    });
+  }, [wishlist]);
 
   const handleRemove = (wishlistId) => {
-    dispatch(removeFromWishlist(wishlistId)); // Wishlist-dən silirik
+    dispatch(removeFromWishlist(wishlistId));
   };
 
-  if (loading) return <div>Loading...</div>;
+  const filteredWishlist =
+    filter === "all"
+      ? wishlist
+      : wishlist.filter((item) => item.status === filter);
+
+      const goBack = () => {
+        navigate(-1);  // Bu, istifadəçini əvvəlki səhifəyə qaytaracaq
+      };
 
   return (
-    <div>
-      <h2>Your Wishlist</h2>
-      {wishlist.length === 0 ? (
-        <p>No books in your wishlist.</p>
-      ) : (
-        <ul>
-          {wishlist.map((item) => (
-            <li key={item._id}>
-              <h3>{item.product.title}</h3>
-              <p>Status: {item.status}</p>
-              <ButtonWishlist productId={item.product._id} />
-              <button onClick={() => handleStatusChange(item.product._id, "wantToRead")}>Want to Read</button>
-              <button onClick={() => handleStatusChange(item.product._id, "alreadyRead")}>Already Read</button>
-              <button onClick={() => handleRemove(item._id)}>Remove from Wishlist</button>
-            </li>
-          ))}
-        </ul>
-      )}
+    <div className="container mt-4">
+      <div className="row">
+        <div className="d-flex mb-2 align-items-center gap-2">
+          <div>
+          <div className="backHover" onClick={goBack}> Back</div>
+          </div>
+          <MdNavigateNext/>
+          <h2>Book Shelves</h2>
+        </div>
+        <div className="col-md-3">
+          <div className="wishlist-sidebar p-3">
+            <button
+              className={`filter-btn ${filter === "all" ? "active" : ""}`}
+              onClick={() => setFilter("all")}
+            >
+              📚 All
+            </button>
+            <button
+              className={`filter-btn ${
+                filter === "wantToRead" ? "active" : ""
+              }`}
+              onClick={() => setFilter("wantToRead")}
+            >
+              📖 Want to Read
+            </button>
+            <button
+              className={`filter-btn ${
+                filter === "alreadyRead" ? "active" : ""
+              }`}
+              onClick={() => setFilter("alreadyRead")}
+            >
+              ✅ Already Read
+            </button>
+          </div>
+        </div>
+        <div className="col-md-9">
+          {filteredWishlist.length === 0 ? (
+            <p
+              style={{
+                textAlign: "center",
+                fontSize: "30px",
+              }}
+            >
+              No books found 😢
+            </p>
+          ) : (
+            <div className="wishlist-items d-flex flex-column gap-3">
+              {filteredWishlist.map((item) => (
+                <div key={item._id} className="wishlist-item row p-3">
+                  <div className="col-sm-2">
+                    <img
+                      style={{
+                        width: "100%",
+                        cursor: "pointer",
+                      }}
+                      src={`http://localhost:5000/${item.product.image}`}
+                      alt={item.product.title}
+                      className="wishlist-img"
+                      onClick={() =>
+                        navigate(`/productdetail/${item.product._id}`)
+                      }
+                    />
+                  </div>
+                  <div className="col-sm-10 d-flex flex-column justify-content-between">
+                    <div className="d-flex justify-content-between ">
+                      <h3
+                        style={{
+                          fontWeight: "bold",
+                        }}
+                      >
+                        {item.product.title}
+                      </h3>
+                    </div>
+                    <p>Author: {item.product.author}</p>
+                    {/* rating */}
+                    <div className="d-flex gap-1">
+                      Rating:{" "}
+                      {reviews[item.product._id] ? (
+                        <>
+                          <div className="d-flex gap-1">
+                            <span>
+                              {Array.from({ length: 5 }, (_, index) => {
+                                const rating = reviews[item.product._id].rating;
+                                if (index < Math.floor(rating)) {
+                                  return (
+                                    <i
+                                      key={index}
+                                      className="fa fa-star customStar"
+                                    ></i>
+                                  );
+                                } else if (index < rating) {
+                                  return (
+                                    <i
+                                      key={index}
+                                      className="fa fa-star-half-stroke customStar"
+                                    ></i>
+                                  );
+                                } else {
+                                  return (
+                                    <i
+                                      key={index}
+                                      className="fa-regular fa-star customStar"
+                                    ></i>
+                                  );
+                                }
+                              })}
+                            </span>
+                            <span>
+                              ({reviews[item.product._id].rating.toFixed(1)})
+                            </span>
+                          </div>
+                        </>
+                      ) : (
+                        "N/A"
+                      )}
+                    </div>
+
+                    <p
+                      style={{
+                        color: "#595959",
+                      }}
+                    >
+                      {item.product.description.slice(0, 300) + "..."}
+                    </p>
+                    <div
+                      className="d-flex gap-2 justify-content-between"
+                      style={{
+                        color: "#595959",
+                      }}
+                    >
+                      <p className="d-flex gap-1">
+                        Categories:
+                        {item.product?.categories.map((cat, index) => (
+                          <span key={index}>{cat}</span>
+                        ))}
+                      </p>
+                      <p>
+                        Added:{" "}
+                        {new Date(item.addedAt).toLocaleDateString("en-US", {
+                          month: "short",
+                          day: "numeric",
+                          year: "numeric",
+                        })}
+                      </p>
+                    </div>
+
+                    <div className="d-flex gap-2 justify-content-end">
+                      <ButtonWishlist productId={item.product._id} />
+                      <button
+                        className="btn btn-danger"
+                        onClick={() => handleRemove(item._id)}
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 };

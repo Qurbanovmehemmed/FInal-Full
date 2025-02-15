@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from "react";
 import "./ProductDetail.scss";
-import { data, useParams } from "react-router-dom";
+import { data, useNavigate, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { HiUser } from "react-icons/hi2";
 import axios from "axios";
 import RatingInput from "../../components/catSelect/RatingInput";
 import WishlistButtons from "../wishlist/wishlistbutton/Wishlistbutton";
-
+import WishlistCount from "../wishlist/wishlistbutton/WishlistCount";
+import { MdNavigateNext } from "react-icons/md";
 
 const ProductDetail = () => {
   const { id } = useParams();
+  const navigate =useNavigate()
   const { products } = useSelector((state) => state.products);
   const { user } = useSelector((state) => state.user);
   const [selectedTab, setSelectedTab] = useState("description");
@@ -258,9 +260,15 @@ const ProductDetail = () => {
       return comment.userId !== user?.existUser?._id ? comment.username : "";
     }
   };
+  const goBack = () => {
+    navigate(-1); // Bu, istifadəçini əvvəlki səhifəyə qaytaracaq
+  };
 
   return (
     <>
+      <div className="container">
+      
+      </div>
       <div className="shadow bg-body">
         <div className="container">
           <div className="row">
@@ -294,16 +302,19 @@ const ProductDetail = () => {
                   </div>
                   <p>{averageRating}</p>
                 </div>
+
                 <WishlistButtons userId={user.existUser._id} productId={id} />
+                <div className="d-flex mb-2 align-items-center gap-2">
+          <div>
+            <div className="backHover" onClick={goBack}>
+              {" "}
+              Back
+            </div>
+          </div>
+          
+        </div>
+
               
-
-                <div className="d-flex gap-2 flex-wrap ">
-                  {/* <button className="btn btn-success customGreenBtn">
-                    I want to read
-                  </button> */}
-
-                  {/* <button className="btn btn-secondary customGreenBtn">Already read this book</button> */}
-                </div>
               </div>
             </div>
           </div>
@@ -412,41 +423,36 @@ const ProductDetail = () => {
                                   review.comments.map((comment) => (
                                     <div key={comment._id} className="comment ">
                                       <div className="">
-                                     <div className="d-flex gap-2 align-items-center">
-                                     <div className="commentImg">
-                                          <img
-                                            src={`http://localhost:5000/${comment.image}`}
-                                            alt=""
-                                          />
+                                        <div className="d-flex gap-2 align-items-center">
+                                          <div className="commentImg">
+                                            <img
+                                              src={`http://localhost:5000/${comment.image}`}
+                                              alt=""
+                                            />
+                                          </div>
+                                          <strong>{comment?.username}</strong>
                                         </div>
-                                        <strong>{comment?.username}</strong>
-                                     </div>
                                         <div className="commentContent">
-                                        
-                                        <div>
-                                          {comment.text}
+                                          <div>{comment.text}</div>
                                         </div>
+                                      </div>
 
-                                      </div>
-                                      </div>
-                                     
-                                      
                                       {user &&
                                       user.existUser?._id ===
                                         comment?.userId ? (
                                         <>
-                                       <div className="deleteComment">
-                                       <p 
-                                            onClick={() =>
-                                              handleDeleteComment(
-                                                review._id,
-                                                comment._id
-                                              )
-                                            }
-                                          >
-                                            Delete
-                                          </p>
-                                       </div>
+                                          <div className="deleteComment">
+                                            <p
+                                              onClick={() =>
+                                                handleDeleteComment(
+                                                  review._id,
+                                                  comment._id
+                                                )
+                                              }
+                                            >
+                                              Delete
+                                            </p>
+                                          </div>
                                         </>
                                       ) : (
                                         ""
@@ -556,6 +562,12 @@ const ProductDetail = () => {
                         <img
                           src={`http://localhost:5000/${product.image}`}
                           alt={product.title}
+                          style={{
+                            cursor:"pointer"
+                          }}
+                          onClick={() =>
+                            navigate(`/productdetail/${product._id}`)
+                          }
                         />
                       </div>
                       <div>

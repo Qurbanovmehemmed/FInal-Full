@@ -1,0 +1,132 @@
+/* Wishlist Container */
+.wishlist-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding: 20px;
+  }
+  
+  /* Sidebar */
+  .wishlist-sidebar {
+    width: 280px;
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    height: fit-content;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+
+  }
+  
+  .wishlist-sidebar h4 {
+    font-size: 18px;
+    margin-bottom: 15px;
+  }
+  
+/* Updated Button Styles */
+.filter-btn {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 10px;
+    border: none;
+    border-radius: 5px;
+    background: #ffffff; /* Red-Orange color */
+    font-size: 14px;
+    cursor: pointer;
+    transition: 0.3s ease;
+    border: 1px solid #ff1f1f;
+    color: #ff1f1f;
+  }
+  
+  .filter-btn:hover,
+  .filter-btn.active {
+    background: #ff3b30; /* Darker Red-Orange */
+    color: white;
+  }
+  
+  .delete-btn {
+    background: #ff4d4d; /* Red color */
+    color: white;
+    border: none;
+    padding: 7px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+  
+  .delete-btn:hover {
+    background: #ff1f1f; /* Darker Red */
+  }
+  
+  /* Wishlist Books */
+  .wishlist-books {
+    flex-grow: 1;
+  }
+  
+  .book-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+    transition: 0.3s ease-in-out;
+  }
+  
+  .book-item:hover {
+    transform: scale(1.02);
+  }
+  
+  .book-image {
+    width: 90px;
+    height: 130px;
+    object-fit: cover;
+    border-radius: 5px;
+  }
+  
+  .book-content {
+    flex: 1;
+  }
+  
+  .book-title {
+    font-size: 16px;
+    font-weight: bold;
+  }
+  
+  .book-status {
+    display: inline-block;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: bold;
+  }
+  
+  .status-wantToRead {
+    background-color: #ffdd57;
+    color: #856404;
+  }
+  
+  .status-alreadyRead {
+    background-color: #28a745;
+    color: white;
+  }
+  
+  .btn-group {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+  }
+  
+  
+  
+  .wishlist-item {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+  }
+
+  .customStar{
+    color: #ffdd57;
+    
+  }

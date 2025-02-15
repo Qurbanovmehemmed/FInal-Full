@@ -20,7 +20,9 @@ export const userSlice = createSlice({
     },
     setLogout: (state) => {
       state.user = null;
+        
       localStorage.removeItem("user");
+
     },
   },
 });

@@ -19,14 +19,14 @@ const persistWishlistConfig = {
   storage,
 };
 
-const persistUserConfig = {
-  key: "user",
-  storage,
-};
-const persistedUserReducer = persistReducer(
-  persistUserConfig,
-  userSlice.reducer
-);
+// const persistUserConfig = {
+//   key: "user",
+//   storage,
+// };
+// const persistedUserReducer = persistReducer(
+//   persistUserConfig,
+//   userSlice.reducer
+// );
 
 const persistedProductReducer = persistReducer(
   persistProductConfig,
@@ -45,7 +45,7 @@ export const store = configureStore({
     products: persistedProductReducer,
     basket: persistedBasketReducer,
     wishlist: persistedWishlistReducer,
-    user:persistedUserReducer ,
+    user:userSlice.reducer ,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
