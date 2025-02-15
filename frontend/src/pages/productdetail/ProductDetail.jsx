@@ -7,6 +7,7 @@ import axios from "axios";
 import RatingInput from "../../components/catSelect/RatingInput";
 import WishlistButtons from "../wishlist/wishlistbutton/Wishlistbutton";
 
+
 const ProductDetail = () => {
   const { id } = useParams();
   const { products } = useSelector((state) => state.products);
@@ -293,12 +294,13 @@ const ProductDetail = () => {
                   </div>
                   <p>{averageRating}</p>
                 </div>
+                <WishlistButtons userId={user.existUser._id} productId={id} />
+              
 
                 <div className="d-flex gap-2 flex-wrap ">
                   {/* <button className="btn btn-success customGreenBtn">
                     I want to read
                   </button> */}
-                  <WishlistButtons userId={user.existUser._id} productId={id} />
 
                   {/* <button className="btn btn-secondary customGreenBtn">Already read this book</button> */}
                 </div>

@@ -1,28 +1,63 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios"; // Birbaşa axios-u import edirik
+import axios from "axios";
 
-// Axios konfiqurasiyası (credentials üçün)
-axios.defaults.baseURL = "http://localhost:5000/api"; // Backend server URL
-axios.defaults.withCredentials = true; // Cookies və session üçün
+// Axios konfiqurasiyası
+axios.defaults.baseURL = "http://localhost:5000/api";
+axios.defaults.withCredentials = true;
 
-// 📌 Wishlist-ə kitab əlavə et
 export const addToWishlist = createAsyncThunk(
   "wishlist/addToWishlist",
-  async ({ userId, productId, status }, { rejectWithValue }) => {
+  async ({ productId, status }, { rejectWithValue, getState }) => {
     try {
-      const response = await axios.post("/wishlist/add", { userId, productId, status });
-      return response.data;
+      const userId = getState().user.user?.existUser?._id;
+      if (!userId) throw new Error("User not logged in");
+
+      // Wishlist-də mövcud olan məhsulu tapmaq
+      const existingItem = getState().wishlist.wishlist.find(
+        (item) => item.productId === productId
+      );
+
+      if (existingItem) {
+        // Əgər kitab artıq wishlist-dədirsə və eyni statusda deyilsə, yenilə və ya sil
+        if (existingItem.status === status) {
+          // Əgər artıq eyni statusdadırsa, silmək
+          await axios.delete(`/wishlist/remove/${existingItem._id}`);
+          return { productId, status: "removed" }; // Silinmiş məhsulun məlumatı
+        } else {
+          // Əgər status fərqlidirsə, statusu yenilə
+          await axios.put("/wishlist/update", {
+            userId,
+            productId: existingItem.productId, // Burada existingItem.productId olmalıdır
+            status,
+          });
+          return { productId, status: "updated" }; // Yenilənmiş məhsulun məlumatı
+        }
+      } else {
+        // Əgər məhsul wishlist-də yoxdursa, yeni məhsul əlavə et
+        const response = await axios.post("/wishlist/add", {
+          userId,
+          productId,
+          status,
+        });
+        return response.data; // Yeni məhsul əlavə ediləcək
+      }
     } catch (error) {
-      return rejectWithValue(error.response?.data || "Error adding to wishlist");
+      return rejectWithValue(
+        error.response?.data || "Error adding to wishlist"
+      );
     }
   }
 );
 
+
 // 📌 İstifadəçinin wishlist kitablarını al
 export const getUserWishlist = createAsyncThunk(
   "wishlist/getUserWishlist",
-  async (userId, { rejectWithValue }) => {
+  async (_, { rejectWithValue, getState }) => {
     try {
+      const userId = getState().user.user?.existUser?._id;
+      if (!userId) throw new Error("User not logged in");
+
       const response = await axios.get(`/wishlist/${userId}`);
       return response.data;
     } catch (error) {
@@ -34,25 +69,34 @@ export const getUserWishlist = createAsyncThunk(
 // 📌 Wishlist statusunu yenilə
 export const updateWishlistStatus = createAsyncThunk(
   "wishlist/updateWishlistStatus",
-  async ({ wishlistId, status }, { rejectWithValue }) => {
+  async ({ userId, productId, status }, { rejectWithValue }) => {
     try {
-      const response = await axios.put("/wishlist/update", { wishlistId, status });
+      const response = await axios.put("/wishlist/update", {
+        userId,
+        productId, // Burada productId istifadə olunur
+        status,
+      });
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response?.data || "Error updating wishlist status");
+      return rejectWithValue(
+        error.response?.data || "Error updating wishlist status"
+      );
     }
   }
 );
+
 
 // 📌 Wishlist-dən kitabı sil
 export const removeFromWishlist = createAsyncThunk(
   "wishlist/removeFromWishlist",
   async (wishlistId, { rejectWithValue }) => {
     try {
-      const response = await axios.delete(`/wishlist/remove/${wishlistId}`);
-      return response.data;
+      await axios.delete(`/wishlist/remove/${wishlistId}`);
+      return wishlistId;
     } catch (error) {
-      return rejectWithValue(error.response?.data || "Error removing from wishlist");
+      return rejectWithValue(
+        error.response?.data || "Error removing from wishlist"
+      );
     }
   }
 );
@@ -64,7 +108,11 @@ const wishlistSlice = createSlice({
     loading: false,
     error: null,
   },
-  reducers: {},
+  reducers: {
+    clearWishlist: (state) => {
+      state.wishlist = []; // Wishlist təmizlənir
+    },
+  },
   extraReducers: (builder) => {
     builder
       // 📌 Wishlist-ə əlavə et
@@ -73,7 +121,7 @@ const wishlistSlice = createSlice({
       })
       .addCase(addToWishlist.fulfilled, (state, action) => {
         state.loading = false;
-        state.wishlist.push(action.payload.wishlistItem);
+        state.wishlist.push(action.payload.wishlistItem); // Əlavə olunan kitab wishlist-ə əlavə olunur
       })
       .addCase(addToWishlist.rejected, (state, action) => {
         state.loading = false;
@@ -99,7 +147,9 @@ const wishlistSlice = createSlice({
       })
       .addCase(updateWishlistStatus.fulfilled, (state, action) => {
         state.loading = false;
-        const index = state.wishlist.findIndex((item) => item._id === action.payload.wishlistItem._id);
+        const index = state.wishlist.findIndex(
+          (item) => item._id === action.payload.wishlistItem._id
+        );
         if (index !== -1) {
           state.wishlist[index] = action.payload.wishlistItem;
         }
@@ -115,7 +165,9 @@ const wishlistSlice = createSlice({
       })
       .addCase(removeFromWishlist.fulfilled, (state, action) => {
         state.loading = false;
-        state.wishlist = state.wishlist.filter((item) => item._id !== action.meta.arg);
+        state.wishlist = state.wishlist.filter(
+          (item) => item._id !== action.payload
+        );
       })
       .addCase(removeFromWishlist.rejected, (state, action) => {
         state.loading = false;
@@ -124,4 +176,5 @@ const wishlistSlice = createSlice({
   },
 });
 
+export const { clearWishlist } = wishlistSlice.actions;
 export default wishlistSlice;

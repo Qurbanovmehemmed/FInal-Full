@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { addToWishlist, updateWishlistStatus } from "../../../redux/features/WishlistSlice";
 import "./Wishlistbutton.css";
+import { addToWishlist, updateWishlistStatus } from "../../../redux/features/WishlistSlice";
 
-const WishlistButtons = ({ productId }) => {
+const ButtonWishlist = ({ productId }) => {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.user); // Redux-dan istifadəçi məlumatlarını alırıq
   const { wishlist } = useSelector((state) => state.wishlist); // Wishlist məlumatlarını alırıq
@@ -83,7 +83,7 @@ const WishlistButtons = ({ productId }) => {
           className={`btn ${currentStatus === "wantToRead" ? "btn-success" : "btn-outline-success"}`}
           onClick={handleModalToggle}
         >
-          I want to read
+          I want to read yeni
         </button>
       </div>
 
@@ -97,4 +97,4 @@ const WishlistButtons = ({ productId }) => {
   );
 };
 
-export default WishlistButtons;
+export default ButtonWishlist;

@@ -27,11 +27,11 @@ const Navbar = () => {
     } else {
       alert("Logout failed");
     }
+      window.location.reload();
   };
   const isAdmin = user?.existUser?.email === "mahammadag-af106@code.edu.az";
 
   const totalWishlistCount = wishlist.length;
-  console.log(user?.existUser?._id)
   return (
     <div className="navbar-section">
       <div className="container">
