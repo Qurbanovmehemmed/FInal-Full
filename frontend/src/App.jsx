@@ -18,6 +18,8 @@ import Profile from "./pages/Profile/Profile";
 import Create from "./pages/Create/Create";
 import ProtectAdmin from "./routes/protect/ProtectAdmin";
 import UserProfile from "./pages/Profile/userProfile/UserProfile";
+import Product from "./pages/Products/Product";
+import Mystory from "./pages/MyStory/Mystory";
 
 const router = createBrowserRouter([
   {
@@ -27,6 +29,11 @@ const router = createBrowserRouter([
       {
         path: "/",
         element: <Home />,
+      },
+
+      {
+        path: "/allproduct",
+        element: <Product />,
       },
       {
         path: "/category",
@@ -89,6 +96,10 @@ const router = createBrowserRouter([
       {
         path: "/create",
         element: <Create />,
+      },
+      {
+        path: "/mystory",
+        element: <Mystory />,
       },
       {
         path:"userprofile",

@@ -2,10 +2,11 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getProducts } from "../../redux/features/ProductSlice";
 import Slider from "react-slick"; // React Slick kitabxanası
-import "slick-carousel/slick/slick.css"; 
+import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Card from "../card/Card";
-
+import { MdNavigateNext } from "react-icons/md";
+import { Link } from "react-router-dom";
 const Horror = () => {
   const dispatch = useDispatch();
   const { products } = useSelector((state) => state.products);
@@ -46,7 +47,10 @@ const Horror = () => {
     <div className="container mt-5">
       <div className="d-flex justify-content-between mb-2">
         <h3>Horror</h3>
-        <p>view all</p>
+        <Link to={"/allproduct"} className="d-flex align-items-center  ">
+          view all
+          <MdNavigateNext />
+        </Link>
       </div>
 
       <Slider {...sliderSettings}>
@@ -59,7 +63,5 @@ const Horror = () => {
     </div>
   );
 };
-
-
 
 export default Horror;

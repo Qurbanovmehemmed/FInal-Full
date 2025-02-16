@@ -10,6 +10,7 @@ import axios from "axios";
 import RatingStars from "../../components/ratingStarts/RatingStars";
 import { Link, useNavigate } from "react-router-dom";
 import { MdNavigateNext } from "react-icons/md";
+import StarRatings from "react-star-ratings";
 
 const Wishlist = () => {
   const dispatch = useDispatch();
@@ -17,7 +18,6 @@ const Wishlist = () => {
   const { wishlist, loading } = useSelector((state) => state.wishlist);
   const [filter, setFilter] = useState("all");
   const [reviews, setReviews] = useState({}); // Rəyləri saxlamaq üçün state
-
   useEffect(() => {
     dispatch(getUserWishlist());
   }, [dispatch]);
@@ -63,18 +63,20 @@ const Wishlist = () => {
       ? wishlist
       : wishlist.filter((item) => item.status === filter);
 
-      const goBack = () => {
-        navigate(-1);  // Bu, istifadəçini əvvəlki səhifəyə qaytaracaq
-      };
-
+  const goBack = () => {
+    navigate(-1); // Bu, istifadəçini əvvəlki səhifəyə qaytaracaq
+  };
   return (
     <div className="container mt-4">
       <div className="row">
         <div className="d-flex mb-2 align-items-center gap-2">
           <div>
-          <div className="backHover" onClick={goBack}> Back</div>
+            <div className="backHover" onClick={goBack}>
+              {" "}
+              Back
+            </div>
           </div>
-          <MdNavigateNext/>
+          <MdNavigateNext />
           <h2>Book Shelves</h2>
         </div>
         <div className="col-md-3">
@@ -143,54 +145,32 @@ const Wishlist = () => {
                     </div>
                     <p>Author: {item.product.author}</p>
                     {/* rating */}
-                    <div className="d-flex gap-1">
+                    <div className="d-flex gap-1 align-items-center ">
                       Rating:{" "}
                       {reviews[item.product._id] ? (
                         <>
-                          <div className="d-flex gap-1">
-                            <span>
-                              {Array.from({ length: 5 }, (_, index) => {
-                                const rating = reviews[item.product._id].rating;
-                                if (index < Math.floor(rating)) {
-                                  return (
-                                    <i
-                                      key={index}
-                                      className="fa fa-star customStar"
-                                    ></i>
-                                  );
-                                } else if (index < rating) {
-                                  return (
-                                    <i
-                                      key={index}
-                                      className="fa fa-star-half-stroke customStar"
-                                    ></i>
-                                  );
-                                } else {
-                                  return (
-                                    <i
-                                      key={index}
-                                      className="fa-regular fa-star customStar"
-                                    ></i>
-                                  );
-                                }
-                              })}
-                            </span>
-                            <span>
+                          <div className="d-flex gap-1 align-items-center ">
+                            <StarRatings
+                              rating={reviews[item.product._id].rating}
+                              starRatedColor="gold"
+                              numberOfStars={5}
+                              starDimension="20px"
+                              starSpacing="1px"
+                            />
+                            <div>
                               ({reviews[item.product._id].rating.toFixed(1)})
-                            </span>
+                            </div>
                           </div>
                         </>
                       ) : (
-                        "N/A"
+                        ""
                       )}
                     </div>
 
-                    <p
-                      style={{
-                        color: "#595959",
-                      }}
-                    >
-                      {item.product.description.slice(0, 300) + "..."}
+                    <p style={{ color: "#595959", marginTop: "5px" }}>
+                      {item.product.description.length > 300
+                        ? item.product.description.slice(0, 300) + "..."
+                        : item.product.description}
                     </p>
                     <div
                       className="d-flex gap-2 justify-content-between"

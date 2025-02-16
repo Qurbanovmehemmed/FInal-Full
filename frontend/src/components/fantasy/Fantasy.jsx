@@ -5,6 +5,8 @@ import Slider from "react-slick"; // React Slick kitabxanası
 import "slick-carousel/slick/slick.css"; 
 import "slick-carousel/slick/slick-theme.css";
 import Card from "../card/Card";
+import { MdNavigateNext } from "react-icons/md";
+import { Link } from "react-router-dom";
 
 const Fantasy = () => {
   const dispatch = useDispatch();
@@ -46,7 +48,10 @@ const Fantasy = () => {
     <div className="container mt-5">
       <div className="d-flex justify-content-between mb-2">
         <h3>Fantasy</h3>
-        <p>view all</p>
+        <Link to={"/allproduct"} className="d-flex align-items-center  ">
+          view all
+          <MdNavigateNext />
+        </Link>
       </div>
 
       <Slider {...sliderSettings}>

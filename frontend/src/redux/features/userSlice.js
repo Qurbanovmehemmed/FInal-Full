@@ -9,7 +9,6 @@ const initialState = {
   user: storedUser,
 };
 
-
 export const userSlice = createSlice({
   name: "user",
   initialState,
@@ -20,9 +19,8 @@ export const userSlice = createSlice({
     },
     setLogout: (state) => {
       state.user = null;
-        
-      localStorage.removeItem("user");
 
+      localStorage.removeItem("user");
     },
   },
 });

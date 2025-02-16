@@ -35,7 +35,6 @@ const Create = () => {
       description: "",
       author: user?.existUser?.name || "",
       categories: [],
-      price: "",
       rating: 0,
     },
     validationSchema: productSchema,
@@ -54,7 +53,6 @@ const Create = () => {
     selectedCategories.forEach((cat) => {
       formData.append("categories[]", cat.value);
     });
-    formData.append("price", values.price);
     formData.append("rating", rating);
 
     console.log("📩 Göndərilən FormData:", Object.fromEntries(formData));
@@ -144,7 +142,6 @@ const Create = () => {
                   className="form-control"
                   onChange={handleChange}
                   value={values.description}
-                  sty
                 />
               </div>
               <div className="form-groupCreate">
@@ -163,26 +160,13 @@ const Create = () => {
                 <label htmlFor="categories">Categories</label>
                 <div className="text-danger">{errors.category}</div>
                 <CategorySelect
-                  categories={["Elektronika", "Moda", "Ev və Bağça"]}
+                  categories={["Romance", "Horror", "Fantasy","Mystery"]}
                   selectedCategories={selectedCategories}
                   setSelectedCategories={setSelectedCategories}
                 />
               </div>
-              <div className="form-groupCreate">
-                <label htmlFor="price">Price</label>
-                <div className="text-danger">{errors.price}</div>
-                <input
-                  type="text"
-                  id="price"
-                  className="form-control"
-                  onChange={handleChange}
-                  value={values.price}
-                />
-              </div>
-              <div className="form-groupCreate">
-                <label>Rating</label>
-                <RatingInput rating={rating} setRating={setRating} />
-              </div>
+              
+            
               <div
                 className="form-groupCreate "
                 style={{ marginTop: "20px", paddingBottom: "20px" }}

@@ -2,7 +2,7 @@ import product from "../models/productModel.js";
 
 export const addProduct = async (req, res) => {
   try {
-    const { title, description, author,  price, rating } = req.body;
+    const { title, description, author,   rating } = req.body;
 
     const imageUrl = `images/${req.file.filename}`.replace(/\\/g, "/");
 
@@ -15,7 +15,7 @@ export const addProduct = async (req, res) => {
       description,
       author,
       categories,
-      price,
+      
       rating,
       image: imageUrl,
     });

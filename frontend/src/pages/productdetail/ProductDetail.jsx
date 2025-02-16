@@ -303,7 +303,7 @@ const ProductDetail = () => {
                   <p>{averageRating}</p>
                 </div>
 
-                <WishlistButtons userId={user.existUser._id} productId={id} />
+                <WishlistButtons userId={user?.existUser?._id} productId={id} />
                 <div className="d-flex mb-2 align-items-center gap-2">
           <div>
             <div className="backHover" onClick={goBack}>
