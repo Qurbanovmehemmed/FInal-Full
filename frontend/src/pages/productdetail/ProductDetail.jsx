@@ -306,7 +306,7 @@ const ProductDetail = () => {
                 <WishlistButtons userId={user?.existUser?._id} productId={id} />
                 <div className="d-flex mb-2 align-items-center gap-2">
           <div>
-            <div className="backHover" onClick={goBack}>
+            <div className="backHover" onClick={goBack} style={{marginTop:"10px"}}>
               {" "}
               Back
             </div>

@@ -18,7 +18,7 @@ const Card = ({ product }) => {
   }, [wishlist, color]);
 
   return (
-    <div className="col-md-2">
+    <div className="">
       <div
         className="cards"
         onClick={() => navigate(`/productdetail/${product._id}`)}

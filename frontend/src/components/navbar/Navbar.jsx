@@ -109,8 +109,9 @@
                   </Dropdown.Menu>
                 </Dropdown>
                 <div className="navlist-item">
-                  <Link to="/women">Women</Link>
+                  <Link to="/admin">Admin</Link>
                 </div>
+                
               </div>
             </div>
 
@@ -254,7 +255,7 @@
                 </ul>
               </div>
             </div>
-            <RxHamburgerMenu onClick={toggle} className="burger"/>
+           <RxHamburgerMenu onClick={toggle} className="burger"/>
           </div>
             <div className="burger-menu">
             {show ? (
@@ -393,6 +394,9 @@
                   
                   <div className="navlist-item">
                     <Link to="/women">Women</Link>
+                  </div>
+                  <div className="navlist-item">
+                    <Link to="/admin">Admin</Link>
                   </div>
                 </div>
                 <div className="navInput">

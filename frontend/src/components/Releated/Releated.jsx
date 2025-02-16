@@ -53,7 +53,7 @@ const Releated = () => {
   };
 
   return (
-    <div className="container">
+    <div className="container ">
       <div className="row mt-5">
         <div className="d-flex justify-content-between mb-2">
           <h3>Favorite Categories</h3>
@@ -65,7 +65,7 @@ const Releated = () => {
         <Slider {...settings} className="col-12">
           {displayedProducts.length > 0 ? (
             displayedProducts.map((product) => (
-              <div key={product._id} className="col-2">
+              <div key={product._id} className="">
                 <Card product={product} />
               </div>
             ))

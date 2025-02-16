@@ -7,8 +7,6 @@ import Men from "./pages/Men";
 import Women from "./pages/Women";
 import Latest from "./pages/Latest";
 import Admin from "./pages/admin/Admin";
-import ProductDetail from "./pages/productdetail/ProductDetail";
-import Basket from "./pages/basket/Basket";
 import Wishlist from "./pages/wishlist/Wishlist";
 import Register from "./pages/auth/register/Register";
 import Login from "./pages/auth/login/Login";
@@ -20,6 +18,8 @@ import ProtectAdmin from "./routes/protect/ProtectAdmin";
 import UserProfile from "./pages/Profile/userProfile/UserProfile";
 import Product from "./pages/Products/Product";
 import Mystory from "./pages/MyStory/Mystory";
+import ProtectedRoute from "./routes/ProtectRouter/ProtectedRoute";
+import ProductDetail from "./pages/productdetail/ProductDetail";
 
 const router = createBrowserRouter([
   {
@@ -30,10 +30,9 @@ const router = createBrowserRouter([
         path: "/",
         element: <Home />,
       },
-
       {
         path: "/allproduct",
-        element: <Product />,
+        element: <Product />, 
       },
       {
         path: "/category",
@@ -52,6 +51,10 @@ const router = createBrowserRouter([
         element: <Latest />,
       },
       {
+        path: "/productdetail/:id",
+        element: <ProductDetail />,
+      },
+      {
         path: "/admin",
         element: <ProtectAdmin />, 
         children: [
@@ -62,18 +65,6 @@ const router = createBrowserRouter([
         ],
       },
       {
-        path: "/basket",
-        element: <Basket />,
-      },
-      {
-        path: "/wishlist",
-        element: <Wishlist />,
-      },
-      {
-        path: "/productdetail/:id",
-        element: <ProductDetail />,
-      },
-      {
         path: "/register",
         element: <Register />,
       },
@@ -81,32 +72,41 @@ const router = createBrowserRouter([
         path: "/login",
         element: <Login />,
       },
+
       {
-        path: "/forgotpassword",
-        element: <ForgotPassword />,
+        element: <ProtectedRoute />,
+        children: [
+          {
+            path: "/wishlist",
+            element: <Wishlist />,
+          },
+          {
+            path: "/mystory",
+            element: <Mystory />,
+          },
+          {
+            path: "/profile",
+            element: <Profile />,
+          },
+          {
+            path: "/create",
+            element: <Create />,
+          },
+          {
+            path: "/resetpassword",
+            element: <Resetpassword />,
+          },
+          {
+            path: "/forgotpassword",
+            element: <ForgotPassword />,
+          },
+          {
+            path: "/userprofile",
+            element: <UserProfile />,
+          },
+        ],
       },
-      {
-        path: "/resetpassword",
-        element: <Resetpassword />,
-      },
-      {
-        path: "/profile",
-        element: <Profile />,
-      },
-      {
-        path: "/create",
-        element: <Create />,
-      },
-      {
-        path: "/mystory",
-        element: <Mystory />,
-      },
-      {
-        path:"userprofile",
-        element: <UserProfile/>
-      }
     ],
- 
   },
 ]);
 
