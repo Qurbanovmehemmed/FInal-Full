@@ -1,0 +1,61 @@
+.releases-section {
+  padding: 30px 0px;
+  background-color: #f7f5e1;
+  color: #333333;
+}
+.releaseStart {
+  background-color: #e0d5b7;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 35px;
+}
+.releaseDetail {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  gap: 10px;
+  width: 75%;
+}
+.releaseHead {
+  font-weight: 550;
+  color: #4b4b4b;
+}
+.releasDes {
+  max-width: 98%;
+  color: #6a4e23;
+}
+.newH {
+  font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
+    "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
+}
+.releaseImage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+@media (max-width: 1400px) {
+  .releaseDetail {
+    width: 73%;
+  }
+}
+@media (max-width: 1200px) {
+  .releaseDetail {
+    width: 68.5%;
+  }
+}
+@media (max-width: 992px) {
+    .releaseStart {
+        padding: 20px;
+     display: flex;
+     align-items: center;
+     justify-content: center;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .mediaCateDate {
+      display: flex;
+      flex-direction: column;
+    }
+  }
+

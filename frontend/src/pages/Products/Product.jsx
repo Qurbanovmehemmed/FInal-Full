@@ -5,24 +5,28 @@ import StarRatings from "react-star-ratings";
 import { useNavigate, useLocation } from "react-router-dom";
 import { searchProduct } from "../../redux/features/ProductSlice";
 import { MdNavigateNext } from "react-icons/md";
+import ReactPaginate from "react-paginate"; // 📌 Pagination üçün əlavə edildi
 import "./Product.css";
 
 const Product = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const location = useLocation(); // URL parametrlərini oxumaq üçün
+  const location = useLocation();
   const { products } = useSelector((state) => state.products);
   const [categories, setCategories] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState(products);
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [selectedRating, setSelectedRating] = useState(0);
   const [reviews, setReviews] = useState({});
+  const [currentPage, setCurrentPage] = useState(0); // 📌 Yeni state əlavə edildi
+
+  const productsPerPage = 8; // 📌 Hər səhifədə 8 məhsul göstər
 
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
     const categoryParam = urlParams.get("category");
     if (categoryParam) {
-      setSelectedCategories([categoryParam]); // URL-dəki category-ni state-ə qoyuruq
+      setSelectedCategories([categoryParam]);
     }
   }, [location.search]);
 
@@ -84,6 +88,7 @@ const Product = () => {
     }
 
     setFilteredProducts(filtered);
+    setCurrentPage(0); // 📌 Filtr dəyişəndə səhifəni sıfırla
   }, [selectedCategories, selectedRating, products, reviews]);
 
   const handleCategoryChange = (category) => {
@@ -108,15 +113,20 @@ const Product = () => {
   };
 
   const goBack = () => {
-    navigate(-1); // Bu, istifadəçini əvvəlki səhifəyə qaytaracaq
+    navigate(-1);
   };
+
+  // 📌 Pagination üçün məhsulları bölmək
+  const offset = currentPage * productsPerPage;
+  const paginatedProducts = filteredProducts.slice(offset, offset + productsPerPage);
+  const itemsPerPage = 8;
+  const pageCount = Math.ceil(filteredProducts.length / itemsPerPage);
 
   return (
     <div className="container">
       <div className="d-flex mb-2 align-items-center gap-2">
         <div>
           <div className="backHover" onClick={goBack}>
-            {" "}
             Back
           </div>
         </div>
@@ -148,13 +158,7 @@ const Product = () => {
                       cursor: "pointer",
                     }}
                   />
-                  <label
-                    htmlFor={category}
-                    className="ms-2"
-                    style={{
-                      cursor: "pointer",
-                    }}
-                  >
+                  <label htmlFor={category} className="ms-2">
                     {category}
                   </label>
                 </div>
@@ -187,68 +191,33 @@ const Product = () => {
         </div>
 
         <div className="col-md-9 row">
-          {filteredProducts.length > 0 ? (
-            filteredProducts.map((product) => (
-              <div
-                key={product._id}
-                className="col-xl-3 col-lg-4 col-md-6 mb-6 d-flex flex-wrap col-sm-6"
-              >
+          {paginatedProducts.length > 0 ? (
+            paginatedProducts.map((product) => (
+              <div key={product._id} className="col-xl-3 col-lg-4 col-md-6 mb-6 d-flex flex-wrap col-sm-6">
                 <div className="card mb-3">
-               
+                <div className="imageAll">
                 <img
                     src={`http://localhost:5000/${product.image}`}
                     className="card-img-top"
                     alt={product.name}
                     onClick={() => navigate(`/productdetail/${product._id}`)}
-                    style={{
-                      cursor: "pointer",
-                      
-                      
-                    }}
+                    style={{ cursor: "pointer",
+                     
+                     }}
                   />
-                  <div className="card-body d-flex flex-column gap-1">
-                    <h5
-                      className="card-title"
-                      style={{
-                        width: "100%",
-                        minHeight: "48px",
-                      }}
-                    >
-                      {product.title}
-                    </h5>
-                    <p
-                      className="card-text"
-                      style={{
-                        color: "#595959",
-                      }}
-                    >
-                      {product.categories.join(", ")}
-                    </p>
-                    <div className="d-flex gap-1 white-space-no-wrap">
-                      {reviews[product._id] ? (
-                        <>
-                          <StarRatings
-                            rating={reviews[product._id].rating}
-                            starRatedColor="gold"
-                            numberOfStars={5}
-                            starDimension="20px"
-                            starSpacing="1px"
-                          />
-                          <span>
-                            ({reviews[product._id].rating.toFixed(1)})
-                          </span>
-                        </>
-                      ) : (
-                        <>
-                          <StarRatings
-                            starRatedColor="gold"
-                            numberOfStars={5}
-                            starDimension="20px"
-                            starSpacing="1px"
-                          />
-                          <span>(0.0)</span>
-                        </>
-                      )}
+                </div>
+                  <div className="card-body">
+                    <h5 className="card-title">{product.title}</h5>
+                    <p className="card-text">{product.categories.join(", ")}</p>
+                    <div className="d-flex gap-1">
+                      <StarRatings
+                        rating={reviews[product._id]?.rating || 0}
+                        starRatedColor="gold"
+                        numberOfStars={5}
+                        starDimension="20px"
+                        starSpacing="1px"
+                      />
+                      <span>({reviews[product._id]?.rating?.toFixed(1) || "0.0"})</span>
                     </div>
                   </div>
                 </div>
@@ -257,6 +226,19 @@ const Product = () => {
           ) : (
             <p>No products found</p>
           )}
+
+          {/* 📌 Pagination Component */}
+         {pageCount > 1 && ( <ReactPaginate
+            previousLabel={"←"}
+            nextLabel={"→"}
+            breakLabel={"..."}
+            pageCount={pageCount}
+            marginPagesDisplayed={2}
+            pageRangeDisplayed={3}
+            onPageChange={(data) => setCurrentPage(data.selected)}
+            containerClassName={"pagination"}
+            activeClassName={"active"}
+          />)}
         </div>
       </div>
     </div>

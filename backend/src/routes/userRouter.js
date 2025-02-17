@@ -1,6 +1,7 @@
 import express from "express";
 import {
   forgotPassword,
+  getAllUsers,
   login,
   logout,
   register,
@@ -22,6 +23,6 @@ userRouter.post("/forgotpassword", forgotPassword);
 userRouter.post("/resetpassword", resetPassword);
 userRouter.put("/update", verifyToken, upload.single("image"), updateProfile);
 userRouter.put("/update-favorites", verifyToken, updateFavoriteCategories);
-
+userRouter.get("/", verifyToken,  getAllUsers);
 
 export default userRouter;

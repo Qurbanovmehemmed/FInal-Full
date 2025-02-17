@@ -24,20 +24,21 @@ const Romance = () => {
     dots: false,
     infinite: false,
     speed: 500,
-    slidesToShow: 6, // Masaüstü görünüşdə 6 məhsul göstər
+    slidesToShow: 5, // Masaüstü görünüşdə 6 məhsul göstər
     slidesToScroll: 3,
     responsive: [
+   
       {
         breakpoint: 1024, // Tablet
         settings: {
-          slidesToShow: 4,
+          slidesToShow: 3,
           slidesToScroll: 2,
         },
       },
       {
         breakpoint: 768, // Kiçik ekranlar (mobil)
         settings: {
-          slidesToShow: 2,
+          slidesToShow: 1,
           slidesToScroll: 1,
         },
       },
@@ -48,7 +49,7 @@ const Romance = () => {
     <div className="container mt-5">
       <div className="d-flex justify-content-between mb-2">
         <h3>Romance</h3>
-        <Link to={"/allproduct"} className="d-flex align-items-center  ">
+        <Link to={"/allproduct"} className="d-flex align-items-center  underline">
           view all
           <MdNavigateNext />
         </Link>
@@ -56,7 +57,10 @@ const Romance = () => {
 
       <Slider {...sliderSettings}>
         {romanceProducts.map((product) => (
-          <div key={product._id} className="col-2">
+          <div key={product._id} style={{
+            display:"flex",
+            gap:"20px"
+          }}>
             <Card product={product} />
           </div>
         ))}

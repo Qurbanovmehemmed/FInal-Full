@@ -19,21 +19,21 @@ const Card = ({ product }) => {
 
   return (
     <div className="">
-      <div
-        className="cards"
-        onClick={() => navigate(`/productdetail/${product._id}`)}
-      >
-        <div className="heart-icon"></div>
-        <div className="image">
-          <img src={`http://localhost:5000/${product.image}`} alt="" />
-        </div>
-        <div className="content">
-          <div className="card-rating d-flex gap-2">
-            {product?.categories.map((cat, index) => (
-              <span key={index}>{cat}</span>
-            ))}
+      <div className="cards">
+          <div className="image">
+            <img
+              src={`http://localhost:5000/${product.image}`}
+              alt=""
+              onClick={() => navigate(`/productdetail/${product._id}`)}
+            />
           </div>
-        </div>
+          <div className="content">
+            <div className="card-rating d-flex gap-2">
+              {product?.categories.map((cat, index) => (
+                <span key={index}>{cat}</span>
+              ))}
+            </div>
+          </div>
       </div>
     </div>
   );

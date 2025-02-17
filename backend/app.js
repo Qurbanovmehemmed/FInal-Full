@@ -26,6 +26,7 @@ app.use(cookieParser());
 app.use("/api/products", productRouter);
 app.use("/auth", userRouter);
 app.use("/api/user", userRouter);
+app.use("/api/users", userRouter);
 app.use("/images", express.static("src/images"));
 app.use("/api/reviews", reviewRoutes);
 app.use("/api/wishlist", wishlistRouter);

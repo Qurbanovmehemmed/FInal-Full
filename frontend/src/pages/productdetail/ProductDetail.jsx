@@ -269,7 +269,7 @@ const ProductDetail = () => {
       <div className="container">
       
       </div>
-      <div className="shadow bg-body">
+      <div className="shadow detailShadow bg-body">
         <div className="container">
           <div className="row">
             <div className="d-flex justify-content-center flex-wrap gap-5">
@@ -537,7 +537,7 @@ const ProductDetail = () => {
             )}
           </div>
           <div
-            className="col-md-3 shadow p-4 "
+            className="col-md-3 shadow detailShadow p-4 "
             style={{
               background: "#fff",
               borderRadius: "10px",

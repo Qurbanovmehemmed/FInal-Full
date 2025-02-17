@@ -32,20 +32,20 @@ const Releated = () => {
     dots: false,
     infinite: false,
     speed: 500,
-    slidesToShow: 6,
+    slidesToShow: 5, // Masaüstü görünüşdə 6 məhsul göstər
     slidesToScroll: 3,
     responsive: [
       {
-        breakpoint: 1024,
+        breakpoint: 1024, // Tablet
         settings: {
-          slidesToShow: 4,
+          slidesToShow: 3,
           slidesToScroll: 2,
         },
       },
       {
-        breakpoint: 768,
+        breakpoint: 768, // Kiçik ekranlar (mobil)
         settings: {
-          slidesToShow: 2,
+          slidesToShow: 1,
           slidesToScroll: 1,
         },
       },
@@ -56,13 +56,13 @@ const Releated = () => {
     <div className="container ">
       <div className="row mt-5">
         <div className="d-flex justify-content-between mb-2">
-          <h3>Favorite Categories</h3>
+          <h3>Recommended for you</h3>
           <Link to={"/allproduct"} className="d-flex align-items-center  ">
-          view all
-          <MdNavigateNext />
-        </Link>
+            view all
+            <MdNavigateNext />
+          </Link>
         </div>
-        <Slider {...settings} className="col-12">
+        <Slider {...settings}>
           {displayedProducts.length > 0 ? (
             displayedProducts.map((product) => (
               <div key={product._id} className="">
@@ -70,7 +70,13 @@ const Releated = () => {
               </div>
             ))
           ) : (
-            <p>Heç bir məhsul tapılmadı</p>
+            <>
+                {products.map((product) => (
+                  <div key={product._id}>
+                    <Card product={product} />
+                  </div>
+                ))}
+            </>
           )}
         </Slider>
       </div>

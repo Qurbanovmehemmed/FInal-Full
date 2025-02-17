@@ -9,8 +9,8 @@ const SeacrhProduct = ({ product }) => {
           <img src={product?.image} alt="" />
         </div>
         <div className="searchcontent">
-          <a className="title">{product?.title}</a>
-          <p className="price">${product?.price}</p>
+          <a className="title">adsas</a>
+          <p className="price">asdasd</p>
         </div>
       </div>
     </div>

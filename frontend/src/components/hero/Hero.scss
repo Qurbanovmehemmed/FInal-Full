@@ -1,16 +1,66 @@
 .hero-section {
   position: relative;
-  height: 600px;
+  width: 100%;
   overflow: hidden;
 }
 
+.carousel-item img {
+  width: 100%;
+  height: auto; /* Şəkilin nisbətini qorumaq üçün */
+  object-fit: contain; /* Şəkilin tam görünməsi üçün */
+}
+
+/* Tablet (768px və aşağısı) */
+@media (max-width: 768px) {
+  .hero-section {
+    height: auto; /* Hündürlüyü avtomatik tənzimlə */
+  }
+
+  .carousel-item img {
+    width: 100%;
+    height: auto;
+  }
+}
+
+/* Mobil (576px və aşağısı) */
+@media (max-width: 576px) {
+  .hero-section {
+    height: auto;
+  }
+
+  .carousel-item img {
+    width: 100%;
+    height: auto;
+    object-fit: contain; /* Şəkil tam ekrana sığsın */
+  }
+
+ 
+}
+
 .carousel-caption {
-  background-color: rgba(0, 0, 0, 0.5);
-  padding: 20px;
+  position: absolute;
+  bottom: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80%; /* Daha yaxşı yerləşməsi üçün */
+  text-align: center;
+  background-color: rgba(0, 0, 0, 0.6); /* Daha qaranlıq fon */
+  color: white;
+  padding: 15px;
   border-radius: 10px;
 }
 
-.carousel-item img {
-  height: 600px;
-  object-fit: cover;
+@media (max-width: 768px) {
+  .carousel-caption {
+    bottom: 15%;
+    width: 90%;
+    font-size: 16px;
+    padding: 10px;
+  }
+}
+
+@media (max-width: 576px) {
+  .carousel-caption {
+   display: none;
+  }
 }

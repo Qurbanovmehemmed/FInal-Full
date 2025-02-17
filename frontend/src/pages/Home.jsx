@@ -6,6 +6,7 @@ import Fantasy from "../components/fantasy/Fantasy";
 import Horror from "../components/Horror/Horror";
 import Mystery from "../components/Mystery/Mystery";
 import Releated from "../components/Releated/Releated";
+import NewReleases from "../components/newReleases/NewReleases";
 
 const Home = () => {
   return (
@@ -13,10 +14,11 @@ const Home = () => {
       <Hero />
     
     <Releated/>
-    <Romance/>
     <Fantasy/>
     <Horror/>
+    <Romance/>
     <Mystery/>
+    <NewReleases/>
     </div>
   );
 };

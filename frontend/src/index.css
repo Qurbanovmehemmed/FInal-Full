@@ -26,3 +26,14 @@ p {
     text-decoration: underline;
   }
 }
+
+.slick-next{
+    right: -25px !important;
+}
+@media (max-width: 576px) {
+ .slick-arrow{
+  display: none  !important;
+ }
+
+ 
+}

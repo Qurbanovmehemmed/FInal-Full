@@ -24,20 +24,21 @@ const Mystery = () => {
     dots: false,
     infinite: false,
     speed: 500,
-    slidesToShow: 6, // Masaüstü görünüşdə 6 məhsul göstər
+    slidesToShow: 5, // Masaüstü görünüşdə 6 məhsul göstər
     slidesToScroll: 3,
     responsive: [
+   
       {
         breakpoint: 1024, // Tablet
         settings: {
-          slidesToShow: 4,
+          slidesToShow: 3,
           slidesToScroll: 2,
         },
       },
       {
         breakpoint: 768, // Kiçik ekranlar (mobil)
         settings: {
-          slidesToShow: 2,
+          slidesToShow: 1,
           slidesToScroll: 1,
         },
       },

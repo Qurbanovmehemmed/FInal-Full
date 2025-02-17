@@ -1,29 +1,23 @@
 .cards {
   position: relative;
-width: 196px;
-  
+  display: flex;
+
+  flex-direction: column;
+  align-items: center;
+  text-align: left !important;
+
   .image {
-    width: 100%;
+    width: 95%;
     img {
       width: 100%;
-      height: 100%;
+      min-height: 386px;
       object-fit: cover;
     }
   }
   .content {
-    text-align: center;
+    width: 100%;
+    text-align: left;
     padding: 1rem;
-    .card-title {
-      font-size: 1.5rem;
-      margin: 0.5rem 0;
-    }
-    .card-price {
-      font-size: 1.5rem;
-      margin: 0.5rem 0;
-      font-weight: 700;
-    }
-    .mybtn {
-      cursor: pointer;
-    }
   }
 }
+
