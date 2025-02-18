@@ -16,6 +16,6 @@ productRouter.post("/", upload.single("image"), addProduct);
 productRouter.get("/", getProducts);
 productRouter.delete("/:id", deleteProduct);
 productRouter.get("/search/:title", searchProduct);
-productRouter.put("/update/:id", updateProduct);
+productRouter.put("/:productId", upload.single("image"), updateProduct); 
 
 export default productRouter;

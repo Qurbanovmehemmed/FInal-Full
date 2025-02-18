@@ -75,22 +75,48 @@ export const searchProduct = async (req, res) => {
 };
 
 export const updateProduct = async (req, res) => {
-  console.log("🛠️ Gələn UPDATE Request:", req.body);
   try {
-    const { title, description, author, categories } = req.body;
+    const { productId } = req.params; // Get the productId from the URL params
+    const { title, description, author, rating } = req.body;
 
-    const updatedProduct = await product.findByIdAndUpdate(
-      req.params.id,
-      { title, description, author, categories },
-      { new: true }
+    // Retrieve the current product to get its existing image (if it has one)
+    const existingProduct = await product.findById(productId); // Make sure you're using 'product' here
+
+    if (!existingProduct) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+
+    // If a new image is uploaded, use it. Otherwise, keep the existing image.
+    let imageUrl = existingProduct.image; // Use the image from the existing product
+    if (req.file) {
+      imageUrl = `images/${req.file.filename}`.replace(/\\/g, "/");
+    }
+
+    // Handle categories - make sure it's an array
+    const categories = req.body.categories
+      ? (Array.isArray(req.body.categories) ? req.body.categories : [req.body.categories])
+      : [];
+
+    // Update the product with the new data
+    const updatedProduct = await product.findByIdAndUpdate( // Again, use 'product' here
+      productId,
+      {
+        title,
+        description,
+        author,
+        categories,
+        rating,
+        image: imageUrl,
+      },
+      { new: true } // This will return the updated product
     );
 
-    console.log("🔄 Yenilənmiş Product:", updatedProduct); // ✅ Dəyişiklik olub-olmadığını gör
-    console.log(updatedProduct._id)
+    return res.status(200).json(updatedProduct); // Send the updated product
   } catch (error) {
-    console.error("❌ Error:", error);
-    res.status(500).json({ error: error.message });
+    return res.status(500).json({ message: error.message });
   }
 };
+  
+
 
 

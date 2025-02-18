@@ -3,21 +3,9 @@ import axios from "axios";
 
 const baseURL = "http://localhost:5000/api/products";
 const initialState = {
-  products: JSON.parse(localStorage.getItem("products")) || [], // localStorage-dan məhsul məlumatlarını yükləyirik
-  allProducts: [], 
+  products: [],
+  allProducts: [],
 };
-
-export const updateProduct = createAsyncThunk(
-  "product/updateProduct",
-  async ({ id, updatedData }, { rejectWithValue }) => {
-    try {
-      const response = await axios.put(`http://localhost:5000/api/products/update/${id}`, updatedData);
-      return response.data.product;
-    } catch (error) {
-      return rejectWithValue(error.response?.data?.message || "Xəta baş verdi!");
-    }
-  }
-);
 
 export const getProducts = createAsyncThunk("product/getProducts", async () => {
   const { data } = await axios.get(baseURL);
@@ -33,6 +21,7 @@ export const addProduct = createAsyncThunk(
       });
       return data;
     } catch (error) {
+      console.error("Error adding product:", error.response?.data);
       return rejectWithValue(error.response?.data || "Xəta baş verdi");
     }
   }
@@ -57,10 +46,27 @@ export const searchProduct = createAsyncThunk(
   }
 );
 
+// Create updateProduct asyncThunk
+export const updateProduct = createAsyncThunk(
+  "product/updateProduct",
+  async ({ id, updatedData }, { rejectWithValue }) => {
+    try {
+      const { data } = await axios.put(`${baseURL}/${id}`, updatedData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      return data; // Return updated product data
+    } catch (error) {
+      console.error("Error updating product:", error.response?.data);
+      return rejectWithValue(error.response?.data || "Xəta baş verdi");
+    }
+  }
+);
+
 export const productSlice = createSlice({
   name: "product",
   initialState,
   reducers: {
+    // Sorting reducers can go here...
     sortProductLowest: (state) => {
       state.products = state.products.sort((a, b) => a.price - b.price);
     },
@@ -72,28 +78,26 @@ export const productSlice = createSlice({
     builder.addCase(getProducts.fulfilled, (state, action) => {
       state.products = action.payload;
       state.allProducts = action.payload;
-      localStorage.setItem("products", JSON.stringify(state.products)); // `localStorage`-a yazılır
     });
     builder.addCase(addProduct.fulfilled, (state, action) => {
       state.products.push(action.payload);
-      localStorage.setItem("products", JSON.stringify(state.products)); // `localStorage`-a yazılır
     });
     builder.addCase(deleteProduct.fulfilled, (state, action) => {
       state.products = state.products.filter(
         (item) => item._id !== action.payload
       );
-      localStorage.setItem("products", JSON.stringify(state.products)); // `localStorage`-a yazılır
     });
     builder.addCase(searchProduct.fulfilled, (state, action) => {
       state.products = action.payload;
     });
     builder.addCase(updateProduct.fulfilled, (state, action) => {
-      const updatedProduct = action.payload;
-      console.log(action.payload)
-      state.products = state.products.map((product) =>
-        product._id === updatedProduct.id ? updatedProduct : product
+      // Update the product in the products array after a successful update
+      const index = state.products.findIndex(
+        (product) => product._id === action.payload._id
       );
-      localStorage.setItem("products", JSON.stringify(state.products)); // `localStorage`-a yazılır
+      if (index !== -1) {
+        state.products[index] = action.payload;
+      }
     });
   },
 });
