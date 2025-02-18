@@ -12,7 +12,6 @@ const Home = () => {
   return (
     <div>
       <Hero />
-    
     <Releated/>
     <Fantasy/>
     <Horror/>

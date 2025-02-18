@@ -1,16 +1,29 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axios, { all } from "axios";
+import axios from "axios";
 
 const baseURL = "http://localhost:5000/api/products";
 const initialState = {
-  products: [],
-  allProducts: [],
+  products: JSON.parse(localStorage.getItem("products")) || [], // localStorage-dan məhsul məlumatlarını yükləyirik
+  allProducts: [], 
 };
+
+export const updateProduct = createAsyncThunk(
+  "product/updateProduct",
+  async ({ id, updatedData }, { rejectWithValue }) => {
+    try {
+      const response = await axios.put(`http://localhost:5000/api/products/update/${id}`, updatedData);
+      return response.data.product;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || "Xəta baş verdi!");
+    }
+  }
+);
 
 export const getProducts = createAsyncThunk("product/getProducts", async () => {
   const { data } = await axios.get(baseURL);
   return data;
 });
+
 export const addProduct = createAsyncThunk(
   "product/addProduct",
   async (product, { rejectWithValue }) => {
@@ -20,7 +33,6 @@ export const addProduct = createAsyncThunk(
       });
       return data;
     } catch (error) {
-      console.error("Error adding product:", error.response?.data);
       return rejectWithValue(error.response?.data || "Xəta baş verdi");
     }
   }
@@ -49,22 +61,6 @@ export const productSlice = createSlice({
   name: "product",
   initialState,
   reducers: {
-    // searchProduct: (state, action) => {
-    //   state.products = state.allProducts.filter((item) =>
-    //     item.title.toLowerCase().includes(action.payload.toLowerCase())
-    //   );
-    // },
-    // sortProductAZ: (state) => {
-    //   state.products = state.products.sort((a, b) =>
-    //     a.title.localeCompare(b.title)
-    //   );
-    // },
-    // sortProductZA: (state) => {
-    //   state.products = state.products.sort((a, b) =>
-    //     b.title.localeCompare(a.title)
-    //   );
-    // },
-
     sortProductLowest: (state) => {
       state.products = state.products.sort((a, b) => a.price - b.price);
     },
@@ -76,17 +72,28 @@ export const productSlice = createSlice({
     builder.addCase(getProducts.fulfilled, (state, action) => {
       state.products = action.payload;
       state.allProducts = action.payload;
+      localStorage.setItem("products", JSON.stringify(state.products)); // `localStorage`-a yazılır
     });
     builder.addCase(addProduct.fulfilled, (state, action) => {
       state.products.push(action.payload);
+      localStorage.setItem("products", JSON.stringify(state.products)); // `localStorage`-a yazılır
     });
     builder.addCase(deleteProduct.fulfilled, (state, action) => {
       state.products = state.products.filter(
         (item) => item._id !== action.payload
       );
+      localStorage.setItem("products", JSON.stringify(state.products)); // `localStorage`-a yazılır
     });
     builder.addCase(searchProduct.fulfilled, (state, action) => {
       state.products = action.payload;
+    });
+    builder.addCase(updateProduct.fulfilled, (state, action) => {
+      const updatedProduct = action.payload;
+      console.log(action.payload)
+      state.products = state.products.map((product) =>
+        product._id === updatedProduct.id ? updatedProduct : product
+      );
+      localStorage.setItem("products", JSON.stringify(state.products)); // `localStorage`-a yazılır
     });
   },
 });

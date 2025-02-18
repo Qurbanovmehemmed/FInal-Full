@@ -74,5 +74,23 @@ export const searchProduct = async (req, res) => {
   }
 };
 
+export const updateProduct = async (req, res) => {
+  console.log("🛠️ Gələn UPDATE Request:", req.body);
+  try {
+    const { title, description, author, categories } = req.body;
+
+    const updatedProduct = await product.findByIdAndUpdate(
+      req.params.id,
+      { title, description, author, categories },
+      { new: true }
+    );
+
+    console.log("🔄 Yenilənmiş Product:", updatedProduct); // ✅ Dəyişiklik olub-olmadığını gör
+    console.log(updatedProduct._id)
+  } catch (error) {
+    console.error("❌ Error:", error);
+    res.status(500).json({ error: error.message });
+  }
+};
 
 

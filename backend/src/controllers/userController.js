@@ -7,6 +7,7 @@ import RegisterValidationSchema from "../middleware/validation/RegisterValidatio
 import LoginValidationSchema from "../middleware/validation/LoginValidation.js";
 import ForgotValidationSchema from "../middleware/validation/ForgotValidation.js";
 import ResetValidationSchema from "../middleware/validation/ResetValidation.js";
+import crypto from "crypto"
 import path from "path";
 import fs from "fs";
 
@@ -15,7 +16,6 @@ export const register = async (req, res) => {
     const { name, username, email, password } = req.body;
 
     const { filename } = req.file;
-
     const imageUrl = `images/${filename}`.replace(/\\/g, "/");
 
     const { error } = RegisterValidationSchema.validate({
@@ -23,7 +23,6 @@ export const register = async (req, res) => {
       username,
       email,
       password,
-      
     });
 
     if (error) {
@@ -36,31 +35,32 @@ export const register = async (req, res) => {
       return res.status(400).json({ message: "User already exists" });
     }
 
-    const userCount = await user.countDocuments();
-    const isAdmin = userCount === 0;
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-    const hasedPassword = await bcrypt.hash(password, 10);
+    const totalUsers = await user.countDocuments();
+    const isAdmin = totalUsers === 0;  
 
     const newUser = new user({
       image: imageUrl,
       name,
       username,
       email,
-      password: hasedPassword,
-      isAdmin: isAdmin,
+      password: hashedPassword,
+      isAdmin,  
     });
 
     await newUser.save();
 
-    generateToken(newUser._id, res);
+    const token = generateToken(newUser._id, res);
 
-    const confirmLink = `${process.env.SERVER_LINK}/auth/verify`;
+    const confirmLink = `${process.env.SERVER_LINK}/auth/verify/${token}`;
 
     recieveMail(newUser, confirmLink);
 
     return res.status(201).json({
       message: "User created successfully",
       newUser,
+      token,
     });
   } catch (error) {
     return res.status(500).json({ message: error.message });
@@ -69,8 +69,8 @@ export const register = async (req, res) => {
 
 export const verifyEmail = async (req, res) => {
   try {
-    const token = req.cookies.token;
-    
+    const { token } = req.params;
+
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
     const updatedVerify = await user.findByIdAndUpdate(
@@ -85,6 +85,7 @@ export const verifyEmail = async (req, res) => {
     return res.status(400).json({ message: "Token not valid or expaired in" });
   }
 };
+
 
 export const login = async (req, res) => {
   try {
@@ -112,7 +113,6 @@ export const login = async (req, res) => {
 
     existUser.isLogin = true;
     await existUser.save();
-
 
     return res.status(200).json({
       message: "User logged in successfully",
@@ -213,9 +213,6 @@ export const resetPassword = async (req, res) => {
   }
 };
 
-
-
-
 export const updateProfile = async (req, res) => {
   try {
     const userId = req.user.id; // AuthMiddleware-dən gələn istifadəçi ID
@@ -243,11 +240,8 @@ export const updateProfile = async (req, res) => {
   }
 };
 
-
-
 export const updateFavoriteCategories = async (req, res) => {
   try {
-
     const { favCategories } = req.body;
     const userId = req.user.id;
 
@@ -282,4 +276,64 @@ export const getAllUsers = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 };
+
+export const addAdmin = async (req, res) => {
+  try {
+    const { userId } = req.params; // Hedef istifadəçinin ID-si
+
+    // Admin yoxlamaq
+    // if (!req.user || !req.user.isAdmin) {
+    //   return res.status(403).json({ message: "İcazəniz yoxdur!" });
+    // }
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({ message: "Düzgün ID deyil!" });
+    }
+
+    const userToBeAdmin = await user.findById(userId);
+
+    if (!userToBeAdmin) {
+      return res.status(404).json({ message: "İstifadəçi tapılmadı!" });
+    }
+
+    // Admin olaraq təyin et
+    userToBeAdmin.isAdmin = true;
+    await userToBeAdmin.save();
+
+    return res.status(200).json({
+      message: "İstifadəçi admin olaraq təyin edildi!",
+      user: userToBeAdmin,
+    });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+
+export const deleteUser = async (req, res) => {
+  try {
+    const { id } = req.params; // Accessing '_id' from the URL parameters
+
+    // Ensure the logged-in user is an admin
+    if (!req.user || !req.user.isAdmin) {
+      return res.status(403).json({ message: "You are not authorized to perform this action!" });
+    }
+
+    const userToDelete = await user.findById(id); // Use '_id' from params
+
+    if (!userToDelete) {
+      return res.status(404).json({ message: "User not found!" });
+    }
+
+    // Delete the user
+    await userToDelete.remove();
+
+    return res.status(200).json({
+      message: "User successfully deleted!",
+      user: userToDelete,
+    });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
 

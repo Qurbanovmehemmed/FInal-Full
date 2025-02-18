@@ -1,5 +1,7 @@
 import express from "express";
 import {
+  addAdmin,
+  deleteUser,
   forgotPassword,
   getAllUsers,
   login,
@@ -16,7 +18,7 @@ import verifyToken from "../middleware/protected/verifyToken.js";
 const userRouter = express.Router();
 
 userRouter.post("/register", upload.single("image"), register);
-userRouter.get("/verify", verifyEmail);
+userRouter.get("/verify/:token", verifyEmail);
 userRouter.post("/login", login);
 userRouter.post("/logout", verifyToken, logout);
 userRouter.post("/forgotpassword", forgotPassword);
@@ -24,5 +26,7 @@ userRouter.post("/resetpassword", resetPassword);
 userRouter.put("/update", verifyToken, upload.single("image"), updateProfile);
 userRouter.put("/update-favorites", verifyToken, updateFavoriteCategories);
 userRouter.get("/", verifyToken,  getAllUsers);
+userRouter.put("/admin/:id",   addAdmin);
+userRouter.post("/delete",   deleteUser);
 
 export default userRouter;

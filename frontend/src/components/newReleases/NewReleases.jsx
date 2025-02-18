@@ -79,8 +79,8 @@ const NewReleases = () => {
                     <div className="d-flex justify-content-between releasDes mediaCateDate">
                       <div className="d-flex gap-1">
                         Categories:
-                        {product.categories.map((cat) => (
-                          <div>{cat}</div>
+                        {product.categories.map((cat,index) => (
+                          <div key={index}>{cat}</div>
                         ))}
                       </div>
 

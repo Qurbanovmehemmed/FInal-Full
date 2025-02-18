@@ -13,8 +13,10 @@
 
     const { user } = useSelector((state) => state.user);
     const { wishlist } = useSelector((state) => state.wishlist);
-    const { products } = useSelector((state) => state.products);
+    const {products}=useSelector((state)=>state.products)
     const [show, setShow] = useState(false);
+
+    
 
     const [searchQuery, setSearchQuery] = useState("");
     const [searchResults, setSearchResults] = useState([]);
@@ -110,7 +112,9 @@
                 </Dropdown>
                 <div className="navlist-item">
                   <Link to="/admin">Admin</Link>
+                  
                 </div>
+                <Link to="/useradmin">useradmin</Link>
                 
               </div>
             </div>

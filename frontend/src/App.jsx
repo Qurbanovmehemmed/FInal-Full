@@ -20,6 +20,7 @@ import Product from "./pages/Products/Product";
 import Mystory from "./pages/MyStory/Mystory";
 import ProtectedRoute from "./routes/ProtectRouter/ProtectedRoute";
 import ProductDetail from "./pages/productdetail/ProductDetail";
+import UsersAdmin from "./pages/usersAdmin/UsersAdmin";
 
 const router = createBrowserRouter([
   {
@@ -55,6 +56,11 @@ const router = createBrowserRouter([
         element: <ProductDetail />,
       },
       {
+        path:"/useradmin",
+        element:<UsersAdmin/>
+      },
+      
+      {
         path: "/admin",
         element: <ProtectAdmin />, 
         children: [
@@ -62,6 +68,7 @@ const router = createBrowserRouter([
             path: "/admin",
             element: <Admin />,
           },
+          
         ],
       },
       {
