@@ -31,8 +31,14 @@ export const register = async (req, res) => {
 
     const existUser = await user.findOne({ email });
 
+    const checkUsername = await user.findOne({ username });
+
+    if (checkUsername) {
+      return res.status(400).json({ message: "Username already taken!" });
+    }
+
     if (existUser) {
-      return res.status(400).json({ message: "User already exists" });
+      return res.status(400).json({ message: "User already exists!" });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -58,7 +64,7 @@ export const register = async (req, res) => {
     recieveMail(newUser, confirmLink);
 
     return res.status(201).json({
-      message: "User created successfully",
+      message: "Registration successful please check your email",
       newUser,
       token,
     });
@@ -100,13 +106,13 @@ export const login = async (req, res) => {
     const existUser = await user.findOne({ username: username });
 
     if (!existUser) {
-      return res.status(400).json({ message: "User not found" });
+      return res.status(400).json({ message:"Username or password is incorrect!" });
     }
 
     const isMatch = await bcrypt.compare(password, existUser.password);
 
     if (!isMatch) {
-      return res.status(400).json({ message: "Username or Password wrong" });
+      return res.status(400).json({ message: "Username or password is incorrect!" });
     }
 
     generateToken(existUser._id, res);
@@ -115,7 +121,7 @@ export const login = async (req, res) => {
     await existUser.save();
 
     return res.status(200).json({
-      message: "User logged in successfully",
+      message: "User logged in successfully!",
       existUser,
     });
   } catch (error) {
@@ -130,13 +136,13 @@ export const logout = async (req, res) => {
 
     if (!existUser) {
       console.log("User not found");
-      return res.status(404).json({ message: "User not found" });
+      return res.status(404).json({ message: "User not found!" });
     }
 
     existUser.isLogin = false;
     await existUser.save();
     res.clearCookie("token");
-    return res.status(200).json({ message: "User logged out successfully" });
+    return res.status(200).json({ message: "User logged out successfully!" });
   } catch (error) {
     console.error("Logout error:", error);
     return res.status(500).json({ message: error.message });
@@ -155,7 +161,7 @@ export const forgotPassword = async (req, res) => {
 
     const existUser = await user.findOne({ email });
 
-    if (!existUser) return res.status(404).json({ message: "User not found" });
+    if (!existUser) return res.status(404).json({ message: "User not found!" });
 
     generateToken(existUser._id, res, "resetToken");
 
@@ -163,7 +169,7 @@ export const forgotPassword = async (req, res) => {
 
     recieveMail(existUser, resetLink);
 
-    return res.status(200).json({ message: "Reset link sent to your email" });
+    return res.status(200).json({ message: "Reset link sent to your email!" });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
@@ -189,7 +195,7 @@ export const resetPassword = async (req, res) => {
     if (!resetToken) {
       return res
         .status(400)
-        .json({ message: "No token found, request new one" });
+        .json({ message: "No token found, request new one!" });
     }
 
     const decoded = jwt.verify(resetToken, process.env.JWT_SECRET);
@@ -197,7 +203,7 @@ export const resetPassword = async (req, res) => {
     const existUser = await user.findById(decoded.id);
 
     if (!existUser) {
-      return res.status(400).json({ message: "Token not valid or expaired" });
+      return res.status(400).json({ message: "Token not valid or expaired!" });
     }
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -207,7 +213,7 @@ export const resetPassword = async (req, res) => {
 
     res.clearCookie("resetToken");
 
-    return res.status(200).json({ message: "Password reset successfully" });
+    return res.status(200).json({ message: "Password reset successfully!" });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
@@ -280,7 +286,6 @@ export const getAllUsers = async (req, res) => {
 export const addAdmin = async (req, res) => {
   try {
     const { id } = req.params; // Hedef istifadəçinin ID-si
-    console.log(id)
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({ message: "Düzgün ID deyil!" });
@@ -292,18 +297,19 @@ export const addAdmin = async (req, res) => {
       return res.status(404).json({ message: "İstifadəçi tapılmadı!" });
     }
 
-    // Admin olaraq təyin et
-    userToBeAdmin.isAdmin = true;
+    // `isAdmin` dəyərini tərsinə çeviririk
+    userToBeAdmin.isAdmin = !userToBeAdmin.isAdmin;
     await userToBeAdmin.save();
 
     return res.status(200).json({
-      message: "İstifadəçi admin olaraq təyin edildi!",
+      message: `İstifadəçinin admin statusu ${userToBeAdmin.isAdmin ? 'təmin edildi' : 'çıxarıldı'}!`,
       user: userToBeAdmin,
     });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
 };
+
 
 
 export const deleteUser = async (req, res) => {

@@ -11,6 +11,8 @@ import RatingStars from "../../components/ratingStarts/RatingStars";
 import { Link, useNavigate } from "react-router-dom";
 import { MdNavigateNext } from "react-icons/md";
 import StarRatings from "react-star-ratings";
+import "react-toastify/dist/ReactToastify.css"; // React Toastify stilini əlavə edin
+import { toast } from "react-toastify";
 
 const Wishlist = () => {
   const dispatch = useDispatch();
@@ -144,7 +146,6 @@ const Wishlist = () => {
                       </h3>
                     </div>
                     <p>Author: {item.product.author}</p>
-                    {/* rating */}
                     <div className="d-flex gap-1 align-items-center ">
                       Rating:{" "}
                       {reviews[item.product._id] ? (
@@ -198,7 +199,7 @@ const Wishlist = () => {
                       <ButtonWishlist productId={item.product._id} />
                       <button
                         className="btn btn-danger"
-                        onClick={() => handleRemove(item._id)}
+                        onClick={() => {handleRemove(item._id), toast.success("Book removed from shelf!")}}
                       >
                         Remove
                       </button>

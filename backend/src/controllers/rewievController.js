@@ -14,13 +14,11 @@ export const createReview = async (req, res) => {
     });
 
     await newReview.save();
-    res
-      .status(201)
-      .json({
-        success: true,
-        message: "Review added successfully",
-        review: newReview,
-      });
+    res.status(201).json({
+      success: true,
+      message: "Review added successfully",
+      review: newReview,
+    });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
@@ -147,7 +145,6 @@ export const addComment = async (req, res) => {
   }
 };
 
-
 export const editComment = async (req, res) => {
   try {
     const { reviewId, commentId } = req.params;
@@ -200,6 +197,74 @@ export const deleteComment = async (req, res) => {
     await review.save();
 
     res.status(200).json({ success: true, comments: review.comments });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+export const deleteReviewAdmin = async (req, res) => {
+  try {
+    const { reviewId } = req.params;
+
+    const review = await Review.findByIdAndDelete(reviewId);
+
+    if (!review) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Review not found" });
+    }
+
+    res.status(200).json({ success: true, message: "Review deleted" });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+export const deleteCommentAdmin = async (req, res) => {
+  try {
+    const { reviewId, commentId } = req.params;
+
+    const review = await Review.findById(reviewId);
+    if (!review)
+      return res
+        .status(404)
+        .json({ success: false, message: "Review not found" });
+
+    const commentIndex = review.comments.findIndex(
+      (c) => c._id.toString() === commentId
+    );
+    if (commentIndex === -1)
+      return res
+        .status(404)
+        .json({ success: false, message: "Comment not found" });
+
+    review.comments.splice(commentIndex, 1);
+    await review.save();
+
+    res.status(200).json({ success: true, comments: review.comments });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+export const updateReviewAdmin = async (req, res) => {
+  try {
+    const { reviewId } = req.params;
+    const { content, rating } = req.body;
+
+    const review = await Review.findOne({ _id: reviewId});
+
+    if (!review) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Review not found" });
+    }
+
+    review.content = content;
+    review.rating = rating;
+    await review.save();
+
+    res.status(200).json({ success: true, message: "Review updated", review });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }

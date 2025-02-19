@@ -3,6 +3,8 @@ import axios from "axios";
 import { useFormik } from "formik";
 import { registerschema } from "../../../schema/RegisterSchema";
 // import CheckMail from "../../../components/checkMail/CheckMail";
+import "react-toastify/dist/ReactToastify.css";
+import { toast } from "react-toastify";
 
 const Register = () => {
   const baseUrl = "http://localhost:5000/auth";
@@ -21,9 +23,17 @@ const Register = () => {
       });
 
       actions.resetForm();
-
-      alert(" Please check your email to verify your account.");
+      toast.info("Please check your email to verify your account.", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        theme: "light",
+      });
     } catch (error) {
+      toast.error(error.response.data.message);
       console.error("Registration failed:", error);
     }
   };
@@ -37,8 +47,6 @@ const Register = () => {
         email: "",
         password: "",
         confirmpassword: "",
-        
-
       },
       onSubmit: submitForm,
       validationSchema: registerschema,

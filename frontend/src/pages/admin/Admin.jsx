@@ -17,17 +17,22 @@ import Table from "react-bootstrap/Table";
 import "./Admin.scss";
 import { SlClose } from "react-icons/sl";
 import Dropdown from "react-bootstrap/Dropdown"; // Bootstrap Dropdown əlavə et
+import { useNavigate } from "react-router-dom";
+import "react-toastify/dist/ReactToastify.css"; // React Toastify stilini əlavə edin
+import { toast } from "react-toastify";
+
 
 const Admin = () => {
   const { products } = useSelector((state) => state.products);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [open, setOpen] = useState(false);
   const [editProductId, setEditProductId] = useState(null);
   const [previewImage, setPreviewImage] = useState("");
 
-  const [selectedCategory, setSelectedCategory] = useState(""); // Seçilmiş category
-  const [filteredProducts, setFilteredProducts] = useState([]); // Filtrlənmiş məhsullar
+  const [selectedCategory, setSelectedCategory] = useState(""); 
+  const [filteredProducts, setFilteredProducts] = useState([]); 
 
   useEffect(() => {
     if (selectedCategory) {
@@ -76,12 +81,7 @@ const Admin = () => {
       categories: editProductId
         ? products.find((p) => p._id === editProductId)?.categories || []
         : [],
-      price: editProductId
-        ? products.find((p) => p._id === editProductId)?.price || ""
-        : "",
-      rating: editProductId
-        ? products.find((p) => p._id === editProductId)?.rating || 0
-        : 0,
+     
     },
     validationSchema: productSchema,
     validateOnChange: false,
@@ -99,10 +99,12 @@ const Admin = () => {
       try {
         if (editProductId) {
           await dispatch(
-            updateProduct({ id: editProductId, updatedData: formData })
+            updateProduct({ id: editProductId, updatedData: formData }),
+            toast.success("Book status updated!")
           );
         } else {
           await dispatch(addProduct(formData));
+          toast.success("Book created succesfuly!")
         }
         resetForm();
         setOpen(false);
@@ -126,7 +128,7 @@ const Admin = () => {
     setFieldValue("author", product.author);
 
     setFieldValue("categories", product.categories);
-    setOpen(true); // Form açılsın
+    setOpen(true); 
   };
 
   const handleCloseForm = () => {
@@ -140,208 +142,219 @@ const Admin = () => {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setPreviewImage(URL.createObjectURL(file)); // Yeni şəkili göstər
+      setPreviewImage(URL.createObjectURL(file)); 
       setFieldValue("image", file);
     }
   };
 
   return (
-    <div className="container">
-      {open && (
-        <form
-          encType="multipart/form-data"
-          className="form"
-          onSubmit={handleSubmit}
-        >
-          <div className="d-flex  justify-content-between">
-            <h3>{editProductId ? "Edit Product" : "Create Product"}</h3>
+    <div className="container" style={{
+      minHeight: "100vh",
+    }}>
+  {open && (
+    <>
+      <div
+        className="overlay"
+        onClick={handleCloseForm} 
+      ></div>
 
-            <SlClose onClick={handleCloseForm} className="customXBTN" />
-          </div>
-          <div className="form-group">
-            <label htmlFor="image">Image</label>
-            <div className="text-danger">{errors.image}</div>
+      <form
+        encType="multipart/form-data"
+        className="form"
+        onSubmit={handleSubmit}
+      >
+        <div className="d-flex justify-content-between">
+          <h3>{editProductId ? "Edit Book" : "Create Book"}</h3>
 
-            {previewImage && (
-              <img
-                src={previewImage}
-                alt="Current Preview"
-                style={{
-                  width: "100px",
-                  height: "100px",
-                  objectFit: "cover",
-                  marginBottom: "10px",
-                }}
-              />
-            )}
+          <SlClose onClick={handleCloseForm} className="customXBTN" />
+        </div>
+        <div className="form-group">
+          <label htmlFor="image">Image</label>
+          <div className="text-danger">{errors.image}</div>
 
-            <input
-              type="file"
-              id="image"
-              className="form-control"
-              onChange={handleImageChange}
-            />
-          </div>
-          <div className="form-group">
-            <label htmlFor="title">Title</label>
-            <div className="text-danger">{errors.title}</div>
-            <input
-              type="text"
-              id="title"
-              className="form-control"
-              onChange={handleChange}
-              value={values.title}
-            />
-          </div>
-          <div className="form-group">
-            <label htmlFor="description">Description</label>
-            <div className="text-danger">{errors.description}</div>
-            <textarea
-              id="description"
-              className="form-control"
-              onChange={handleChange}
-              value={values.description}
-            />
-          </div>
-          <div className="form-group">
-            <label htmlFor="author">Author</label>
-            <div className="text-danger">{errors.author}</div>
-            <input
-              type="text"
-              id="author"
-              className="form-control"
-              onChange={handleChange}
-              value={values.author}
-            />
-          </div>
-          <div className="form-group">
-            <label htmlFor="categories">Categories</label>
-            <div className="text-danger">{errors.categories}</div>
-            <CategorySelect
-              categories={["Romance", "Fantasy", "Horror", "Mystery"]}
-              selectedCategories={selectedCategories}
-              setSelectedCategories={(categories) => {
-                setSelectedCategories(categories);
-                setFieldValue(
-                  "categories",
-                  categories.map((cat) => cat.value)
-                );
+          {previewImage && (
+            <img
+              src={previewImage}
+              alt="Current Preview"
+              style={{
+                width: "100px",
+                height: "100px",
+                objectFit: "cover",
+                marginBottom: "10px",
               }}
             />
-          </div>
+          )}
 
-          <button type="submit" className="btn btn-primary">
-            {editProductId ? "Update" : "Add"}
-          </button>
-        </form>
-      )}
-      <h2 className="text-center my-3">Admin Panel</h2>
-      <div className="mb-2 d-flex justify-content-between">
-        <button
-          className="btn btn-success"
-          onClick={() => {
-            if (editProductId) {
-              resetForm();
-              setEditProductId(null);
-              setPreviewImage("");
-              setSelectedCategories([]); // Formun açılıb-bağlanmasını idarə et
-            }
-            setOpen(!open);
-          }}
-        >
-          {editProductId ? "Cancel" : "Create"}
-        </button>
-        <input
-          type="text"
-          onChange={(e) => dispatch(searchProduct(e.target.value))}
-        />
-        <div className="d-flex gap-2">
-          <Dropdown className="mb-2">
-            <Dropdown.Toggle variant="secondary" id="categoryFilter">
-              {selectedCategory ? selectedCategory : "Filter by Category"}
-            </Dropdown.Toggle>
-
-            <Dropdown.Menu>
-              <Dropdown.Item onClick={() => setSelectedCategory("")}>
-                All Categories
-              </Dropdown.Item>
-              {["Romance", "Fantasy", "Horror", "Mystery"].map((cat, index) => (
-                <Dropdown.Item
-                  key={index}
-                  onClick={() => setSelectedCategory(cat)}
-                >
-                  {cat}
-                </Dropdown.Item>
-              ))}
-            </Dropdown.Menu>
-          </Dropdown>
-
-          <button
-            className="btn btn-primary"
-            onClick={() => dispatch(sortProductAZ())}
-          >
-            A-z
-          </button>
-          <button
-            className="btn btn-primary"
-            onClick={() => dispatch(sortProductZA())}
-          >
-            Z-a
-          </button>
+          <input
+            type="file"
+            id="image"
+            className="form-control"
+            onChange={handleImageChange}
+          />
         </div>
-      </div>
-      <Table striped bordered hover responsive="md">
-        <thead>
-          <tr>
-            <th>Image</th>
-            <th>Title</th>
-            <th>Category</th>
+        <div className="form-group">
+          <label htmlFor="title">Title</label>
+          <div className="text-danger">{errors.title}</div>
+          <input
+            type="text"
+            id="title"
+            className="form-control"
+            onChange={handleChange}
+            value={values.title}
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="description">Description</label>
+          <div className="text-danger">{errors.description}</div>
+          <textarea
+            id="description"
+            className="form-control"
+            onChange={handleChange}
+            value={values.description}
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="author">Author</label>
+          <div className="text-danger">{errors.author}</div>
+          <input
+            type="text"
+            id="author"
+            className="form-control"
+            onChange={handleChange}
+            value={values.author}
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="categories">Categories</label>
+          <div className="text-danger">{errors.categories}</div>
+          <CategorySelect
+            categories={["Romance", "Fantasy", "Horror", "Mystery"]}
+            selectedCategories={selectedCategories}
+            setSelectedCategories={(categories) => {
+              setSelectedCategories(categories);
+              setFieldValue(
+                "categories",
+                categories.map((cat) => cat.value)
+              );
+            }}
+          />
+        </div>
 
-            <th>Author</th>
-            <th>Description</th>
-            <th>Setting</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredProducts &&
-            filteredProducts.map((item) => (
-              <tr key={item._id}>
-                <td>
-                  <img
-                    style={{ width: "100px", height: "100px" }}
-                    src={`http://localhost:5000/${item.image}`}
-                    alt=""
-                  />
-                </td>
-                <td>{item.title}</td>
-                <td>
-                  {item.categories?.map((cat, index) => (
-                    <div className="d-flex " key={index}>
-                      {cat}
-                    </div>
-                  ))}
-                </td>
-                <td>{item.author}</td>
-                <td>{item.description.slice(0, 100) + "..."}</td>
-                <td className="d-flex gap-2">
-                  <button
-                    className="btn btn-primary"
-                    onClick={() => handleEditProduct(item)}
-                  >
-                    Edit
-                  </button>
-                  <button
-                    className="btn btn-danger"
-                    onClick={() => dispatch(deleteProduct(item._id))}
-                  >
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            ))}
-        </tbody>
-      </Table>
+        <button type="submit" className="btn btn-primary">
+          {editProductId ? "Update" : "Add"}
+        </button>
+      </form>
+    </>
+  )}
+
+  <div className="mb-2 d-flex justify-content-between">
+    <button
+      className="btn btn-success"
+      onClick={() => {
+        if (editProductId) {
+          resetForm();
+          setEditProductId(null);
+          setPreviewImage("");
+          setSelectedCategories([]); // Formun açılıb-bağlanmasını idarə et
+        }
+        setOpen(!open);
+      }}
+    >
+      {editProductId ? "Cancel" : "Create"}
+    </button>
+    <input
+      type="text"
+      onChange={(e) => dispatch(searchProduct(e.target.value))}
+    />
+    <div className="d-flex gap-2">
+      <Dropdown className="mb-2">
+        <Dropdown.Toggle variant="secondary" id="categoryFilter">
+          {selectedCategory ? selectedCategory : "Filter by Category"}
+        </Dropdown.Toggle>
+
+        <Dropdown.Menu>
+          <Dropdown.Item onClick={() => setSelectedCategory("")}>
+            All Categories
+          </Dropdown.Item>
+          {["Romance", "Fantasy", "Horror", "Mystery"].map((cat, index) => (
+            <Dropdown.Item
+              key={index}
+              onClick={() => setSelectedCategory(cat)}
+            >
+              {cat}
+            </Dropdown.Item>
+          ))}
+        </Dropdown.Menu>
+      </Dropdown>
+
+      <Dropdown>
+      <Dropdown.Toggle variant="success" id="dropdown-basic">
+       Filter By Title
+      </Dropdown.Toggle>
+
+      <Dropdown.Menu>
+        <Dropdown.Item href="#/action-1" onClick={() => dispatch(sortProductAZ())}> A-z</Dropdown.Item>
+        <Dropdown.Item href="#/action-2" onClick={() => dispatch(sortProductZA())}>Z-a</Dropdown.Item>
+      </Dropdown.Menu>
+    </Dropdown>
+
+   
     </div>
+  </div>
+  <Table striped bordered hover responsive="md">
+    <thead>
+      <tr>
+        <th>Image</th>
+        <th>Title</th>
+        <th>Category</th>
+
+        <th>Author</th>
+        <th>Description</th>
+        <th>Setting</th>
+      </tr>
+    </thead>
+    <tbody>
+      {filteredProducts &&
+        filteredProducts.map((item) => (
+          <tr key={item._id}>
+            <td>
+              <img
+                style={{ width: "100px", height: "100px" }}
+                src={`http://localhost:5000/${item.image}`}
+                alt=""
+                onClick={() => navigate(`/productdetail/${item._id}`)}
+              />
+            </td>
+            <td>{item.title}</td>
+            <td>
+              {item.categories?.map((cat, index) => (
+                <div className="d-flex" key={index}>
+                  {cat}
+                </div>
+              ))}
+            </td>
+            <td>{item.author}</td>
+            <td>{item.description.slice(0, 100) + "..."}</td>
+            <td className="d-flex gap-2">
+              <button
+                className="btn btn-primary"
+                onClick={() => handleEditProduct(item)}
+              >
+                Edit
+              </button>
+              <button
+                className="btn btn-danger"
+                onClick={() => {dispatch(deleteProduct(item._id)), toast.success("Book deleted!")}}
+              >
+                Delete
+              </button>
+            </td>
+          </tr>
+        ))}
+    </tbody>
+  </Table>
+</div>
+
   );
 };
 

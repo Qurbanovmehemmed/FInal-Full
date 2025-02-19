@@ -5,6 +5,8 @@ import { loginschema } from "../../../schema/LoginSchema";
 import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { setUser } from "../../../redux/features/userSlice";
+import "react-toastify/dist/ReactToastify.css"; 
+import { toast } from "react-toastify";
 
 const Login = () => {
   const baseUrl = "http://localhost:5000/auth";
@@ -19,16 +21,18 @@ const Login = () => {
 
       if (res.status === 200) {
         dispatch(setUser(res.data));
-        alert("Login successful");
+        toast.success(res.data.message);
+        
       } else {
-        alert("Login failed");
+        toast.error("Login failed");
       }
 
       actions.resetForm();
 
       navigate("/");
     } catch (error) {
-      console.error("Login failed:", error);
+      toast.error(error.response.data.message);
+      // console.error("Login failed:", error);
     }
   };
 

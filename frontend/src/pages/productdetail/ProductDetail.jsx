@@ -6,12 +6,11 @@ import { HiUser } from "react-icons/hi2";
 import axios from "axios";
 import RatingInput from "../../components/catSelect/RatingInput";
 import WishlistButtons from "../wishlist/wishlistbutton/Wishlistbutton";
-import WishlistCount from "../wishlist/wishlistbutton/WishlistCount";
 import { MdNavigateNext } from "react-icons/md";
 
 const ProductDetail = () => {
   const { id } = useParams();
-  const navigate =useNavigate()
+  const navigate = useNavigate();
   const { products } = useSelector((state) => state.products);
   const { user } = useSelector((state) => state.user);
   const [selectedTab, setSelectedTab] = useState("description");
@@ -261,14 +260,75 @@ const ProductDetail = () => {
     }
   };
   const goBack = () => {
-    navigate(-1); // Bu, istifadəçini əvvəlki səhifəyə qaytaracaq
+    navigate(-1);
+  };
+
+  const handleDeleteReviewAdmin = async (reviewId) => {
+    try {
+      await axios.delete(
+        `http://localhost:5000/api/reviews/admin/${reviewId}`,
+        {
+          withCredentials: true,
+        }
+      );
+
+      const { data } = await axios.get(
+        `http://localhost:5000/api/reviews/${id}`,
+        { withCredentials: true }
+      );
+
+      setReviews(data.reviews);
+    } catch (error) {
+      console.error("Error deleting review:", error);
+    }
+  };
+
+  const handleEditReviewAdmin = async () => {
+    if (!reviewText.trim() || !editingReview) return;
+
+    try {
+      await axios.put(
+        `http://localhost:5000/api/reviews/admin/${editingReview._id}`,
+        { content: reviewText, rating },
+        { withCredentials: true }
+      );
+
+      const { data } = await axios.get(
+        `http://localhost:5000/api/reviews/${id}`,
+        { withCredentials: true }
+      );
+
+      setReviews(data.reviews);
+      setReviewText("");
+      setRating(5);
+      setEditingReview(null);
+    } catch (error) {
+      console.error("Error editing review:", error);
+    }
+  };
+
+  const handleDeleteCommentAdmin = async (reviewId, commentId) => {
+    try {
+      await axios.delete(
+        `http://localhost:5000/api/reviews/comment/admin/${reviewId}/${commentId}`,
+        { withCredentials: true }
+      );
+
+      setReviews(
+        reviews.map((r) =>
+          r._id === reviewId
+            ? { ...r, comments: r.comments.filter((c) => c._id !== commentId) }
+            : r
+        )
+      );
+    } catch (error) {
+      console.error("Error deleting comment:", error);
+    }
   };
 
   return (
     <>
-      <div className="container">
-      
-      </div>
+      <div className="container"></div>
       <div className="shadow detailShadow bg-body">
         <div className="container">
           <div className="row">
@@ -305,16 +365,17 @@ const ProductDetail = () => {
 
                 <WishlistButtons userId={user?.existUser?._id} productId={id} />
                 <div className="d-flex mb-2 align-items-center gap-2">
-          <div>
-            <div className="backHover" onClick={goBack} style={{marginTop:"10px"}}>
-              {" "}
-              Back
-            </div>
-          </div>
-          
-        </div>
-
-              
+                  <div>
+                    <div
+                      className="backHover"
+                      onClick={goBack}
+                      style={{ marginTop: "10px" }}
+                    >
+                      {" "}
+                      Back
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -438,25 +499,29 @@ const ProductDetail = () => {
                                       </div>
 
                                       {user &&
-                                      user.existUser?._id ===
-                                        comment?.userId ? (
-                                        <>
-                                          <div className="deleteComment">
-                                            <p
-                                              onClick={() =>
-                                                handleDeleteComment(
-                                                  review._id,
-                                                  comment._id
-                                                )
-                                              }
-                                            >
-                                              Delete
-                                            </p>
-                                          </div>
-                                        </>
-                                      ) : (
-                                        ""
-                                      )}
+                                        (user.existUser?._id ===
+                                          comment?.userId ||
+                                          user.existUser?.isAdmin) && (
+                                          <>
+                                            <div className="deleteComment">
+                                              <p
+                                                onClick={() =>
+                                                  user.existUser?.isAdmin
+                                                    ? handleDeleteCommentAdmin(
+                                                        review._id,
+                                                        comment._id
+                                                      )
+                                                    : handleDeleteComment(
+                                                        review._id,
+                                                        comment._id
+                                                      )
+                                                }
+                                              >
+                                                Delete
+                                              </p>
+                                            </div>
+                                          </>
+                                        )}
                                     </div>
                                   ))}
                                 <div className="add-comment mt-2">
@@ -481,11 +546,12 @@ const ProductDetail = () => {
                           </div>
                         </div>
 
-                        <div className="review-actions">
+                        <div className="review-actions mt-2 ">
                           {user &&
-                            user.existUser?._id === review?.userId?._id && ( // Check if the logged-in user is the author of the review
+                            (user.existUser?._id === review?.userId?._id ||
+                              user.existUser?.isAdmin) && ( // Check if the logged-in user is the author of the review or an admin
                               <>
-                                <div className="d-flex gap-1">
+                                <div className="d-flex gap-1 ">
                                   <button
                                     className="btn btn-sm btn-warning"
                                     onClick={() => {
@@ -498,7 +564,9 @@ const ProductDetail = () => {
                                   <button
                                     className="btn btn-sm btn-danger"
                                     onClick={() =>
-                                      handleDeleteReview(review._id)
+                                      user.existUser?.isAdmin
+                                        ? handleDeleteReviewAdmin(review._id)
+                                        : handleDeleteReview(review._id)
                                     }
                                   >
                                     Delete
@@ -525,7 +593,11 @@ const ProductDetail = () => {
                       <button
                         className="btn btn-success mt-2 mx-2"
                         onClick={
-                          editingReview ? handleEditReview : handleAddReview
+                          editingReview
+                            ? user.existUser?.isAdmin
+                              ? handleEditReviewAdmin
+                              : handleEditReview
+                            : handleAddReview
                         }
                       >
                         {editingReview ? "Update Review" : "Add Review"}
@@ -563,7 +635,7 @@ const ProductDetail = () => {
                           src={`http://localhost:5000/${product.image}`}
                           alt={product.title}
                           style={{
-                            cursor:"pointer"
+                            cursor: "pointer",
                           }}
                           onClick={() =>
                             navigate(`/productdetail/${product._id}`)

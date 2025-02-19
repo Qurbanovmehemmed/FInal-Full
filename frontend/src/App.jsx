@@ -6,7 +6,6 @@ import Category from "./pages/Category";
 import Men from "./pages/Men";
 import Women from "./pages/Women";
 import Latest from "./pages/Latest";
-import Admin from "./pages/admin/Admin";
 import Wishlist from "./pages/wishlist/Wishlist";
 import Register from "./pages/auth/register/Register";
 import Login from "./pages/auth/login/Login";
@@ -20,7 +19,7 @@ import Product from "./pages/Products/Product";
 import Mystory from "./pages/MyStory/Mystory";
 import ProtectedRoute from "./routes/ProtectRouter/ProtectedRoute";
 import ProductDetail from "./pages/productdetail/ProductDetail";
-import UsersAdmin from "./pages/usersAdmin/UsersAdmin";
+import Alladmins from "./pages/Alladmins";
 
 const router = createBrowserRouter([
   {
@@ -33,7 +32,7 @@ const router = createBrowserRouter([
       },
       {
         path: "/allproduct",
-        element: <Product />, 
+        element: <Product />,
       },
       {
         path: "/category",
@@ -55,29 +54,16 @@ const router = createBrowserRouter([
         path: "/productdetail/:id",
         element: <ProductDetail />,
       },
-      {
-        path:"/useradmin",
-        element:<UsersAdmin/>
-      },
-      
+
       {
         path: "/admin",
-        element: <ProtectAdmin />, 
+        element: <ProtectAdmin />,
         children: [
           {
             path: "/admin",
-            element: <Admin />,
+            element: <Alladmins />,
           },
-          
         ],
-      },
-      {
-        path: "/register",
-        element: <Register />,
-      },
-      {
-        path: "/login",
-        element: <Login />,
       },
 
       {
@@ -114,6 +100,14 @@ const router = createBrowserRouter([
         ],
       },
     ],
+  },
+  {
+    path: "/register",
+    element: <Register />,
+  },
+  {
+    path: "/login",
+    element: <Login />,
   },
 ]);
 

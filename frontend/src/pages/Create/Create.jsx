@@ -2,11 +2,14 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addProduct, getProducts } from "../../redux/features/ProductSlice";
 import { useFormik } from "formik";
-import { productSchema } from "../../schema/ProductCreateSchema";
 import CategorySelect from "../../components/catSelect/CategorySelect";
 import RatingInput from "../../components/catSelect/RatingInput";
 import { FaCloudUploadAlt } from "react-icons/fa";
+import "react-toastify/dist/ReactToastify.css"; 
+import { toast } from "react-toastify";
+
 import "./Create.scss";
+import { productSchema } from "../../schema/ProductCreateSchema";
 
 const Create = () => {
   const { user } = useSelector((state) => state.user);
@@ -14,13 +17,12 @@ const Create = () => {
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [rating, setRating] = useState(0);
   const [open, setOpen] = useState(false);
-  const [previewImage, setPreviewImage] = useState(null); // Yeni state
-
+  const [previewImage, setPreviewImage] = useState(null); 
   const handleImageChange = (e) => {
     const file = e.currentTarget.files[0];
     if (file) {
       setFieldValue("image", file);
-      setPreviewImage(URL.createObjectURL(file)); // Önizləmə üçün URL yaradılır
+      setPreviewImage(URL.createObjectURL(file)); 
     }
   };
 
@@ -35,7 +37,7 @@ const Create = () => {
       description: "",
       author: user?.existUser?.name || "",
       categories: [],
-      rating: 0,
+      
     },
     validationSchema: productSchema,
   });
@@ -49,22 +51,32 @@ const Create = () => {
     formData.append("title", values.title);
     formData.append("description", values.description);
     formData.append("author", values.author);
-    // formData.append("categories", selectedCategories.map(cat => cat.value));
     selectedCategories.forEach((cat) => {
       formData.append("categories[]", cat.value);
     });
-    formData.append("rating", rating);
 
-    console.log("📩 Göndərilən FormData:", Object.fromEntries(formData));
+    console.log( Object.fromEntries(formData));
+    if (
+      !values.title ||
+      !values.description ||
+      selectedCategories.length === 0 ||
+      !values.image
+    ) {
+      toast.error("Please fill in all fields");
+      return; 
+    }
 
     try {
       const response = await dispatch(addProduct(formData));
-      console.log("✅ Product əlavə edildi:", response);
+      console.log( response);
       resetForm();
       setOpen(false);
-      window.location.reload();
+      setPreviewImage(null);
+      setSelectedCategories([]);
+      toast.success("New story created successfully!");
+      
     } catch (error) {
-      console.error("❌ Error:", error);
+      console.error( error);
     }
   };
 
@@ -78,9 +90,12 @@ const Create = () => {
         <div className="row">
           <div className="col-md-3 mt-3">
             <div className="form-group">
-                <div className="text-danger">{errors.image}</div>
+              <div className="text-danger">{errors.image}</div>
 
-              <div className="image-upload-wrapper position-relative d-inline-block" style={{ width: "100%", height: "400px" }}>
+              <div
+                className="image-upload-wrapper position-relative d-inline-block"
+                style={{ width: "100%", height: "400px" }}
+              >
                 <input
                   type="file"
                   id="image"
@@ -158,15 +173,14 @@ const Create = () => {
               </div>
               <div className="form-groupCreate">
                 <label htmlFor="categories">Categories</label>
-                <div className="text-danger">{errors.category}</div>
+                <div className="text-danger">{errors.categories}</div>
                 <CategorySelect
-                  categories={["Romance", "Horror", "Fantasy","Mystery"]}
+                  categories={["Romance", "Horror", "Fantasy", "Mystery"]}
                   selectedCategories={selectedCategories}
                   setSelectedCategories={setSelectedCategories}
                 />
               </div>
-              
-            
+
               <div
                 className="form-groupCreate "
                 style={{ marginTop: "20px", paddingBottom: "20px" }}
