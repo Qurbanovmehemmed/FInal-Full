@@ -7,9 +7,9 @@ import RegisterValidationSchema from "../middleware/validation/RegisterValidatio
 import LoginValidationSchema from "../middleware/validation/LoginValidation.js";
 import ForgotValidationSchema from "../middleware/validation/ForgotValidation.js";
 import ResetValidationSchema from "../middleware/validation/ResetValidation.js";
-import crypto from "crypto"
 import path from "path";
 import fs from "fs";
+import mongoose from "mongoose";
 
 export const register = async (req, res) => {
   try {
@@ -279,17 +279,14 @@ export const getAllUsers = async (req, res) => {
 
 export const addAdmin = async (req, res) => {
   try {
-    const { userId } = req.params; // Hedef istifadəçinin ID-si
+    const { id } = req.params; // Hedef istifadəçinin ID-si
+    console.log(id)
 
-    // Admin yoxlamaq
-    // if (!req.user || !req.user.isAdmin) {
-    //   return res.status(403).json({ message: "İcazəniz yoxdur!" });
-    // }
-    if (!mongoose.Types.ObjectId.isValid(userId)) {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({ message: "Düzgün ID deyil!" });
     }
 
-    const userToBeAdmin = await user.findById(userId);
+    const userToBeAdmin = await user.findById(id);
 
     if (!userToBeAdmin) {
       return res.status(404).json({ message: "İstifadəçi tapılmadı!" });
@@ -311,28 +308,20 @@ export const addAdmin = async (req, res) => {
 
 export const deleteUser = async (req, res) => {
   try {
-    const { id } = req.params; // Accessing '_id' from the URL parameters
+    const { userId } = req.params; // Silinməli istifadəçinin ID-si
+    // Yalnız adminlər istifadəçi silə bilər
+    
 
-    // Ensure the logged-in user is an admin
-    if (!req.user || !req.user.isAdmin) {
-      return res.status(403).json({ message: "You are not authorized to perform this action!" });
+    // İstifadəçini tapıb silirik
+    const delteeduser = await user.findByIdAndDelete(userId);
+
+    if (!delteeduser) {
+      return res.status(404).json({ success: false, message: "User not found" });
     }
 
-    const userToDelete = await user.findById(id); // Use '_id' from params
-
-    if (!userToDelete) {
-      return res.status(404).json({ message: "User not found!" });
-    }
-
-    // Delete the user
-    await userToDelete.remove();
-
-    return res.status(200).json({
-      message: "User successfully deleted!",
-      user: userToDelete,
-    });
+    return res.status(200).json({ success: true, message: "User deleted successfully" });
   } catch (error) {
-    return res.status(500).json({ message: error.message });
+    return res.status(500).json({ success: false, message: error.message });
   }
 };
 

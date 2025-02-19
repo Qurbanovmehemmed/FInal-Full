@@ -5,28 +5,54 @@ import {
   getProducts,
   deleteProduct,
   searchProduct,
-  sortProductLowest,
-  sortProductHigest,
   addProduct,
   updateProduct,
+  sortProductAZ,
+  sortProductZA,
 } from "../../redux/features/ProductSlice";
 import CategorySelect from "../../components/catSelect/CategorySelect";
 import RatingInput from "../../components/catSelect/RatingInput";
 import { productSchema } from "../../schema/ProductCreateSchema";
 import Table from "react-bootstrap/Table";
 import "./Admin.scss";
+import { SlClose } from "react-icons/sl";
+import Dropdown from "react-bootstrap/Dropdown"; // Bootstrap Dropdown əlavə et
 
 const Admin = () => {
   const { products } = useSelector((state) => state.products);
   const dispatch = useDispatch();
   const [selectedCategories, setSelectedCategories] = useState([]);
-  const [rating, setRating] = useState(0);
   const [open, setOpen] = useState(false);
-  const [editProductId, setEditProductId] = useState(null); // State for editing
+  const [editProductId, setEditProductId] = useState(null);
+  const [previewImage, setPreviewImage] = useState("");
+
+  const [selectedCategory, setSelectedCategory] = useState(""); // Seçilmiş category
+  const [filteredProducts, setFilteredProducts] = useState([]); // Filtrlənmiş məhsullar
+
+  useEffect(() => {
+    if (selectedCategory) {
+      setFilteredProducts(
+        products.filter((product) =>
+          product.categories.includes(selectedCategory)
+        )
+      );
+    } else {
+      setFilteredProducts(products);
+    }
+  }, [selectedCategory, products]);
 
   useEffect(() => {
     dispatch(getProducts());
   }, [dispatch]);
+
+  useEffect(() => {
+    if (editProductId) {
+      const product = products.find((p) => p._id === editProductId);
+      if (product) {
+        setPreviewImage(`http://localhost:5000/${product.image}`);
+      }
+    }
+  }, [editProductId, products]);
 
   const {
     values,
@@ -34,74 +60,126 @@ const Admin = () => {
     setFieldValue,
     errors,
     resetForm,
+    handleSubmit,
   } = useFormik({
     initialValues: {
       image: null,
-      title: "",
-      description: "",
-      author: "",
-      categories: [],
-      price: "",
-      rating: 0,
+      title: editProductId
+        ? products.find((p) => p._id === editProductId)?.title || ""
+        : "",
+      description: editProductId
+        ? products.find((p) => p._id === editProductId)?.description || ""
+        : "",
+      author: editProductId
+        ? products.find((p) => p._id === editProductId)?.author || ""
+        : "",
+      categories: editProductId
+        ? products.find((p) => p._id === editProductId)?.categories || []
+        : [],
+      price: editProductId
+        ? products.find((p) => p._id === editProductId)?.price || ""
+        : "",
+      rating: editProductId
+        ? products.find((p) => p._id === editProductId)?.rating || 0
+        : 0,
     },
     validationSchema: productSchema,
-    enableReinitialize: true, // This will allow form to reinitialize when values change
-  });
+    validateOnChange: false,
+    validateOnBlur: false,
+    onSubmit: async (values, { resetForm }) => {
+      const formData = new FormData();
+      formData.append("image", values.image);
+      formData.append("title", values.title);
+      formData.append("description", values.description);
+      formData.append("author", values.author);
+      selectedCategories.forEach((cat) => {
+        formData.append("categories[]", cat.value);
+      });
 
-  const handleFormSubmit = async (e) => {
-    e.preventDefault();
-    const formData = new FormData();
-    formData.append("image", values.image);
-    formData.append("title", values.title);
-    formData.append("description", values.description);
-    formData.append("author", values.author);
-    selectedCategories.forEach((cat) => {
-      formData.append("categories[]", cat.value);
-    });
-    formData.append("price", values.price);
-    formData.append("rating", rating);
-
-    try {
-      if (editProductId) {
-        // If editProductId is set, update the product
-        await dispatch(updateProduct({ id: editProductId, updatedData: formData }));
-      } else {
-        // Otherwise, create a new product
-        await dispatch(addProduct(formData));
+      try {
+        if (editProductId) {
+          await dispatch(
+            updateProduct({ id: editProductId, updatedData: formData })
+          );
+        } else {
+          await dispatch(addProduct(formData));
+        }
+        resetForm();
+        setOpen(false);
+        setEditProductId(null);
+        setPreviewImage("");
+        setSelectedCategories([]);
+      } catch (error) {
+        console.error("❌ Error:", error);
       }
-      resetForm();
-      setOpen(false);
-      setEditProductId(null); // Reset the edit state after successful submit
-    } catch (error) {
-      console.error("❌ Error:", error);
-    }
-  };
+    },
+  });
 
   const handleEditProduct = (product) => {
     setEditProductId(product._id);
     setSelectedCategories(
       product.categories.map((cat) => ({ value: cat, label: cat }))
     );
-    setRating(product.rating);
+    setFieldValue("image", product.image);
     setFieldValue("title", product.title);
     setFieldValue("description", product.description);
     setFieldValue("author", product.author);
-    setFieldValue("price", product.price);
+
+    setFieldValue("categories", product.categories);
+    setOpen(true); // Form açılsın
+  };
+
+  const handleCloseForm = () => {
+    resetForm();
+    setOpen(false);
+    setEditProductId(null);
+    setPreviewImage("");
+    setSelectedCategories([]);
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setPreviewImage(URL.createObjectURL(file)); // Yeni şəkili göstər
+      setFieldValue("image", file);
+    }
   };
 
   return (
     <div className="container">
       {open && (
-        <form encType="multipart/form-data" className="form" onSubmit={handleFormSubmit}>
-          <h3>{editProductId ? "Edit Product" : "Create Product"}</h3>
+        <form
+          encType="multipart/form-data"
+          className="form"
+          onSubmit={handleSubmit}
+        >
+          <div className="d-flex  justify-content-between">
+            <h3>{editProductId ? "Edit Product" : "Create Product"}</h3>
+
+            <SlClose onClick={handleCloseForm} className="customXBTN" />
+          </div>
           <div className="form-group">
             <label htmlFor="image">Image</label>
             <div className="text-danger">{errors.image}</div>
+
+            {previewImage && (
+              <img
+                src={previewImage}
+                alt="Current Preview"
+                style={{
+                  width: "100px",
+                  height: "100px",
+                  objectFit: "cover",
+                  marginBottom: "10px",
+                }}
+              />
+            )}
+
             <input
               type="file"
               id="image"
               className="form-control"
-              onChange={(e) => setFieldValue("image", e.currentTarget.files[0])}
+              onChange={handleImageChange}
             />
           </div>
           <div className="form-group">
@@ -138,28 +216,20 @@ const Admin = () => {
           </div>
           <div className="form-group">
             <label htmlFor="categories">Categories</label>
-            <div className="text-danger">{errors.category}</div>
+            <div className="text-danger">{errors.categories}</div>
             <CategorySelect
               categories={["Romance", "Fantasy", "Horror", "Mystery"]}
               selectedCategories={selectedCategories}
-              setSelectedCategories={setSelectedCategories}
+              setSelectedCategories={(categories) => {
+                setSelectedCategories(categories);
+                setFieldValue(
+                  "categories",
+                  categories.map((cat) => cat.value)
+                );
+              }}
             />
           </div>
-          <div className="form-group">
-            <label htmlFor="price">Price</label>
-            <div className="text-danger">{errors.price}</div>
-            <input
-              type="text"
-              id="price"
-              className="form-control"
-              onChange={handleChange}
-              value={values.price}
-            />
-          </div>
-          <div className="form-group">
-            <label>Rating</label>
-            <RatingInput rating={rating} setRating={setRating} />
-          </div>
+
           <button type="submit" className="btn btn-primary">
             {editProductId ? "Update" : "Add"}
           </button>
@@ -167,43 +237,74 @@ const Admin = () => {
       )}
       <h2 className="text-center my-3">Admin Panel</h2>
       <div className="mb-2 d-flex justify-content-between">
-        <button className="btn btn-success" onClick={() => setOpen(!open)}>
-          {editProductId ? "Cancel Edit" : "Create"}
+        <button
+          className="btn btn-success"
+          onClick={() => {
+            if (editProductId) {
+              resetForm();
+              setEditProductId(null);
+              setPreviewImage("");
+              setSelectedCategories([]); // Formun açılıb-bağlanmasını idarə et
+            }
+            setOpen(!open);
+          }}
+        >
+          {editProductId ? "Cancel" : "Create"}
         </button>
         <input
           type="text"
           onChange={(e) => dispatch(searchProduct(e.target.value))}
         />
         <div className="d-flex gap-2">
+          <Dropdown className="mb-2">
+            <Dropdown.Toggle variant="secondary" id="categoryFilter">
+              {selectedCategory ? selectedCategory : "Filter by Category"}
+            </Dropdown.Toggle>
+
+            <Dropdown.Menu>
+              <Dropdown.Item onClick={() => setSelectedCategory("")}>
+                All Categories
+              </Dropdown.Item>
+              {["Romance", "Fantasy", "Horror", "Mystery"].map((cat, index) => (
+                <Dropdown.Item
+                  key={index}
+                  onClick={() => setSelectedCategory(cat)}
+                >
+                  {cat}
+                </Dropdown.Item>
+              ))}
+            </Dropdown.Menu>
+          </Dropdown>
+
           <button
             className="btn btn-primary"
-            onClick={() => dispatch(sortProductLowest())}
+            onClick={() => dispatch(sortProductAZ())}
           >
-            Low
+            A-z
           </button>
           <button
             className="btn btn-primary"
-            onClick={() => dispatch(sortProductHigest())}
+            onClick={() => dispatch(sortProductZA())}
           >
-            High
+            Z-a
           </button>
         </div>
       </div>
-      <Table striped bordered hover>
+      <Table striped bordered hover responsive="md">
         <thead>
           <tr>
             <th>Image</th>
             <th>Title</th>
             <th>Category</th>
-            <th>Price</th>
-            <th>Rating</th>
+
+            <th>Author</th>
             <th>Description</th>
             <th>Setting</th>
           </tr>
         </thead>
         <tbody>
-          {products &&
-            products.map((item) => (
+          {filteredProducts &&
+            filteredProducts.map((item) => (
               <tr key={item._id}>
                 <td>
                   <img
@@ -215,16 +316,14 @@ const Admin = () => {
                 <td>{item.title}</td>
                 <td>
                   {item.categories?.map((cat, index) => (
-                    <button className="d-flex " key={index}>
+                    <div className="d-flex " key={index}>
                       {cat}
-                    </button>
+                    </div>
                   ))}
                 </td>
-                <td>{item.price}</td>
-                <td>{item.rating}</td>
-                <td>{item.description}</td>
                 <td>{item.author}</td>
-                <td>
+                <td>{item.description.slice(0, 100) + "..."}</td>
+                <td className="d-flex gap-2">
                   <button
                     className="btn btn-primary"
                     onClick={() => handleEditProduct(item)}

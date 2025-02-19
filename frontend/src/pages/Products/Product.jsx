@@ -116,7 +116,6 @@ const Product = () => {
     navigate(-1);
   };
 
-  // 📌 Pagination üçün məhsulları bölmək
   const offset = currentPage * productsPerPage;
   const paginatedProducts = filteredProducts.slice(offset, offset + productsPerPage);
   const itemsPerPage = 8;
@@ -227,7 +226,6 @@ const Product = () => {
             <p>No products found</p>
           )}
 
-          {/* 📌 Pagination Component */}
          {pageCount > 1 && ( <ReactPaginate
             previousLabel={"←"}
             nextLabel={"→"}

@@ -26,7 +26,7 @@ userRouter.post("/resetpassword", resetPassword);
 userRouter.put("/update", verifyToken, upload.single("image"), updateProfile);
 userRouter.put("/update-favorites", verifyToken, updateFavoriteCategories);
 userRouter.get("/", verifyToken,  getAllUsers);
-userRouter.put("/admin/:id",   addAdmin);
-userRouter.post("/delete",   deleteUser);
+userRouter.post("/admin/:id",   addAdmin);
+userRouter.delete("/:userId", verifyToken, deleteUser);
 
 export default userRouter;

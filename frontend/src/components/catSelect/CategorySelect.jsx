@@ -15,7 +15,7 @@ const CategorySelect = ({ categories, selectedCategories, setSelectedCategories 
       getOptionLabel={(e) => e.label}
       getOptionValue={(e) => e.value}
       closeMenuOnSelect={false}
-      placeholder="Kateqoriyaları seçin"
+      placeholder="Choose categories"
     />
   );
 };

@@ -66,12 +66,15 @@ export const productSlice = createSlice({
   name: "product",
   initialState,
   reducers: {
-    // Sorting reducers can go here...
-    sortProductLowest: (state) => {
-      state.products = state.products.sort((a, b) => a.price - b.price);
+    sortProductAZ: (state) => {
+      state.products = state.products.sort((a, b) =>
+        a.title.localeCompare(b.title)
+      );
     },
-    sortProductHigest: (state) => {
-      state.products = state.products.sort((a, b) => b.price - a.price);
+    sortProductZA: (state) => {
+      state.products = state.products.sort((a, b) =>
+        b.title.localeCompare(a.title)
+      );
     },
   },
   extraReducers: (builder) => {
@@ -102,6 +105,6 @@ export const productSlice = createSlice({
   },
 });
 
-export const { sortProductHigest, sortProductLowest } = productSlice.actions;
+export const { sortProductAZ, sortProductZA } = productSlice.actions;
 
 export default productSlice.reducer;
