@@ -20,6 +20,12 @@
         right: 4%;
         font-weight: bold;
         font-style: italic;
+        transition: text-shadow 0.3s ease-in-out; /* Keçid effekti */
+
+        &:hover{
+          text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5); /* Hover zamanı kölgə */
+          
+        }
       }
     }
     .navlist {
@@ -29,6 +35,14 @@
       gap: 20px;
       margin: 0;
       padding: 0;
+      .hovTextShadow{
+        transition: text-shadow 0.3s ease-in-out; /* Keçid effekti */
+        &:hover{
+          text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5); /* Hover zamanı kölgə */
+        }
+        
+      }
+    
     }
     .wrapper {
       display: flex;

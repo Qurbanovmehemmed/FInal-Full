@@ -112,6 +112,7 @@ const Product = () => {
     setSelectedRating(0);
   };
 
+  //! qeyd et
   const goBack = () => {
     navigate(-1);
   };
@@ -123,54 +124,51 @@ const Product = () => {
 
   return (
     <div className="container">
-      <div className="d-flex mb-2 align-items-center gap-2">
-        <div>
-          <div className="backHover" onClick={goBack}>
-            Back
-          </div>
-        </div>
-        <MdNavigateNext />
-        <h2>All Books</h2>
+    <div className="d-flex mb-2 align-items-center gap-2">
+      <div>
+        <div className="backHover" onClick={goBack}>Back</div>
       </div>
-
-      <div className="container d-flex mt-4 flex-wrap gap-4">
-        <div className="col-md-3 ">
-          <div className="shadow filterArea">
+      <MdNavigateNext />
+      <h2>All Books</h2>
+    </div>
+  
+    <div className="container mt-4">
+      <div className="row">
+        <div className="col-lg-3 col-md-4 col-sm-12 mt-3">
+          <div className="shadow filterArea p-3">
             <div className="filterInputArea">
               <input
                 type="text"
                 onChange={(e) => dispatch(searchProduct(e.target.value))}
-                className="filterInput"
+                className="filterInput form-control"
                 placeholder="Filter by title.."
               />
             </div>
-            <div className="filterCat">
+            <div className="filterCat mt-3">
               <h5>Filter By Categories</h5>
               {categories.map((category) => (
-                <div key={category}>
+                <div key={category} className="form-check">
                   <input
                     type="checkbox"
                     id={category}
                     onChange={() => handleCategoryChange(category)}
                     checked={selectedCategories.includes(category)}
-                    style={{
-                      cursor: "pointer",
-                    }}
+                    className="form-check-input"
                   />
-                  <label htmlFor={category} className="ms-2">
+                  <label htmlFor={category} className="form-check-label ms-2">
                     {category}
                   </label>
                 </div>
               ))}
-              <div className="d-flex alig-items-end justify-content-end">
-                <div className="removeFilterproduct" onClick={resetFiltersCate}>
+              <div className="text-end">
+                <button className="btn btn-sm btn-danger" onClick={resetFiltersCate}>
                   Reset
-                </div>
+                </button>
               </div>
             </div>
-
-            <div className="filterRate">
-              <h5 className="mt-3">Filter By Rating</h5>
+  
+            <div className="filterRate mt-3">
+              <h5>Filter By Rating</h5>
               <div className="d-flex align-items-center justify-content-between">
                 <StarRatings
                   rating={selectedRating}
@@ -178,68 +176,78 @@ const Product = () => {
                   changeRating={setSelectedRating}
                   numberOfStars={5}
                   name="rating"
-                  starDimension="30px"
+                  starDimension="20px"
                   starSpacing="5px"
                 />
-                <div className="removeFilterproduct" onClick={resetFiltersRate}>
+                <button className="btn btn-sm btn-danger" onClick={resetFiltersRate}>
                   Reset
-                </div>
+                </button>
               </div>
             </div>
           </div>
         </div>
-
-        <div className="col-md-9 row">
-          {paginatedProducts.length > 0 ? (
-            paginatedProducts.map((product) => (
-              <div key={product._id} className="col-xl-3 col-lg-4 col-md-6 mb-6 d-flex flex-wrap col-sm-6">
-                <div className="card mb-3">
-                <div className="imageAll">
-                <img
-                    src={`http://localhost:5000/${product.image}`}
-                    className="card-img-top"
-                    alt={product.name}
-                    onClick={() => navigate(`/productdetail/${product._id}`)}
-                    style={{ cursor: "pointer",
-                     
-                     }}
-                  />
-                </div>
-                  <div className="card-body">
-                    <h5 className="card-title">{product.title}</h5>
-                    <p className="card-text">{product.categories.join(", ")}</p>
-                    <div className="d-flex gap-1">
-                      <StarRatings
-                        rating={reviews[product._id]?.rating || 0}
-                        starRatedColor="gold"
-                        numberOfStars={5}
-                        starDimension="20px"
-                        starSpacing="1px"
+  
+        <div className="col-lg-9 col-md-8 col-sm-12">
+          <div className="row g-4">
+            {paginatedProducts.length > 0 ? (
+              paginatedProducts.map((product) => (
+                <div key={product._id} className="col-xl-3 col-lg-4 col-md-6 col-sm-12">
+                  <div className="card h-100 shadow-sm">
+                    <div className="imageAll">
+                      <img
+                        src={`http://localhost:5000/${product.image}`}
+                        className="card-img-top img-fluid"
+                        alt={product.name}
+                        onClick={() => navigate(`/productdetail/${product._id}`)}
+                        style={{ cursor: "pointer", objectFit: "cover", height: "290px" }}
                       />
-                      <span>({reviews[product._id]?.rating?.toFixed(1) || "0.0"})</span>
+                    </div>
+                    <div className="card-body">
+                      <h5 className="card-title" style={{ height: "50px" }}>
+                        {product.title}
+                      </h5>
+                      <p className="card-text">
+                        {product.categories.join(", ")} 
+                      </p>
+                      <div className="d-flex gap-1">
+                        <StarRatings
+                          rating={reviews[product._id]?.rating || 0}
+                          starRatedColor="gold"
+                          numberOfStars={5}
+                          starDimension="20px"
+                          starSpacing="1px"
+                        />
+                        <span>({reviews[product._id]?.rating?.toFixed(1) || "0.0"})</span>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))
-          ) : (
-            <p>No products found</p>
+              ))
+            ) : (
+              <p className="text-center">No products found</p>
+            )}
+          </div>
+  
+          {pageCount > 1 && (
+            <div className="d-flex justify-content-center mt-4">
+              <ReactPaginate
+                previousLabel={"←"}
+                nextLabel={"→"}
+                breakLabel={"..."}
+                pageCount={pageCount}
+                marginPagesDisplayed={2}
+                pageRangeDisplayed={3}
+                onPageChange={(data) => setCurrentPage(data.selected)}
+                containerClassName={"pagination"}
+                activeClassName={"active"}
+              />
+            </div>
           )}
-
-         {pageCount > 1 && ( <ReactPaginate
-            previousLabel={"←"}
-            nextLabel={"→"}
-            breakLabel={"..."}
-            pageCount={pageCount}
-            marginPagesDisplayed={2}
-            pageRangeDisplayed={3}
-            onPageChange={(data) => setCurrentPage(data.selected)}
-            containerClassName={"pagination"}
-            activeClassName={"active"}
-          />)}
         </div>
       </div>
     </div>
+  </div>
+  
   );
 };
 

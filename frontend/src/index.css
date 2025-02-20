@@ -37,3 +37,42 @@ p {
 
  
 }
+
+.btn {
+  transition: all 0.3s ease-in-out;
+}
+
+.btn-success:hover {
+  background-color: #218838 !important; /* Bootstrap default success hover */
+  box-shadow: 0px 4px 8px rgba(40, 167, 69, 0.5);
+  transform: scale(1.05);
+}
+
+.btn-danger:hover {
+  background-color: #c82333 !important; /* Bootstrap default danger hover */
+  box-shadow: 0px 4px 8px rgba(220, 53, 69, 0.5);
+  transform: scale(1.05);
+}
+
+.btn-warning:hover {
+  background-color: #e0a800 !important; /* Bootstrap default warning hover */
+  box-shadow: 0px 4px 8px rgba(255, 193, 7, 0.5);
+  transform: scale(1.05);
+}
+
+.btn-info:hover {
+  background-color: #138496 !important; /* Bootstrap default info hover */
+  box-shadow: 0px 4px 8px rgba(23, 162, 184, 0.5);
+  transform: scale(1.05);
+}
+
+.btn-dark:hover {
+  background-color: #1d2124 !important; /* Bootstrap default dark hover */
+  box-shadow: 0px 4px 8px rgba(52, 58, 64, 0.5);
+  transform: scale(1.05);
+}
+.btn-secondary:hover {
+  background-color: #5a6268 !important; /* Bootstrap default secondary hover */
+  box-shadow: 0px 4px 8px rgba(108, 117, 125, 0.5);
+  transform: scale(1.05);
+}

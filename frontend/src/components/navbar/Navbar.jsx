@@ -83,10 +83,10 @@ const Navbar = () => {
 
             <div className="navlist d-flex flex-wrap navNone">
               <div className="navlist-item">
-                <Link to="/wishlist">My Shelf</Link>
+                <Link to="/wishlist" className="hovTextShadow">My Shelf</Link>
               </div>
               <Dropdown>
-                <Dropdown.Toggle variant="" id="dropdown-custom-components">
+                <Dropdown.Toggle variant="" id="dropdown-custom-components" className="hovTextShadow">
                   Browse
                 </Dropdown.Toggle>
                 <Dropdown.Menu>
@@ -108,7 +108,7 @@ const Navbar = () => {
                 </Dropdown.Menu>
               </Dropdown>
               <div className="navlist-item">
-                <Link to="/admin">Admin</Link>
+                <Link to="/admin" className="hovTextShadow">Admin</Link>
               </div>
             </div>
           </div>
@@ -163,6 +163,7 @@ const Navbar = () => {
               title="Write"
               id="dropdown-menu-align-end"
               variant="transparent"
+              
             >
               <Dropdown.Item eventKey="1">
                 <div

@@ -49,11 +49,12 @@ const Hero = () => {
         <Carousel.Item>
           <img
             className="d-block "
-            src="https://ma.wattpad.com/overdrive_hfc_desktop_v4.png"
+            src="https://ma.wattpad.com/drive_hfc_desktop_v4.png"
             alt="Third slide"
             style={{
               width: "100%",
             }}
+            onClick={() => navigate(`/productdetail/67b736ffd7397e80a84b8b23`)}
           />
           <Carousel.Caption>
             <h3>Your Next Favorite Book Awaits</h3>

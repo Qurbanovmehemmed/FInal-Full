@@ -3,6 +3,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "../../../redux/features/userSlice";
 import axios from "axios";
 import "./UserProfile.css";
+import "react-toastify/dist/ReactToastify.css"; // React Toastify stilini əlavə edin
+import { toast } from "react-toastify";
+import { Link } from "react-router-dom";
 
 const UserProfile = () => {
   const { user } = useSelector((state) => state.user);
@@ -19,7 +22,7 @@ const UserProfile = () => {
     "Drama",
     "Romance",
     "Mystery",
-  ]); // All available categories
+  ]); 
 
   useEffect(() => {
     if (user && user.existUser && user.existUser.favCategories) {
@@ -54,7 +57,9 @@ const UserProfile = () => {
           JSON.stringify({ ...user, existUser: updatedUser })
         );
         setShowModal(false);
+        toast.success("Changes saved successfully");
       } else {
+        toast.error(response.data.message || "Unknown error");
         console.error(
           "Backend failed to update favorites:",
           response.data.message || "Unknown error"
@@ -80,21 +85,32 @@ const UserProfile = () => {
     <>
       <div className="container">
         <div className="user-profile-container">
-          <div className="profile-image">
-            <img
-              src={
-                user?.existUser?.image
-                  ? `http://localhost:5000/${user.existUser.image}`
-                  : "/default-avatar.png"
-              }
-              alt={user?.existUser?.username}
-            />
+          <div className="d-flex  align-items-start justify-content-between">
+            <div className="profile-image">
+              <img
+                src={
+                  user?.existUser?.image
+                    ? `http://localhost:5000/${user.existUser.image}`
+                    : "/default-avatar.png"
+                }
+                alt={user?.existUser?.username}
+              />
+            </div>
+            <button
+              className="btn btn-primary"
+              onClick={() => (window.location.href = "/profile")}
+            >
+              Edit Profile
+            </button>
           </div>
 
           <div className="profile-details">
             <h2>{user.name}</h2>
             <p>
               <strong>Username:</strong> {user?.existUser?.username}
+            </p>
+            <p>
+              <strong>Name:</strong> {user?.existUser?.name}
             </p>
             <p>
               <strong>Email:</strong> {user?.existUser?.email}
@@ -111,13 +127,6 @@ const UserProfile = () => {
               )}
             </p>
 
-            <button
-              className="btn btn-primary"
-              onClick={() => (window.location.href = "/profile")}
-            >
-              Edit Profile
-            </button>
-
             <div className="favorite-categories">
               <div className="d-flex gap-2">
                 <h4>Fav Categories</h4>
@@ -129,10 +138,10 @@ const UserProfile = () => {
                 </button>
               </div>
 
-              <ul className="d-flex gap-3">
+              <ul className="d-flex gap-3 mt-2 flex-wrap">
                 {updatedCategories.map((cat, index) => (
                   <li key={index} className="category-item">
-                    <button>{cat}</button>
+                    <Link to={`/allproduct?category=${cat}`} className="favBtn">{cat}</Link>
                   </li>
                 ))}
               </ul>
@@ -144,7 +153,7 @@ const UserProfile = () => {
       {showModal && (
         <div className="modal">
           <div className="modal-content">
-            <h5>Kateqoriya Seç</h5>
+            <h5>Choose category</h5>
             <div className="category-list">
               {allCategories.map((cat, index) => (
                 <div key={index} className="category-option">
@@ -157,14 +166,11 @@ const UserProfile = () => {
                 </div>
               ))}
             </div>
-            <button onClick={handleSaveChanges} className="btn btn-success">
-              Yadda saxla
-            </button>
             <button
-              onClick={() => setShowModal(false)}
-              className="btn btn-secondary"
+              onClick={handleSaveChanges}
+              className="btn btn-success mt-2"
             >
-              Bağla
+              Save changes
             </button>
           </div>
         </div>

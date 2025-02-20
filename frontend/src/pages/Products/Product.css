@@ -1,69 +1,86 @@
-.filterArea{
- 
-    padding: 30px 30px;
-    background-color: white;
-    border-radius: 10px;
+/* .filterArea {
+  padding: 30px 30px;
+  background-color: white;
+  border-radius: 10px;
 }
-.filterInput{
-    width: 100%;
-    margin-bottom: 20px;
-    padding: 10px;
-    border-radius: 5px;
-    border: 1px solid #595959;
-}
-
-.removeFilterproduct{
-    background-color: whitesmoke;
-    padding: 5px 10px;
-    border-radius: 30px;
-    color: #595959;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    &:hover{
-        text-decoration: underline;
-        color: red;
-    }
+.filterInput {
+  width: 100%;
+  margin-bottom: 20px;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #595959;
 }
 
+.removeFilterproduct {
+  background-color: whitesmoke;
+  padding: 5px 10px;
+  border-radius: 30px;
+  color: #595959;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  &:hover {
+    text-decoration: underline;
+    color: red;
+  }
+} */
 
 .pagination {
-    display: flex;
-    justify-content: center;
-    list-style: none;
-    padding: 10px 0;
-  }
-  
-  .pagination li {
-    margin: 0 5px;
-  }
-  
-  .pagination a {
-    padding: 8px 12px;
-    text-decoration: none;
-    color: #333;
-    background: #f0f0f0;
-    border-radius: 5px;
-    transition: 0.3s;
-  }
-  
-  .pagination a:hover {
-    background: #d9534f;
-    color: white !important;
-  }
-  
-  .pagination .active a {
-    background: #d9534f;
-    color: white;
-  }
-  
-
-.imageAll{
-    width: 100% !important;
-    img{
-        width: 100% !important;
-        height: 100% !important;
-        object-fit: cover !important;
-    }
+  display: flex;
+  justify-content: center;
+  list-style: none;
+  padding: 10px 0;
 }
 
+.pagination li {
+  margin: 0 5px;
+}
 
+.pagination a {
+  padding: 8px 12px;
+  text-decoration: none;
+  color: #333;
+  background: #f0f0f0;
+  border-radius: 5px;
+  transition: 0.3s;
+}
+
+.pagination a:hover {
+  background: #d9534f;
+  color: white !important;
+}
+
+.pagination .active a {
+  background: #d9534f;
+  color: white;
+}
+
+/* .imageAll {
+  width: 100%;
+  height: 300px; 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  min-height: 299px;
+}
+
+.imageAll img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; 
+}
+
+.card {
+  width: 100%;
+  max-width: 280px; 
+  min-height: 420px;
+  max-height: 448px;
+  display: flex;
+  flex-direction: column;
+}
+
+.card-body {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+} */

@@ -3,9 +3,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { setLogout, setUser } from "../../redux/features/userSlice";
-import { FaEye } from "react-icons/fa";
-import { FaEyeSlash } from "react-icons/fa";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import "./Profile.scss";
+import { FaPenAlt } from "react-icons/fa";
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -15,12 +16,22 @@ const Profile = () => {
   const [username, setUsername] = useState(user?.existUser?.username || "");
   const [email, setEmail] = useState(user?.existUser?.email || "");
   const [image, setImage] = useState(null);
-  const [open, setOpen] = useState(false);
+  const [previewImage, setPreviewImage] = useState(
+    user?.existUser?.image ? `http://localhost:5000/${user.existUser.image}` : "/default-avatar.png"
+  );
 
   if (!user) {
     navigate("/login");
     return null;
   }
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImage(file);
+      setPreviewImage(URL.createObjectURL(file)); // Yeni şəkili önizləmə üçün göstər
+    }
+  };
 
   const handleUpdateProfile = async (e) => {
     e.preventDefault();
@@ -50,11 +61,10 @@ const Profile = () => {
         setName(res.data.name);
         setUsername(res.data.username);
         setEmail(res.data.email);
-        dispatch(setLogout()); // Clear user from Redux store
-        navigate("/login");
-        alert("Profile updated successfully");
+        setPreviewImage(`http://localhost:5000/${res.data.image}`); // Yenilənmiş şəkili göstər
+        toast.success("Profile updated successfully");
       } else {
-        alert("Failed to update profile");
+        toast.error("Failed to update profile");
       }
     } catch (error) {
       console.error("Error updating profile:", error);
@@ -62,75 +72,35 @@ const Profile = () => {
     }
   };
 
-  console.log("Redux-dan gələn user:", user);
   return (
-    <div className="profile-container">
-      <div className="container">
+    <div className="container">
+      <div className="profile-container">
         <div className="profile-details">
-          {/* <div className="profile-info">
-            <div className="profile-image">
-              <img
-                src={
-                  user?.existUser?.image
-                    ? `http://localhost:5000/${user.existUser.image}`
-                    : "/default-avatar.png"
-                }
-                alt={user?.existUser?.username}
-              />
-            </div>
-            <div className="profile-text">
-              <h3>Name: {user?.existUser?.name}</h3>
-              <h3>Username: {user?.existUser?.username}</h3>
-              <p>Email: {user?.existUser?.email}</p>
-              <p>
-                Joined:{" "}
-                {new Date(user?.existUser?.createdAt).toLocaleDateString()}
-              </p>
-            </div>
-          </div> */}
-         
-
           <div className="profile-update">
             <h3 className="text-center">Profile</h3>
             <form onSubmit={handleUpdateProfile}>
               <div className="profileDeatils">
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    position: "relative",
-                    justifyContent: "center",
-                  }}
-                >
-                  <label htmlFor="fileUpload" style={{ cursor: "pointer" }}>
+                <div className="profile-image-wrapper">
+                  <label htmlFor="fileUpload" className="profile-image-label">
                     <img
-                      src={
-                        user?.existUser?.image
-                          ? `http://localhost:5000/${user.existUser.image}`
-                          : "/default-avatar.png"
-                      }
+                      src={previewImage} // Yeni şəkil seçilərsə, önizləmə göstər
                       alt={user?.existUser?.username}
-                      style={{
-                        width: "100px",
-                        height: "100px",
-                        borderRadius: "50%",
-                      }}
+                      className="profile-image"
                     />
+                    <div className="edit-icon">
+                      <FaPenAlt />
+                    </div>
                   </label>
 
                   <input
                     type="file"
                     id="fileUpload"
                     style={{ display: "none" }}
-                    onChange={(e) => setImage(e.target.files[0])}
+                    onChange={handleImageChange}
                   />
-                 
-                </div>
-                <div className="d-flex gap-2 justify-content-center">
-                <div onClick={()=>setOpen(!open)} style={{color:"blue ",cursor:"pointer",textAlign:"center"}}>Change Image</div>
-                {open ? (<div>click image</div>) : ("")}
                 </div>
               </div>
+
               <div>
                 <div className="profilText">Name</div>
                 <input
@@ -151,7 +121,6 @@ const Profile = () => {
               </div>
               <div>
                 <div className="profilText">Email</div>
-
                 <input
                   type="email"
                   value={email}
@@ -164,34 +133,30 @@ const Profile = () => {
             </form>
           </div>
 
+          <div className="d-flex gap-2 justify-content-between align-items-center mt-2 flex-wrap">
+            <div>
+              <div className="password-reset">
+                <button
+                  className="btn btn-primary"
+                  onClick={() => navigate("/forgotpassword")}
+                >
+                  Reset Password
+                </button>
+              </div>
+            </div>
 
-        <div className="d-flex gap-2 justify-content-between align-items-center mt-2">
-        <div style={{}}>
-           
-           <div className="password-reset">
-             <button
-               className="btn btn-primary"
-               onClick={() => {
-                 navigate("/resetpassword");
-               }}
-             >
-               Reset Password
-             </button>
-           </div>
-         </div>
-
-         <div className="logout ">
-           <button
-             className="btn btn-danger"
-             onClick={() => {
-               dispatch(setLogout());
-               navigate("/login");
-             }}
-           >
-             Logout
-           </button>
-         </div>
-        </div>
+            <div className="logout">
+              <button
+                className="btn btn-danger"
+                onClick={() => {
+                  dispatch(setLogout());
+                  navigate("/login");
+                }}
+              >
+                Logout
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>

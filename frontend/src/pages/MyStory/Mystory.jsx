@@ -27,7 +27,7 @@ const Mystory = () => {
   const [previewImage, setPreviewImage] = useState("");
 
   const myStoryProducts = products.filter(
-    (product) => product?.author === user?.existUser?.name
+    (product) => product?.author === user?.existUser?.username
   );
   useEffect(() => {
     if (editProductId) {
@@ -240,7 +240,7 @@ const Mystory = () => {
                 value={values.description}
               />
             </div>
-            <div className="form-group">
+            {/* <div className="form-group">
               <label htmlFor="author">Author</label>
               <div className="text-danger">{errors.author}</div>
               <input
@@ -250,12 +250,12 @@ const Mystory = () => {
                 onChange={handleChange}
                 value={values.author}
               />
-            </div>
+            </div> */}
             <div className="form-group">
               <label htmlFor="categories">Categories</label>
               <div className="text-danger">{errors.categories}</div>
               <CategorySelect
-                categories={["Romance", "Fantasy", "Horror", "Mystery"]}
+                categories={["Romance", "Fantasy", "Horror", "Mystery","Drama"]}
                 selectedCategories={selectedCategories}
                 setSelectedCategories={(categories) => {
                   setSelectedCategories(categories);

@@ -1,0 +1,71 @@
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { getProducts } from "../../redux/features/ProductSlice";
+import Slider from "react-slick"; // React Slick kitabxanası
+import "slick-carousel/slick/slick.css"; 
+import "slick-carousel/slick/slick-theme.css";
+import Card from "../card/Card";
+import { MdNavigateNext } from "react-icons/md";
+import { Link } from "react-router-dom";
+
+const Drama = () => {
+  const dispatch = useDispatch();
+  const { products } = useSelector((state) => state.products);
+
+  useEffect(() => {
+    dispatch(getProducts());
+  }, [dispatch]);
+
+  const DramaProducts = products.filter((product) =>
+    product.categories.includes("Drama")
+  );
+
+  const sliderSettings = {
+    dots: false,
+    infinite: false,
+    speed: 500,
+    slidesToShow: 5, // Masaüstü görünüşdə 6 məhsul göstər
+    slidesToScroll: 3,
+    responsive: [
+   
+      {
+        breakpoint: 1024, // Tablet
+        settings: {
+          slidesToShow: 3,
+          slidesToScroll: 2,
+        },
+      },
+      {
+        breakpoint: 768, // Kiçik ekranlar (mobil)
+        settings: {
+          slidesToShow: 1,
+          slidesToScroll: 1,
+        },
+      },
+    ],
+  };
+
+  return (
+    <div className="container mt-5">
+      <div className="d-flex justify-content-between mb-2">
+        <h3>Drama</h3>
+        <Link to={"/allproduct"} className="d-flex align-items-center  ">
+          view all
+          <MdNavigateNext />
+        </Link>
+      </div>
+
+      <Slider {...sliderSettings}>
+        {DramaProducts.map((product) => (
+          <div key={product._id} className="col-2">
+            <Card product={product} />
+          </div>
+        ))}
+      </Slider>
+    </div>
+  );
+};
+
+
+
+export default Drama;

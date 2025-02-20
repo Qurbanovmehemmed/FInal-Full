@@ -35,7 +35,7 @@ const Create = () => {
       image: null,
       title: "",
       description: "",
-      author: user?.existUser?.name || "",
+      author: user?.existUser?.username || "",
       categories: [],
       
     },
@@ -175,7 +175,7 @@ const Create = () => {
                 <label htmlFor="categories">Categories</label>
                 <div className="text-danger">{errors.categories}</div>
                 <CategorySelect
-                  categories={["Romance", "Horror", "Fantasy", "Mystery"]}
+                  categories={["Romance", "Horror", "Fantasy", "Mystery","Drama"]}
                   selectedCategories={selectedCategories}
                   setSelectedCategories={setSelectedCategories}
                 />

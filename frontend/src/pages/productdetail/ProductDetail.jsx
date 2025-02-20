@@ -22,6 +22,12 @@ const ProductDetail = () => {
 
   const findProduct = products.find((product) => product._id === id);
 
+  // !qeyd ed
+  
+    useEffect(() => {
+      window.scrollTo(0, 0);
+    }, []); 
+
   useEffect(() => {
     axios
       .get(`http://localhost:5000/api/reviews/${id}`, { withCredentials: true })
@@ -609,7 +615,7 @@ const ProductDetail = () => {
             )}
           </div>
           <div
-            className="col-md-3 shadow detailShadow p-4 "
+            className="col-md-3 shadow detailShadow p-4 mt-2"
             style={{
               background: "#fff",
               borderRadius: "10px",

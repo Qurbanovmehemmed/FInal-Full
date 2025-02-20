@@ -25,7 +25,7 @@ userRouter.post("/forgotpassword", forgotPassword);
 userRouter.post("/resetpassword", resetPassword);
 userRouter.put("/update", verifyToken, upload.single("image"), updateProfile);
 userRouter.put("/update-favorites", verifyToken, updateFavoriteCategories);
-userRouter.get("/", verifyToken,  getAllUsers);
+userRouter.get("/",  getAllUsers);
 userRouter.post("/admin/:id",   addAdmin);
 userRouter.delete("/:userId", verifyToken, deleteUser);
 
