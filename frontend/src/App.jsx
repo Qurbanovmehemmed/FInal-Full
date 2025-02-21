@@ -20,6 +20,7 @@ import Mystory from "./pages/MyStory/Mystory";
 import ProtectedRoute from "./routes/ProtectRouter/ProtectedRoute";
 import ProductDetail from "./pages/productdetail/ProductDetail";
 import Alladmins from "./pages/Alladmins";
+import ProtectLoginRegister from "./routes/ProtectLoginRegister";
 
 const router = createBrowserRouter([
   {
@@ -54,10 +55,8 @@ const router = createBrowserRouter([
         path: "/productdetail/:id",
         element: <ProductDetail />,
       },
-      
 
       {
-        path: "/admin",
         element: <ProtectAdmin />,
         children: [
           {
@@ -86,7 +85,7 @@ const router = createBrowserRouter([
             path: "/create",
             element: <Create />,
           },
-         
+
           {
             path: "/userprofile",
             element: <UserProfile />,
@@ -96,13 +95,19 @@ const router = createBrowserRouter([
     ],
   },
   {
-    path: "/register",
-    element: <Register />,
+    element: <ProtectLoginRegister />,
+    children: [
+      {
+        path: "/register",
+        element: <Register />,
+      },
+      {
+        path: "/login",
+        element: <Login />,
+      },
+    ],
   },
-  {
-    path: "/login",
-    element: <Login />,
-  },
+
   {
     path: "/resetpassword",
     element: <Resetpassword />,

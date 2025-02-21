@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import "./ProductDetail.scss";
-import { data, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { HiUser } from "react-icons/hi2";
 import axios from "axios";
 import RatingInput from "../../components/catSelect/RatingInput";
 import WishlistButtons from "../wishlist/wishlistbutton/Wishlistbutton";
-import { MdNavigateNext } from "react-icons/md";
+import "react-toastify/dist/ReactToastify.css";
+import { toast } from "react-toastify";
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -19,14 +20,24 @@ const ProductDetail = () => {
   const [rating, setRating] = useState(5);
   const [editingReview, setEditingReview] = useState(null);
   const [editingComment, setEditingComment] = useState(null);
+  const [visibleReviews, setVisibleReviews] = useState(3);
+  const [visibleComments, setVisibleComments] = useState(3);
+
+  const loadMoreReviews = () => {
+    setVisibleReviews((prev) => prev + 5);
+  };
+
+  const loadMoreComments = () => {
+    setVisibleComments((prev) => prev + 5);
+  };
 
   const findProduct = products.find((product) => product._id === id);
 
   // !qeyd ed
-  
-    useEffect(() => {
-      window.scrollTo(0, 0);
-    }, []); 
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   useEffect(() => {
     axios
@@ -42,7 +53,7 @@ const ProductDetail = () => {
       .then((response) => {
         const updatedReviews = response.data.reviews.map((review) => ({
           ...review,
-          comments: review.comments || [], // Ensure comments is always an array
+          comments: review.comments || [],
         }));
         setReviews(updatedReviews);
       });
@@ -66,33 +77,49 @@ const ProductDetail = () => {
       setReviews(data.reviews);
       setReviewText("");
       setRating(5);
+      toast.success("Review added successfully!");
     } catch (error) {
       console.error("Error adding review:", error);
     }
   };
 
   const handleEditReview = async () => {
-    if (!reviewText.trim() || !editingReview) return;
-
+    if (!editingReview) return;  // Əgər redaktə ediləcək review yoxdursa, heç bir şey etmə
+  
+    const apiUrl = user.existUser?.isAdmin
+      ? `http://localhost:5000/api/reviews/admin/${editingReview._id}`  // Adminlər üçün URL
+      : `http://localhost:5000/api/reviews/${editingReview._id}`;  // Normal istifadəçilər üçün URL
+  
     try {
-      await axios.put(
-        `http://localhost:5000/api/reviews/${editingReview._id}`,
+      const { data } = await axios.put(
+        apiUrl,  // Yuxarıda seçilən URL istifadə edilir
         { content: reviewText, rating },
         { withCredentials: true }
       );
-
-      const { data } = await axios.get(
-        `http://localhost:5000/api/reviews/${id}`,
-        { withCredentials: true }
+  
+      setReviews((prevReviews) =>
+        prevReviews.map((review) =>
+          review._id === editingReview._id
+            ? { ...review, content: reviewText, rating }
+            : review
+        )
       );
-
-      setReviews(data.reviews);
-      setReviewText("");
-      setRating(5);
+  
       setEditingReview(null);
+      setReviewText("");
+      setRating(0);
+      toast.success("Review updated successfully!");
     } catch (error) {
-      console.error("Error editing review:", error);
+      console.error("Error updating review:", error);
     }
+  };
+  
+
+  const handleEditClick = (review) => {
+    setEditingReview(review);
+    setReviewText(review.content);
+    setRating(review.rating);
+   
   };
 
   const handleDeleteReview = async (reviewId) => {
@@ -107,6 +134,7 @@ const ProductDetail = () => {
       );
 
       setReviews(data.reviews);
+      toast.success("Review deleted successfully!");
     } catch (error) {
       console.error("Error deleting review:", error);
     }
@@ -131,20 +159,17 @@ const ProductDetail = () => {
 
   const handleLikeReview = async (reviewId) => {
     try {
-      // Like əməliyyatını serverə göndəririk
       const { data } = await axios.put(
         `http://localhost:5000/api/reviews/like/${reviewId}`,
         {},
         { withCredentials: true }
       );
 
-      // Serverdən yenilənmiş like sayını alırıq
       const { data: reviewsData } = await axios.get(
-        `http://localhost:5000/api/reviews/${id}`, // Müvafiq review'ların olduğu yeri almaq
+        `http://localhost:5000/api/reviews/${id}`,
         { withCredentials: true }
       );
 
-      // Yenilənmiş review-ları set edirik
       setReviews(reviewsData.reviews);
     } catch (error) {
       console.error("Error liking review:", error);
@@ -171,6 +196,7 @@ const ProductDetail = () => {
               : review
           )
         );
+        toast.success("Comment added successfully!");
       } else {
         console.error("No comment data received from the server.");
       }
@@ -179,63 +205,9 @@ const ProductDetail = () => {
     } catch (error) {
       console.error("Error adding comment:", error);
     }
-    window.location.reload();
   };
 
-  // const handleEditComment = async (reviewId) => {
-  //   // Şərh mətni boşsa və ya editingComment mövcud deyilsə, əməliyyat etməməliyik
-  //   if (!editingComment?.text.trim() || !editingComment) return;
 
-  //   // Cookies-dən tokeni alırıq
-  //   const token = cookies.get('token');
-  //   if (!token) {
-  //     console.error("Token not found in cookies!");
-  //     return;
-  //   }
-
-  //   try {
-  //     // PUT sorğusunu göndəririk
-  //     const response = await axios.put(
-  //       `http://localhost:5000/api/reviews/comment/${reviewId}/${editingComment._id}`,
-  //       { text: editingComment.text },
-  //       {
-  //         headers: {
-  //           Authorization: `Bearer ${token}`, // Tokeni header-da göndəririk
-  //         },
-  //         withCredentials: true, // Cookies göndərmək üçün bu seçimi saxlayırıq
-  //       }
-  //     );
-
-  //     console.log("Response after editing comment:", response.data);
-
-  //     // Yenilənmiş şərhləri tətbiq edirik
-  //     setCommentText(""); // Şərh mətni təmizlənir
-  //     setReviews((prevReviews) =>
-  //       prevReviews.map((review) =>
-  //         review._id === reviewId
-  //           ? {
-  //               ...review,
-  //               comments: review.comments.map((c) =>
-  //                 c._id === editingComment._id
-  //                   ? { ...c, text: editingComment.text } // Redaktə olunmuş şərh
-  //                   : c
-  //               ),
-  //             }
-  //           : review
-  //       )
-  //     );
-
-  //     setEditingComment(null); // Redaktə bitdi, resetləyirik
-  //   } catch (error) {
-  //     console.error("Error editing comment:", error);
-  //   }
-
-  //   // Konsol log ilə reviewId və editingComment._id-yi yoxlaya bilərsiniz
-  //   console.log("Review ID:", reviewId);
-  //   console.log("Comment ID:", editingComment?._id);
-  // };
-
-  useEffect(() => {}, [reviews]);
 
   const handleDeleteComment = async (reviewId, commentId) => {
     try {
@@ -251,20 +223,12 @@ const ProductDetail = () => {
             : r
         )
       );
+      toast.success("Comment deleted successfully!");
     } catch (error) {
       console.error("Error deleting comment:", error);
     }
   };
 
-  const commentUser = (comment) => {
-    const isUserComment = user?.existUser?._id === comment.userId;
-
-    if (isUserComment) {
-      return user.existUser.username;
-    } else {
-      return comment.userId !== user?.existUser?._id ? comment.username : "";
-    }
-  };
   const goBack = () => {
     navigate(-1);
   };
@@ -284,34 +248,12 @@ const ProductDetail = () => {
       );
 
       setReviews(data.reviews);
+      toast.success("Review deleted successfully!");
     } catch (error) {
       console.error("Error deleting review:", error);
     }
   };
 
-  const handleEditReviewAdmin = async () => {
-    if (!reviewText.trim() || !editingReview) return;
-
-    try {
-      await axios.put(
-        `http://localhost:5000/api/reviews/admin/${editingReview._id}`,
-        { content: reviewText, rating },
-        { withCredentials: true }
-      );
-
-      const { data } = await axios.get(
-        `http://localhost:5000/api/reviews/${id}`,
-        { withCredentials: true }
-      );
-
-      setReviews(data.reviews);
-      setReviewText("");
-      setRating(5);
-      setEditingReview(null);
-    } catch (error) {
-      console.error("Error editing review:", error);
-    }
-  };
 
   const handleDeleteCommentAdmin = async (reviewId, commentId) => {
     try {
@@ -327,10 +269,12 @@ const ProductDetail = () => {
             : r
         )
       );
+      toast.success("Comment deleted successfully!");
     } catch (error) {
       console.error("Error deleting comment:", error);
     }
   };
+
 
   return (
     <>
@@ -390,7 +334,7 @@ const ProductDetail = () => {
 
       <div className="container">
         <div className="row mt-4">
-          <div className="col-md-9">
+          <div className="col-12 col-sm-12 col-md-8 col-lg-9 ">
             <div className="tabs">
               <button
                 className={`tab-button ${
@@ -424,9 +368,9 @@ const ProductDetail = () => {
               <div className="tab-content">
                 <div className="reviews-section mt-3">
                   {reviews.length > 0 ? (
-                    reviews.map((review) => (
+                    reviews.slice(0, visibleReviews).map((review) => (
                       <div key={review._id} className="review">
-                        <div className="d-flex gap-3">
+                        <div className="d-flex gap-3 flex-wrap">
                           <div className="userRew">
                             {review.userId?.image ? (
                               <img
@@ -468,7 +412,41 @@ const ProductDetail = () => {
                               </p>
                             </div>
 
-                            <p className="rewContent">{review.content}</p>
+                            <div className="mb-4">
+                              {editingReview?._id === review._id ? (
+                                // Edit mode - Textarea və "Update Review" düyməsi
+                                <div>
+                                  <textarea
+                                    className="form-control"
+                                    value={reviewText}
+                                    onChange={(e) =>
+                                      setReviewText(e.target.value)
+                                    }
+                                  />
+                                  <RatingInput
+                                    rating={rating}
+                                    setRating={setRating}
+                                  />
+                                  <button
+                                    className="btn btn-success mt-2 mx-2"
+                                    onClick={handleEditReview}
+                                  >
+                                    Update Review
+                                  </button>
+                                  <button
+                                    className="btn btn-secondary mt-2"
+                                    onClick={() => setEditingReview(null)}
+                                  >
+                                    Cancel
+                                  </button>
+                                </div>
+                              ) : (
+                                // Normal görünüş - Sadəcə mətn və "Edit" düyməsi
+                                <p className="reviewContentText">
+                                  {review.content}
+                                </p>
+                              )}
+                            </div>
 
                             <div className="d-flex gap-2">
                               <button
@@ -487,49 +465,66 @@ const ProductDetail = () => {
                             {openCommentSection === review?._id && (
                               <div className="comments mt-2">
                                 {review.comments?.length > 0 &&
-                                  review.comments.map((comment) => (
-                                    <div key={comment._id} className="comment ">
-                                      <div className="">
-                                        <div className="d-flex gap-2 align-items-center">
-                                          <div className="commentImg">
-                                            <img
-                                              src={`http://localhost:5000/${comment.image}`}
-                                              alt=""
-                                            />
-                                          </div>
-                                          <strong>{comment?.username}</strong>
-                                        </div>
-                                        <div className="commentContent">
-                                          <div>{comment.text}</div>
-                                        </div>
-                                      </div>
-
-                                      {user &&
-                                        (user.existUser?._id ===
-                                          comment?.userId ||
-                                          user.existUser?.isAdmin) && (
-                                          <>
-                                            <div className="deleteComment">
-                                              <p
-                                                onClick={() =>
-                                                  user.existUser?.isAdmin
-                                                    ? handleDeleteCommentAdmin(
-                                                        review._id,
-                                                        comment._id
-                                                      )
-                                                    : handleDeleteComment(
-                                                        review._id,
-                                                        comment._id
-                                                      )
-                                                }
-                                              >
-                                                Delete
-                                              </p>
+                                  review.comments
+                                    .slice(0, visibleComments)
+                                    .map((comment) => (
+                                      <div
+                                        key={comment._id}
+                                        className="comment "
+                                      >
+                                        <div className="">
+                                          <div className="d-flex gap-2 align-items-center">
+                                            <div className="commentImg">
+                                              <img
+                                                src={`http://localhost:5000/${comment.image}`}
+                                                alt=""
+                                              />
                                             </div>
-                                          </>
-                                        )}
-                                    </div>
-                                  ))}
+                                            <strong>{comment?.username}</strong>
+                                          </div>
+                                          <div className="commentContent">
+                                            <div>{comment.text}</div>
+                                          </div>
+                                        </div>
+
+                                        {user &&
+                                          (user.existUser?._id ===
+                                            comment?.userId ||
+                                            user.existUser?.isAdmin) && (
+                                            <>
+                                              <div className="deleteComment">
+                                                <p
+                                                  onClick={() =>
+                                                    user.existUser?.isAdmin
+                                                      ? handleDeleteCommentAdmin(
+                                                          review._id,
+                                                          comment._id
+                                                        )
+                                                      : handleDeleteComment(
+                                                          review._id,
+                                                          comment._id
+                                                        )
+                                                  }
+                                                >
+                                                  Delete
+                                                </p>
+                                              </div>
+                                            </>
+                                          )}
+                                      </div>
+                                    ))}
+                                {review.comments.length > visibleComments && (
+                                  <p
+                                    className="load-more-reviews text-muted text-center mb-4"
+                                    style={{
+                                      width: "100%",
+                                    }}
+                                    onClick={loadMoreComments}
+                                  >
+                                    Load More
+                                  </p>
+                                )}
+
                                 <div className="add-comment mt-2">
                                   <input
                                     type="text"
@@ -544,7 +539,7 @@ const ProductDetail = () => {
                                     className="btn btn-success"
                                     onClick={() => handleAddComment(review._id)}
                                   >
-                                    Add Comment
+                                    Add
                                   </button>
                                 </div>
                               </div>
@@ -560,10 +555,7 @@ const ProductDetail = () => {
                                 <div className="d-flex gap-1 ">
                                   <button
                                     className="btn btn-sm btn-warning"
-                                    onClick={() => {
-                                      setEditingReview(review);
-                                      setReviewText(review.content);
-                                    }}
+                                    onClick={() => handleEditClick(review)}  
                                   >
                                     Edit
                                   </button>
@@ -587,6 +579,14 @@ const ProductDetail = () => {
                     <p>No reviews yet.</p>
                   )}
 
+                  {reviews.length > visibleReviews && (
+                    <p
+                      className="load-more-reviews text-muted text-center"
+                      onClick={loadMoreReviews}
+                    >
+                      Load More
+                    </p>
+                  )}
                   {user && (
                     <div className="add-review mt-3">
                       <textarea
@@ -615,15 +615,14 @@ const ProductDetail = () => {
             )}
           </div>
           <div
-            className="col-md-3 shadow detailShadow p-4 mt-2"
+            className="col-12 col-sm-12 col-md-4 col-lg-3 col shadow detailShadow p-4 mt-2"
             style={{
               background: "#fff",
               borderRadius: "10px",
-              maxHeight: "885px",
             }}
           >
             <h5>You may also like</h5>
-            <div className="similar-products ">
+            <div className="similar-products d-flex flex-column align-items-center">
               {products
                 .filter(
                   (product) =>
@@ -632,7 +631,6 @@ const ProductDetail = () => {
                       findProduct?.categories.includes(category)
                     )
                 )
-                .slice(0, 5)
                 .map((product) => (
                   <div key={product._id} className="similar-product-card  mt-4">
                     <div className="d-flex gap-2">

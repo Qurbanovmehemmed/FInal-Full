@@ -33,7 +33,7 @@
   padding: 10px 20px;
   cursor: pointer;
   margin: 30px;
-  min-width: 267px;
+  /* min-width: 267px; */
 }
 .customAdd {
   border-radius: 30px;

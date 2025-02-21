@@ -63,11 +63,20 @@
   border-radius: 5px;
   border: 1px solid #21212147;
   padding: 30px;
+  max-width: 900px;
+}
+.reviewContentText{
+  font-size: 16px;
+  color: #121212;
+  max-width: 800px;
+  word-wrap: break-word; /* Sözləri düzgün şəkildə bölmək */
+  overflow-wrap: break-word; 
 }
 .review-actions{
   font-size: 14px;
     color: #777;
     font-style: italic;
+   
 }
 .userRew{
   display: flex;
@@ -155,11 +164,12 @@
   max-width: 188px;
 }
 .comments {
+  width: 100%;
   margin-top: 10px;
   border-top: 1px solid #21212147;
 }
 .comment{
-  padding: 30px 0px 20px 50px;  
+  padding: 20px;  
   border-top: 1px solid #21212147;
   .commentImg{
     width: 50px;
@@ -172,34 +182,47 @@
   }
   .commentContent{
     margin-top: 20px;
-    max-width: 850px;
+    max-width: 800px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
   }
 }
 .deleteComment{
   color: #DF4244;
   cursor: pointer;
   display: flex;
-  width: 100%;
-  justify-content: flex-end;
+  margin-top: 10px;
   :hover{
     text-decoration: underline;
   }
 }
 .add-comment{
-  padding: 0px 0px 20px 50px;
   display: flex;
   align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
   input{
+    width: 70%;
+    border-radius: 5px;
     padding: 10px;
-    border-radius: 30px 0px 0px 30px;
     border: 1px solid #21212147;
   }
   button{
-    padding: 10px 20px;
-    border-radius: 0px 30px 30px 0px;
+    width: 20%;
+    padding: 10px;
     border: none;
     color: white;
     cursor: pointer;
   }
 
+}
+.reviews-section{
+  .load-more-reviews{
+    cursor: pointer;
+    transition: all 0.3s ease;
+    &:hover{
+      text-decoration: underline;
+      color: #000 !important;
+    }
+  }
 }

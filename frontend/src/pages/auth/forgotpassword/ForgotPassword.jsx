@@ -42,7 +42,7 @@ const ForgotPassword = () => {
           handleSubmit();
         }}
       >
-        <h3>ForgotPassword</h3>
+        <h3>Forgot Password</h3>
 
         <div className="form-group">
           <label htmlFor="username">Email</label>

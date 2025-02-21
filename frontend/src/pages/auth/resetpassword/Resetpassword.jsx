@@ -49,7 +49,7 @@ const Resetpassword = () => {
           handleSubmit();
         }}
       >
-        <h3>ResetPassword</h3>
+        <h3>Reset Password</h3>
 
         <div className="form-group">
           <label htmlFor="username">New password</label>

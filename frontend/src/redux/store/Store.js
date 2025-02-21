@@ -45,7 +45,7 @@ export const store = configureStore({
     products: persistedProductReducer,
     basket: persistedBasketReducer,
     wishlist: persistedWishlistReducer,
-    user:userSlice.reducer ,
+    user:userSlice.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

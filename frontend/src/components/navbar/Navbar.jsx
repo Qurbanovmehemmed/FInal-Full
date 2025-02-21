@@ -83,10 +83,16 @@ const Navbar = () => {
 
             <div className="navlist d-flex flex-wrap navNone">
               <div className="navlist-item">
-                <Link to="/wishlist" className="hovTextShadow">My Shelf</Link>
+                <Link to="/wishlist" className="hovTextShadow">
+                  My Shelf
+                </Link>
               </div>
               <Dropdown>
-                <Dropdown.Toggle variant="" id="dropdown-custom-components" className="hovTextShadow">
+                <Dropdown.Toggle
+                  variant=""
+                  id="dropdown-custom-components"
+                  className="hovTextShadow"
+                >
                   Browse
                 </Dropdown.Toggle>
                 <Dropdown.Menu>
@@ -107,9 +113,13 @@ const Navbar = () => {
                   </Dropdown.Item>
                 </Dropdown.Menu>
               </Dropdown>
-              <div className="navlist-item">
-                <Link to="/admin" className="hovTextShadow">Admin</Link>
-              </div>
+              {user?.existUser?.isAdmin ? (
+                  <div className="navlist-item">
+                    <Link to="/admin">Admin</Link>
+                  </div>
+                ) : (
+                  ""
+                )}
             </div>
           </div>
 
@@ -163,7 +173,6 @@ const Navbar = () => {
               title="Write"
               id="dropdown-menu-align-end"
               variant="transparent"
-              
             >
               <Dropdown.Item eventKey="1">
                 <div
@@ -203,11 +212,10 @@ const Navbar = () => {
                 data-bs-toggle="dropdown"
               >
                 {user ? (
-                  <div>
+                  <div className="d-flex align-items-center gap-1 ">
                     <img
-                      style={{ width: "30px", height: "30px" }}
+                      style={{ width: "30px", height: "30px", borderRadius: "50%" }}
                       src={`http://localhost:5000/${user?.existUser?.image}`}
-                      alt=""
                     />
                     {user?.existUser?.username}
                   </div>
@@ -267,9 +275,9 @@ const Navbar = () => {
                     data-bs-toggle="dropdown"
                   >
                     {user ? (
-                      <div>
-                        <img
-                          style={{ width: "30px", height: "30px" }}
+                      <div className="d-flex align-items-center gap-1 ">
+                      <img
+                        style={{ width: "30px", height: "30px", borderRadius: "50%" }}
                           src={`http://localhost:5000/${user?.existUser?.image}`}
                           alt=""
                         />
@@ -384,19 +392,18 @@ const Navbar = () => {
                     </Dropdown.Item>
                   </Dropdown.Menu>
                 </Dropdown>
-                <div className="navlist-item">
-                  <Link to="/">Home</Link>
-                </div>
+
                 <div className="navlist-item">
                   <Link to="/wishlist">My Shelf</Link>
                 </div>
 
-                <div className="navlist-item">
-                  <Link to="/women">Women</Link>
-                </div>
-                <div className="navlist-item">
-                  <Link to="/admin">Admin</Link>
-                </div>
+                {user?.existUser?.isAdmin ? (
+                  <div className="navlist-item">
+                    <Link to="/admin">Admin</Link>
+                  </div>
+                ) : (
+                  ""
+                )}
               </div>
               <div className="navInput">
                 <input

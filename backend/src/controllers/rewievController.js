@@ -124,14 +124,14 @@ export const addComment = async (req, res) => {
         .json({ success: false, message: "Review not found" });
 
     // User məlumatlarını tapırıq
-    const cuser = await user.findById(userId); // Burada istifadəçi məlumatları tapılır
+    const cuser = await user.findById(userId); // `user` yox, `User` olmalıdır
     if (!cuser)
       return res
         .status(404)
         .json({ success: false, message: "User not found" });
 
-    const username = cuser.username; // cuser istifadə edilməlidir
-    const image = cuser.image; // cuser istifadə edilməlidir
+    const username = cuser.username;
+    const image = cuser.image;
 
     // Yeni şərhi yaradıb review-a əlavə edirik
     const newComment = { userId, username, text, image };
@@ -139,11 +139,14 @@ export const addComment = async (req, res) => {
 
     // Review-u yeniləyirik
     await review.save();
-    res.status(201).json({ success: true, comments: review.comments });
+
+    // BÜTÜN REVIEW MƏLUMATLARI GERİ QAYTARILIR
+    res.status(201).json({ success: true, review });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
 
 export const editComment = async (req, res) => {
   try {
