@@ -5,6 +5,7 @@ import { persistor, store } from "./redux/store/Store";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import { ToastContainer } from "react-toastify";
+import Chat from "./pages/chat/Chat.jsx";
 
 createRoot(document.getElementById("root")).render(
   <Provider store={store}>

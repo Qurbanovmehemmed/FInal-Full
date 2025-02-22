@@ -8,6 +8,7 @@ import Releated from "../components/Releated/Releated";
 import NewReleases from "../components/newReleases/NewReleases";
 import Drama from "../components/Drama/Drama";
 import { useSelector } from "react-redux";
+import Chat from "./chat/Chat";
 
 const Home = () => {
   const {user} = useSelector((state) => state.user);
@@ -21,6 +22,7 @@ const Home = () => {
     <Mystery/>
     <NewReleases/>
     <Drama/>
+    <Chat/>
     </div>
   );
 };
