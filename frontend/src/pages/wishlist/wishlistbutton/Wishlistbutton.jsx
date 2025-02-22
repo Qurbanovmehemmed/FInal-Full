@@ -104,7 +104,7 @@ const WishlistButtons = ({ productId }) => {
               ? "btn-outline-danger"
               : currentStatus === "alreadyRead"
               ? "btn-outline-primary"
-              : "btn-danger"
+              : "btnx-dangerx"
           }`}
           onClick={handleModalToggle}
         >

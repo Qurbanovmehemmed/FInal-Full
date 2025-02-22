@@ -22,6 +22,7 @@ const ProductDetail = () => {
   const [editingComment, setEditingComment] = useState(null);
   const [visibleReviews, setVisibleReviews] = useState(3);
   const [visibleComments, setVisibleComments] = useState(3);
+  const [sortBy, setSortBy] = useState("oldest"); // Default olaraq "Newest"
 
   const loadMoreReviews = () => {
     setVisibleReviews((prev) => prev + 5);
@@ -84,19 +85,19 @@ const ProductDetail = () => {
   };
 
   const handleEditReview = async () => {
-    if (!editingReview) return;  // Əgər redaktə ediləcək review yoxdursa, heç bir şey etmə
-  
+    if (!editingReview) return; // Əgər redaktə ediləcək review yoxdursa, heç bir şey etmə
+
     const apiUrl = user.existUser?.isAdmin
-      ? `http://localhost:5000/api/reviews/admin/${editingReview._id}`  // Adminlər üçün URL
-      : `http://localhost:5000/api/reviews/${editingReview._id}`;  // Normal istifadəçilər üçün URL
-  
+      ? `http://localhost:5000/api/reviews/admin/${editingReview._id}` // Adminlər üçün URL
+      : `http://localhost:5000/api/reviews/${editingReview._id}`; // Normal istifadəçilər üçün URL
+
     try {
       const { data } = await axios.put(
-        apiUrl,  // Yuxarıda seçilən URL istifadə edilir
+        apiUrl, // Yuxarıda seçilən URL istifadə edilir
         { content: reviewText, rating },
         { withCredentials: true }
       );
-  
+
       setReviews((prevReviews) =>
         prevReviews.map((review) =>
           review._id === editingReview._id
@@ -104,7 +105,7 @@ const ProductDetail = () => {
             : review
         )
       );
-  
+
       setEditingReview(null);
       setReviewText("");
       setRating(0);
@@ -113,13 +114,11 @@ const ProductDetail = () => {
       console.error("Error updating review:", error);
     }
   };
-  
 
   const handleEditClick = (review) => {
     setEditingReview(review);
     setReviewText(review.content);
     setRating(review.rating);
-   
   };
 
   const handleDeleteReview = async (reviewId) => {
@@ -207,8 +206,6 @@ const ProductDetail = () => {
     }
   };
 
-
-
   const handleDeleteComment = async (reviewId, commentId) => {
     try {
       await axios.delete(
@@ -254,7 +251,6 @@ const ProductDetail = () => {
     }
   };
 
-
   const handleDeleteCommentAdmin = async (reviewId, commentId) => {
     try {
       await axios.delete(
@@ -275,6 +271,18 @@ const ProductDetail = () => {
     }
   };
 
+  const sortedReviews = [...reviews].sort((a, b) => {
+    if (sortBy === "newest") {
+      return new Date(b.createdAt) - new Date(a.createdAt); // Yenidən köhnəyə
+    }
+    if (sortBy === "oldest") {
+      return new Date(a.createdAt) - new Date(b.createdAt); // Köhnədən yeniyə
+    }
+    if (sortBy === "mostLiked") {
+      return (b.likes?.length || 0) - (a.likes?.length || 0); // Ən çox like alan birinci
+    }
+    return 0;
+  });
 
   return (
     <>
@@ -334,24 +342,39 @@ const ProductDetail = () => {
 
       <div className="container">
         <div className="row mt-4">
-          <div className="col-12 col-sm-12 col-md-8 col-lg-9 ">
-            <div className="tabs">
-              <button
-                className={`tab-button ${
-                  selectedTab === "description" ? "active" : ""
-                }`}
-                onClick={() => setSelectedTab("description")}
-              >
-                Story line By Author
-              </button>
-              <button
-                className={`tab-button ${
-                  selectedTab === "reviews" ? "active" : ""
-                }`}
-                onClick={() => setSelectedTab("reviews")}
-              >
-                Reviews ({reviews.length})
-              </button>
+          <div className="col-12 col-sm-12 col-md-7 col-lg-8 col-xl-9 ">
+            <div className="tabs d-flex justify-content-between flex-wrap" >
+              <div>
+                <button
+                  className={`tab-button ${
+                    selectedTab === "description" ? "active" : ""
+                  }`}
+                  onClick={() => setSelectedTab("description")}
+                >
+                  Story line By Author
+                </button>
+                <button
+                  className={`tab-button ${
+                    selectedTab === "reviews" ? "active" : ""
+                  }`}
+                  onClick={() => setSelectedTab("reviews")}
+                >
+                  Reviews ({reviews.length})
+                </button>
+              </div>
+              {selectedTab === "reviews" && (
+                <div className="d-flex align-items-center " >
+                  <select
+                    className="form-select w-auto  "
+                    value={sortBy}
+                    onChange={(e) => setSortBy(e.target.value)}
+                  >
+                    <option value="newest">Recent</option>
+                    <option value="oldest">Earliest</option>
+                    <option value="mostLiked">Most Liked</option>
+                  </select>
+                </div>
+              )}
             </div>
 
             {selectedTab === "description" ? (
@@ -367,8 +390,8 @@ const ProductDetail = () => {
             ) : (
               <div className="tab-content">
                 <div className="reviews-section mt-3">
-                  {reviews.length > 0 ? (
-                    reviews.slice(0, visibleReviews).map((review) => (
+                  {sortedReviews.length > 0 ? (
+                    sortedReviews.slice(0, visibleReviews).map((review) => (
                       <div key={review._id} className="review">
                         <div className="d-flex gap-3 flex-wrap">
                           <div className="userRew">
@@ -379,7 +402,13 @@ const ProductDetail = () => {
                                 className="review-user-image"
                               />
                             ) : (
-                              <HiUser />
+                              <div className="d-flex justify-content-center align-items-center review-user-image">
+                                <HiUser
+                                  style={{
+                                    fontSize: "2rem",
+                                  }}
+                                />
+                              </div>
                             )}
                           </div>
                           <div>
@@ -555,7 +584,7 @@ const ProductDetail = () => {
                                 <div className="d-flex gap-1 ">
                                   <button
                                     className="btn btn-sm btn-warning"
-                                    onClick={() => handleEditClick(review)}  
+                                    onClick={() => handleEditClick(review)}
                                   >
                                     Edit
                                   </button>
@@ -615,7 +644,7 @@ const ProductDetail = () => {
             )}
           </div>
           <div
-            className="col-12 col-sm-12 col-md-4 col-lg-3 col shadow detailShadow p-4 mt-2"
+            className="col-12 col-sm-12 col-md-5 col-lg-4 col-xl-3 col shadow detailShadow p-4 mt-2"
             style={{
               background: "#fff",
               borderRadius: "10px",

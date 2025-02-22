@@ -64,5 +64,17 @@
 }
 
 
-
+.btnx-dangerx{
+  background-color:  #c82333;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  cursor: pointer;
+  margin: 30px;
+  &:hover {
+    background-color: #ff0000;
+    color: white;
+  }
+}
 

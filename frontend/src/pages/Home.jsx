@@ -7,12 +7,14 @@ import Mystery from "../components/Mystery/Mystery";
 import Releated from "../components/Releated/Releated";
 import NewReleases from "../components/newReleases/NewReleases";
 import Drama from "../components/Drama/Drama";
+import { useSelector } from "react-redux";
 
 const Home = () => {
+  const {user} = useSelector((state) => state.user);
   return (
     <div>
       <Hero />
-    <Releated/>
+   {user?.existUser && <Releated />}
     <Horror/>
     <Fantasy/>
     <Romance/>

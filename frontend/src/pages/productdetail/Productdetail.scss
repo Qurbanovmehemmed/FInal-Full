@@ -21,10 +21,12 @@
 }
 .detailShadow {
   padding: 35px 0px;
+  align-self: start;
 }
 .tabs {
   display: flex;
   gap: 15px;
+  width: 95%;
 }
 
 .tab-button {
