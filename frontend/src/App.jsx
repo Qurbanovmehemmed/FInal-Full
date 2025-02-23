@@ -18,6 +18,7 @@ import ProtectedRoute from "./routes/ProtectRouter/ProtectedRoute";
 import ProductDetail from "./pages/productdetail/ProductDetail";
 import Alladmins from "./pages/Alladmins";
 import ProtectLoginRegister from "./routes/ProtectLoginRegister";
+import NotFoundPage from "./pages/notfoundPage/NotFoundPage";
 
 const router = createBrowserRouter([
   {
@@ -88,6 +89,10 @@ const router = createBrowserRouter([
         element: <Login />,
       },
     ],
+  },
+  {
+    path: "*",
+    element: <NotFoundPage />,
   },
 
   {
