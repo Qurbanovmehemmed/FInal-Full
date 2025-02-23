@@ -559,6 +559,11 @@ const ProductDetail = () => {
                                     onChange={(e) =>
                                       setCommentText(e.target.value)
                                     }
+                                    onKeyDown={(e) => {
+                                      if (e.key === "Enter") {
+                                        handleAddComment(review._id);
+                                      }
+                                    }}
                                     placeholder="Write a comment..."
                                   />
                                   <button
