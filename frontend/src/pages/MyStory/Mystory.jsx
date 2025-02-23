@@ -177,10 +177,10 @@ const Mystory = () => {
     }
   }
 
-  // Usage
 
   return (
-    <div className="container mt-4">
+    <div className="container mt-5">
+      <div style={{marginTop:"110px"}}></div>
       {open && (
         <>
           <div className="overlay" onClick={handleCloseForm}></div>

@@ -85,15 +85,15 @@ const ProductDetail = () => {
   };
 
   const handleEditReview = async () => {
-    if (!editingReview) return; // Əgər redaktə ediləcək review yoxdursa, heç bir şey etmə
+    if (!editingReview) return;
 
     const apiUrl = user.existUser?.isAdmin
-      ? `http://localhost:5000/api/reviews/admin/${editingReview._id}` // Adminlər üçün URL
-      : `http://localhost:5000/api/reviews/${editingReview._id}`; // Normal istifadəçilər üçün URL
+      ? `http://localhost:5000/api/reviews/admin/${editingReview._id}`
+      : `http://localhost:5000/api/reviews/${editingReview._id}`;
 
     try {
       const { data } = await axios.put(
-        apiUrl, // Yuxarıda seçilən URL istifadə edilir
+        apiUrl,
         { content: reviewText, rating },
         { withCredentials: true }
       );
@@ -286,8 +286,8 @@ const ProductDetail = () => {
 
   return (
     <>
-      <div className="container"></div>
-      <div className="shadow detailShadow bg-body">
+      <div className="container mt-5"></div>
+      <div className="shadow detailShadow bg-body ">
         <div className="container">
           <div className="row">
             <div className="d-flex justify-content-center flex-wrap gap-5">
@@ -343,7 +343,7 @@ const ProductDetail = () => {
       <div className="container">
         <div className="row mt-4">
           <div className="col-12 col-sm-12 col-md-7 col-lg-8 col-xl-9 ">
-            <div className="tabs d-flex justify-content-between flex-wrap" >
+            <div className="tabs d-flex justify-content-between flex-wrap">
               <div>
                 <button
                   className={`tab-button ${
@@ -363,7 +363,7 @@ const ProductDetail = () => {
                 </button>
               </div>
               {selectedTab === "reviews" && (
-                <div className="d-flex align-items-center " >
+                <div className="d-flex align-items-center ">
                   <select
                     className="form-select w-auto  "
                     value={sortBy}
@@ -443,7 +443,6 @@ const ProductDetail = () => {
 
                             <div className="mb-4">
                               {editingReview?._id === review._id ? (
-                                // Edit mode - Textarea və "Update Review" düyməsi
                                 <div>
                                   <textarea
                                     className="form-control"
@@ -470,7 +469,6 @@ const ProductDetail = () => {
                                   </button>
                                 </div>
                               ) : (
-                                // Normal görünüş - Sadəcə mətn və "Edit" düyməsi
                                 <p className="reviewContentText">
                                   {review.content}
                                 </p>
@@ -617,7 +615,7 @@ const ProductDetail = () => {
                     </p>
                   )}
                   {user && (
-                    <div className="add-review mt-3">
+                    <div className="add-review mt-3 mb-5">
                       <textarea
                         className="form-control"
                         value={reviewText}
@@ -628,11 +626,7 @@ const ProductDetail = () => {
                       <button
                         className="btn btn-success mt-2 mx-2"
                         onClick={
-                          editingReview
-                            ? user.existUser?.isAdmin
-                              ? handleEditReviewAdmin
-                              : handleEditReview
-                            : handleAddReview
+                          editingReview ? handleEditReview : handleAddReview
                         }
                       >
                         {editingReview ? "Update Review" : "Add Review"}

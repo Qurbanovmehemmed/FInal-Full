@@ -247,61 +247,68 @@ const Admin = () => {
     </>
   )}
 
-  <div className="mb-2 d-flex justify-content-between">
-    <button
-      className="btn btn-success"
-      onClick={() => {
-        if (editProductId) {
-          resetForm();
-          setEditProductId(null);
-          setPreviewImage("");
-          setSelectedCategories([]); // Formun açılıb-bağlanmasını idarə et
-        }
-        setOpen(!open);
-      }}
-    >
-      {editProductId ? "Cancel" : "Create"}
-    </button>
-    <input
-      type="text"
-      onChange={(e) => dispatch(searchProduct(e.target.value))}
-    />
-    <div className="d-flex gap-2">
-      <Dropdown className="mb-2">
-        <Dropdown.Toggle variant="secondary" id="categoryFilter">
-          {selectedCategory ? selectedCategory : "Filter by Category"}
-        </Dropdown.Toggle>
-
-        <Dropdown.Menu>
-          <Dropdown.Item onClick={() => setSelectedCategory("")}>
-            All Categories
-          </Dropdown.Item>
-          {["Romance", "Fantasy", "Horror", "Mystery"].map((cat, index) => (
-            <Dropdown.Item
-              key={index}
-              onClick={() => setSelectedCategory(cat)}
-            >
-              {cat}
-            </Dropdown.Item>
-          ))}
-        </Dropdown.Menu>
-      </Dropdown>
-
-      <Dropdown>
-      <Dropdown.Toggle variant="success" id="dropdown-basic">
-       Filter By Title
+<div className="mb-2 d-flex justify-content-between flex-wrap gap-2">
+  <button
+    className="btn btn-success"
+    onClick={() => {
+      if (editProductId) {
+        resetForm();
+        setEditProductId(null);
+        setPreviewImage("");
+        setSelectedCategories([]); // Formun açılıb-bağlanmasını idarə et
+      }
+      setOpen(!open);
+    }}
+  >
+    {editProductId ? "Cancel" : "Create"}
+  </button>
+  
+  <input
+    type="text"
+    onChange={(e) => dispatch(searchProduct(e.target.value))}
+    className="form-control w-auto flex-grow-1"
+    placeholder="Search products"
+  />
+  
+  <div className="d-flex gap-2 flex-wrap justify-content-between" >
+    <Dropdown className="">
+      <Dropdown.Toggle variant="secondary" id="categoryFilter">
+        {selectedCategory ? selectedCategory : "Filter by Category"}
       </Dropdown.Toggle>
 
       <Dropdown.Menu>
-        <Dropdown.Item href="#/action-1" onClick={() => dispatch(sortProductAZ())}> A-z</Dropdown.Item>
-        <Dropdown.Item href="#/action-2" onClick={() => dispatch(sortProductZA())}>Z-a</Dropdown.Item>
+        <Dropdown.Item onClick={() => setSelectedCategory("")}>
+          All Categories
+        </Dropdown.Item>
+        {["Romance", "Fantasy", "Horror", "Mystery","Drama"].map((cat, index) => (
+          <Dropdown.Item
+            key={index}
+            onClick={() => setSelectedCategory(cat)}
+          >
+            {cat}
+          </Dropdown.Item>
+        ))}
       </Dropdown.Menu>
     </Dropdown>
 
-   
-    </div>
+    <Dropdown>
+      <Dropdown.Toggle variant="success" id="dropdown-basic">
+        Filter By Title
+      </Dropdown.Toggle>
+
+      <Dropdown.Menu>
+        <Dropdown.Item href="#/action-1" onClick={() => dispatch(sortProductAZ())}>
+          A-z
+        </Dropdown.Item>
+        <Dropdown.Item href="#/action-2" onClick={() => dispatch(sortProductZA())}>
+          Z-a
+        </Dropdown.Item>
+      </Dropdown.Menu>
+    </Dropdown>
   </div>
-  <Table striped bordered hover responsive="md">
+</div>
+
+  <Table striped bordered hover responsive="lg">
     <thead>
       <tr>
         <th>Image</th>
@@ -335,7 +342,7 @@ const Admin = () => {
             </td>
             <td>{item.author}</td>
             <td>{item.description.slice(0, 100) + "..."}</td>
-            <td className="d-flex gap-2">
+            <td className="d-flex gap-2 flex-wrap">
               <button
                 className="btn btn-primary"
                 onClick={() => handleEditProduct(item)}

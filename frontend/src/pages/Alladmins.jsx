@@ -6,8 +6,9 @@ const Alladmins = () => {
   const [selectedTab, setSelectedTab] = useState("books");
 
   return (
-    <div className="container">
-      <div className="row mt-5">
+    <div className="container mt-5">
+      <div style={{ marginTop: "120px" }}></div>
+      <div className="row mt-5" >
         <div className="col-md-2">
           <div className="d-flex flex-column gap-2 justidy-content-center align-items-center">
             <h3>Admin Panel</h3>

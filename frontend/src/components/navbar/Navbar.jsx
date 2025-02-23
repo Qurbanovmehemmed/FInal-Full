@@ -393,12 +393,12 @@ const Navbar = () => {
                   </Dropdown.Menu>
                 </Dropdown>
 
-                <div className="navlist-item">
+                <div className="navlist-item mt-1">
                   <Link to="/wishlist">My Shelf</Link>
                 </div>
 
                 {user?.existUser?.isAdmin ? (
-                  <div className="navlist-item">
+                  <div className="navlist-item mt-2">
                     <Link to="/admin">Admin</Link>
                   </div>
                 ) : (

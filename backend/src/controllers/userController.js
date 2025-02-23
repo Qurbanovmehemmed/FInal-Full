@@ -73,6 +73,32 @@ export const register = async (req, res) => {
   }
 };
 
+export const resendVerificationEmail = async (req, res) => {
+  try {
+    const { email } = req.body;
+    const updatedVerify = await user.findOne({ email });
+
+    if (!updatedVerify) {
+      return res.status(404).json({ message: "İstifadəçi tapılmadı" });
+    }
+
+   
+
+    const token = jwt.sign({ id: updatedVerify._id }, process.env.JWT_SECRET, {
+      expiresIn: "1h",
+    });
+
+    const verificationLink = `${process.env.SERVER_LINK}/auth/verify/${token}`;
+
+    await recieveMail(updatedVerify, verificationLink);
+
+    res.status(200).json({ message: "Təsdiq e-poçtu yenidən göndərildi" });
+  } catch (error) {
+    console.error("Resend email error:", error);
+    res.status(500).json({ message: "Xəta baş verdi" });
+  }
+};
+
 export const verifyEmail = async (req, res) => {
   try {
     const { token } = req.params;

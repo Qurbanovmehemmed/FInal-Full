@@ -69,9 +69,9 @@ const Wishlist = () => {
     navigate(-1); // Bu, istifadəçini əvvəlki səhifəyə qaytaracaq
   };
   return (
-    <div className="container mt-4">
-      <div className="row">
-        <div className="d-flex mb-2 align-items-center gap-2">
+    <div className="container mt-5" >
+      <div className="row ">
+        <div className="d-flex mb-1  align-items-center gap-2" style={{marginTop:"70px"}}>
           <div>
             <div className="backHover" onClick={goBack}>
               {" "}

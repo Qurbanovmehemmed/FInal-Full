@@ -83,8 +83,8 @@ const UserProfile = () => {
 
   return (
     <>
-      <div className="container">
-        <div className="user-profile-container">
+      <div className="container mt-5">
+        <div className="user-profile-container ">
           <div className="d-flex  align-items-start justify-content-between">
             <div className="profile-image">
               <img

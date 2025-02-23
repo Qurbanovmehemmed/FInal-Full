@@ -37,6 +37,9 @@ p {
 
  
 }
+.text-danger{
+  margin-bottom: 5px;
+}
 
 .btn {
   transition: all 0.3s ease-in-out;

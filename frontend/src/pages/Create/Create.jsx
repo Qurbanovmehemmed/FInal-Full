@@ -81,7 +81,8 @@ const Create = () => {
   };
 
   return (
-    <div className="container">
+    <div className="container mt-5" >
+      <div style={{ marginTop: "110px" }}></div>
       <form
         encType="multipart/form-data"
         className=""

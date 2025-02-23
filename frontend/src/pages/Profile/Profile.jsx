@@ -73,7 +73,7 @@ const Profile = () => {
   };
 
   return (
-    <div className="container">
+    <div className="container mt-5">
       <div className="profile-container">
         <div className="profile-details">
           <div className="profile-update">

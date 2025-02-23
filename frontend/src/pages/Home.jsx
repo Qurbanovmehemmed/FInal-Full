@@ -22,7 +22,7 @@ const Home = () => {
     <Mystery/>
     <NewReleases/>
     <Drama/>
-    <Chat/>
+    {/* <Chat/> */}
     </div>
   );
 };

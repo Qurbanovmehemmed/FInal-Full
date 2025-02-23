@@ -7,6 +7,7 @@ import {
   login,
   logout,
   register,
+  resendVerificationEmail,
   resetPassword,
   updateFavoriteCategories,
   updateProfile,
@@ -19,6 +20,8 @@ const userRouter = express.Router();
 
 userRouter.post("/register", upload.single("image"), register);
 userRouter.get("/verify/:token", verifyEmail);
+userRouter.post("/resend-verification", resendVerificationEmail);
+
 userRouter.post("/login", login);
 userRouter.post("/logout", verifyToken, logout);
 userRouter.post("/forgotpassword", forgotPassword);

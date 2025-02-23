@@ -14,12 +14,13 @@ const UsersAdmin = () => {
   const dispatch = useDispatch();
   const { users } = useSelector((state) => state.user);
   const allUser = users.users;
-  const [searchQuery, setSearchQuery] = useState(""); // Axtarış query-si
+  const [searchQuery, setSearchQuery] = useState(""); 
   const [filteredUsers, setFilteredUsers] = useState(allUser);
 
   useEffect(() => {
     dispatch(getAllUsers());
   }, [dispatch]);
+
 
   const handleSearch = () => {
     setFilteredUsers(
@@ -44,7 +45,6 @@ const UsersAdmin = () => {
 
   return (
     <div className="container" style={{ minHeight: "100vh" }}>
-      {/* Axtarış input sahəsi */}
       <div className="mb-3">
         <input
           type="text"
@@ -56,7 +56,7 @@ const UsersAdmin = () => {
         />
       </div>
 
-      <Table striped bordered hover responsive="sm">
+      <Table striped bordered hover responsive="lg">
         <thead>
           <tr>
             <th>#</th>

@@ -1,36 +1,54 @@
 import React, { useEffect, useState } from "react";
 import { io } from "socket.io-client";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { MdOutlineMessage } from "react-icons/md";
+import axios from "axios";
 import "./Chat.css";
-
-const socket = io("http://localhost:3000");
+import { setLogout } from "../../redux/features/userSlice";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css"; 
+import { useNavigate } from "react-router-dom";
 
 const Chat = () => {
   const { user } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
+  const [socketInstance, setSocketInstance] = useState(null);
+  const [showVerificationPopup, setShowVerificationPopup] = useState(false);
+  const [loading, setLoading] = useState(false);
+  
+
+  const isVerified = user?.existUser?.isVerified; 
 
   useEffect(() => {
-    socket.on("receiveMessage", (data) => {
-      setMessages((prev) => [...prev, data]);
-    });
+    if (isVerified) {
+      const socket = io("http://localhost:3000");
 
-    return () => {
-      socket.off("receiveMessage");
-    };
-  }, []);
+      socket.on("receiveMessage", (data) => {
+        setMessages((prev) => [...prev, data]);
+      });
+
+      setSocketInstance(socket);
+
+      return () => {
+        socket.off("receiveMessage");
+        socket.disconnect();
+      };
+    }
+  }, [isVerified]);
 
   const sendMessage = () => {
-    if (message.trim() !== "") {
+    if (message.trim() !== "" && socketInstance) {
       const newMessage = {
         senderId: user?.existUser._id,
         senderUsername: user.existUser.username,
         content: message,
       };
 
-      socket.emit("sendMessage", newMessage);
+      socketInstance.emit("sendMessage", newMessage);
       setMessage("");
     }
   };
@@ -41,17 +59,62 @@ const Chat = () => {
     }
   };
 
+  const handleChatToggle = () => {
+    if (!isVerified) {
+      setShowVerificationPopup(true);
+      return;
+    }
+    setIsOpen(!isOpen);
+  };
+  
+
+  const sendVerificationEmail = () => {
+    setLoading(true);
+    axios
+      .post(
+        "http://localhost:3000/api/user/resend-verification",
+        { email: user.existUser.email },
+        { withCredentials: true }
+      )
+      .then(() => {
+        toast.success("Verification email sent! Please check your inbox.");
+        dispatch(setLogout()); 
+        navigate("/login");
+      })
+      .catch((err) => {
+        console.error("Error sending verification email:", err);
+      })
+      .finally(() => {
+        setLoading(false);
+        setShowVerificationPopup(false);
+      });
+  };
+console.log(user?.existUser?.isVerified)
   return (
     <div>
-      {/* Chat Icon */}
-      <button className="chat-icon" onClick={() => setIsOpen(!isOpen)}>
+      <button className="chat-icon" onClick={handleChatToggle}>
         <MdOutlineMessage size={24} />
       </button>
 
-      {/* Chat Sidebar */}
+      {showVerificationPopup && (
+  <>
+    <div className="popup-overlay show"></div>
+    <div className="verification-popup show">
+      <p>You need to verify your account. Would you like us to send a verification email?</p>
+      <button onClick={sendVerificationEmail} disabled={loading}>
+        {loading ? "Sending email..." : "Yes, send it"}
+      </button>
+      <button onClick={() => setShowVerificationPopup(false)}>No</button>
+    </div>
+  </>
+)}
+
+
+
+
       <div className={`chat-sidebar ${isOpen ? "open" : ""}`}>
         <div className="chat-header">
-          <h3>Live Chat</h3>
+          <h3>Global Live Chat</h3>
           <button className="close-btn" onClick={() => setIsOpen(false)}>✖</button>
         </div>
         <div className="chat-body">
@@ -74,7 +137,7 @@ const Chat = () => {
             type="text"
             value={message}
             onChange={(e) => setMessage(e.target.value)}
-            onKeyDown={handleKeyDown} // ENTER düyməsini dinləyir
+            onKeyDown={handleKeyDown}
             placeholder="Type a message..."
           />
           <button onClick={sendMessage}>Send</button>

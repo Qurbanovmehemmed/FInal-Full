@@ -99,10 +99,7 @@ const Product = () => {
     );
   };
 
-  const resetFilters = () => {
-    setSelectedCategories([]);
-    setSelectedRating(0);
-  };
+ 
 
   const resetFiltersCate = () => {
     setSelectedCategories([]);
@@ -123,8 +120,8 @@ const Product = () => {
   const pageCount = Math.ceil(filteredProducts.length / itemsPerPage);
 
   return (
-    <div className="container">
-    <div className="d-flex mb-2 align-items-center gap-2">
+    <div className="container mt-5">
+    <div className="d-flex mb-2 align-items-center gap-2" style={{marginTop:"110px"}}>
       <div>
         <div className="backHover" onClick={goBack}>Back</div>
       </div>
