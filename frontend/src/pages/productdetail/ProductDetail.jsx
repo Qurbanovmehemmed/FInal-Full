@@ -22,7 +22,7 @@ const ProductDetail = () => {
   const [editingComment, setEditingComment] = useState(null);
   const [visibleReviews, setVisibleReviews] = useState(3);
   const [visibleComments, setVisibleComments] = useState(3);
-  const [sortBy, setSortBy] = useState("oldest"); // Default olaraq "Newest"
+  const [sortBy, setSortBy] = useState("oldest"); 
 
   const loadMoreReviews = () => {
     setVisibleReviews((prev) => prev + 5);
@@ -273,13 +273,13 @@ const ProductDetail = () => {
 
   const sortedReviews = [...reviews].sort((a, b) => {
     if (sortBy === "newest") {
-      return new Date(b.createdAt) - new Date(a.createdAt); // Yenidən köhnəyə
+      return new Date(b.createdAt) - new Date(a.createdAt); 
     }
     if (sortBy === "oldest") {
-      return new Date(a.createdAt) - new Date(b.createdAt); // Köhnədən yeniyə
+      return new Date(a.createdAt) - new Date(b.createdAt); 
     }
     if (sortBy === "mostLiked") {
-      return (b.likes?.length || 0) - (a.likes?.length || 0); // Ən çox like alan birinci
+      return (b.likes?.length || 0) - (a.likes?.length || 0); 
     }
     return 0;
   });
@@ -577,7 +577,7 @@ const ProductDetail = () => {
                         <div className="review-actions mt-2 ">
                           {user &&
                             (user.existUser?._id === review?.userId?._id ||
-                              user.existUser?.isAdmin) && ( // Check if the logged-in user is the author of the review or an admin
+                              user.existUser?.isAdmin) && ( 
                               <>
                                 <div className="d-flex gap-1 ">
                                   <button

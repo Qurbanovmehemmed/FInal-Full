@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Carousel } from "react-bootstrap"; // Importing Bootstrap Carousel component
+import { Carousel } from "react-bootstrap";
 import "./Hero.scss";
 import { useNavigate } from "react-router-dom";
 

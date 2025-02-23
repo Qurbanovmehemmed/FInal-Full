@@ -29,7 +29,7 @@ const Profile = () => {
     const file = e.target.files[0];
     if (file) {
       setImage(file);
-      setPreviewImage(URL.createObjectURL(file)); // Yeni şəkili önizləmə üçün göstər
+      setPreviewImage(URL.createObjectURL(file));
     }
   };
 
@@ -61,7 +61,7 @@ const Profile = () => {
         setName(res.data.name);
         setUsername(res.data.username);
         setEmail(res.data.email);
-        setPreviewImage(`http://localhost:5000/${res.data.image}`); // Yenilənmiş şəkili göstər
+        setPreviewImage(`http://localhost:5000/${res.data.image}`); 
         toast.success("Profile updated successfully");
       } else {
         toast.error("Failed to update profile");
@@ -83,7 +83,7 @@ const Profile = () => {
                 <div className="profile-image-wrapper">
                   <label htmlFor="fileUpload" className="profile-image-label">
                     <img
-                      src={previewImage} // Yeni şəkil seçilərsə, önizləmə göstər
+                      src={previewImage} 
                       alt={user?.existUser?.username}
                       className="profile-image"
                     />

@@ -11,7 +11,7 @@ import RatingStars from "../../components/ratingStarts/RatingStars";
 import { Link, useNavigate } from "react-router-dom";
 import { MdNavigateNext } from "react-icons/md";
 import StarRatings from "react-star-ratings";
-import "react-toastify/dist/ReactToastify.css"; // React Toastify stilini əlavə edin
+import "react-toastify/dist/ReactToastify.css"; 
 import { toast } from "react-toastify";
 
 const Wishlist = () => {
@@ -19,22 +19,20 @@ const Wishlist = () => {
   const navigate = useNavigate();
   const { wishlist, loading } = useSelector((state) => state.wishlist);
   const [filter, setFilter] = useState("all");
-  const [reviews, setReviews] = useState({}); // Rəyləri saxlamaq üçün state
+  const [reviews, setReviews] = useState({}); 
   useEffect(() => {
     dispatch(getUserWishlist());
   }, [dispatch]);
 
-  // Hər kitab üçün rəyləri və ortalama reytinqi əldə edirik
   useEffect(() => {
     wishlist.forEach(async (item) => {
       try {
         const response = await axios.get(
           `http://localhost:5000/api/reviews/${item.product._id}`,
-          { withCredentials: true } // withCredentials əlavə etdik
+          { withCredentials: true } 
         );
         const reviewData = response.data;
 
-        // Ortalama reytinq hesablanması
         const averageRating =
           reviewData.reviews && reviewData.reviews.length > 0
             ? reviewData.reviews.reduce(
@@ -66,7 +64,7 @@ const Wishlist = () => {
       : wishlist.filter((item) => item.status === filter);
 
   const goBack = () => {
-    navigate(-1); // Bu, istifadəçini əvvəlki səhifəyə qaytaracaq
+    navigate(-1); 
   };
   return (
     <div className="container mt-5" >

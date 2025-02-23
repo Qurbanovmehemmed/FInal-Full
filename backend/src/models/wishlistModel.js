@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const WishlistSchema = new mongoose.Schema({
-  user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true }, // İstifadəçi
+  user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true }, 
   product: {
     _id: { type: mongoose.Schema.Types.ObjectId, ref: 'Product' },
     image: String,
@@ -12,8 +12,8 @@ const WishlistSchema = new mongoose.Schema({
     categories: [String],
     rating: Number
   },
-  status: { type: String, enum: ["wantToRead", "alreadyRead"], required: true }, // Status
-  addedAt: { type: Date, default: Date.now }, // Əlavə olunduğu tarix
+  status: { type: String, enum: ["wantToRead", "alreadyRead"], required: true }, 
+  addedAt: { type: Date, default: Date.now }, 
 });
 
 const Wishlist = mongoose.model("Wishlist", WishlistSchema);

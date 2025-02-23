@@ -1,28 +1,3 @@
-/* .filterArea {
-  padding: 30px 30px;
-  background-color: white;
-  border-radius: 10px;
-}
-.filterInput {
-  width: 100%;
-  margin-bottom: 20px;
-  padding: 10px;
-  border-radius: 5px;
-  border: 1px solid #595959;
-}
-
-.removeFilterproduct {
-  background-color: whitesmoke;
-  padding: 5px 10px;
-  border-radius: 30px;
-  color: #595959;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  &:hover {
-    text-decoration: underline;
-    color: red;
-  }
-} */
 
 .pagination {
   display: flex;

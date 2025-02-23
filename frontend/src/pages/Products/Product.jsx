@@ -5,7 +5,7 @@ import StarRatings from "react-star-ratings";
 import { useNavigate, useLocation } from "react-router-dom";
 import { searchProduct } from "../../redux/features/ProductSlice";
 import { MdNavigateNext } from "react-icons/md";
-import ReactPaginate from "react-paginate"; // 📌 Pagination üçün əlavə edildi
+import ReactPaginate from "react-paginate"; 
 import "./Product.css";
 
 const Product = () => {
@@ -18,9 +18,9 @@ const Product = () => {
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [selectedRating, setSelectedRating] = useState(0);
   const [reviews, setReviews] = useState({});
-  const [currentPage, setCurrentPage] = useState(0); // 📌 Yeni state əlavə edildi
+  const [currentPage, setCurrentPage] = useState(0); 
 
-  const productsPerPage = 8; // 📌 Hər səhifədə 8 məhsul göstər
+  const productsPerPage = 8; 
 
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
@@ -88,7 +88,7 @@ const Product = () => {
     }
 
     setFilteredProducts(filtered);
-    setCurrentPage(0); // 📌 Filtr dəyişəndə səhifəni sıfırla
+    setCurrentPage(0); 
   }, [selectedCategories, selectedRating, products, reviews]);
 
   const handleCategoryChange = (category) => {

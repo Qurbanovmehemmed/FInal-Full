@@ -4,7 +4,7 @@ import user from "../models/userModel.js";
 export const createReview = async (req, res) => {
   try {
     const { bookId, content, rating } = req.body;
-    const userId = req.user.id; // AuthMiddleware-dən gələn user ID
+    const userId = req.user.id; 
 
     const newReview = new Review({
       bookId,
@@ -24,7 +24,6 @@ export const createReview = async (req, res) => {
   }
 };
 
-// Kitabın bütün rəylərini gətir
 export const getReviewsByBook = async (req, res) => {
   try {
     const { bookId } = req.params;
@@ -39,7 +38,6 @@ export const getReviewsByBook = async (req, res) => {
   }
 };
 
-// Rəyi redaktə et
 export const updateReview = async (req, res) => {
   try {
     const { reviewId } = req.params;
@@ -64,7 +62,6 @@ export const updateReview = async (req, res) => {
   }
 };
 
-// Rəyi sil
 export const deleteReview = async (req, res) => {
   try {
     const { reviewId } = req.params;
@@ -116,15 +113,13 @@ export const addComment = async (req, res) => {
     const { text } = req.body;
     const userId = req.user.id;
 
-    // Review-ı tapırıq
     const review = await Review.findById(reviewId);
     if (!review)
       return res
         .status(404)
         .json({ success: false, message: "Review not found" });
 
-    // User məlumatlarını tapırıq
-    const cuser = await user.findById(userId); // `user` yox, `User` olmalıdır
+    const cuser = await user.findById(userId); 
     if (!cuser)
       return res
         .status(404)
@@ -133,14 +128,11 @@ export const addComment = async (req, res) => {
     const username = cuser.username;
     const image = cuser.image;
 
-    // Yeni şərhi yaradıb review-a əlavə edirik
     const newComment = { userId, username, text, image };
     review.comments.push(newComment);
 
-    // Review-u yeniləyirik
     await review.save();
 
-    // BÜTÜN REVIEW MƏLUMATLARI GERİ QAYTARILIR
     res.status(201).json({ success: true, review });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });

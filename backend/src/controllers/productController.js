@@ -76,29 +76,25 @@ export const searchProduct = async (req, res) => {
 
 export const updateProduct = async (req, res) => {
   try {
-    const { productId } = req.params; // Get the productId from the URL params
+    const { productId } = req.params; 
     const { title, description, author, rating } = req.body;
 
-    // Retrieve the current product to get its existing image (if it has one)
-    const existingProduct = await product.findById(productId); // Make sure you're using 'product' here
+    const existingProduct = await product.findById(productId); 
 
     if (!existingProduct) {
       return res.status(404).json({ message: 'Product not found' });
     }
 
-    // If a new image is uploaded, use it. Otherwise, keep the existing image.
-    let imageUrl = existingProduct.image; // Use the image from the existing product
+    let imageUrl = existingProduct.image; 
     if (req.file) {
       imageUrl = `images/${req.file.filename}`.replace(/\\/g, "/");
     }
 
-    // Handle categories - make sure it's an array
     const categories = req.body.categories
       ? (Array.isArray(req.body.categories) ? req.body.categories : [req.body.categories])
       : [];
 
-    // Update the product with the new data
-    const updatedProduct = await product.findByIdAndUpdate( // Again, use 'product' here
+    const updatedProduct = await product.findByIdAndUpdate( 
       productId,
       {
         title,
@@ -108,10 +104,10 @@ export const updateProduct = async (req, res) => {
         rating,
         image: imageUrl,
       },
-      { new: true } // This will return the updated product
+      { new: true } 
     );
 
-    return res.status(200).json(updatedProduct); // Send the updated product
+    return res.status(200).json(updatedProduct); 
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }

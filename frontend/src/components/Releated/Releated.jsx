@@ -26,24 +26,24 @@ const Releated = () => {
             favoriteCategories.includes(category)
           )
         )
-      : products; // Əgər favorit kateqoriyalar yoxdursa, bütün məhsulları göstər
+      : products; 
 
   const settings = {
     dots: false,
     infinite: false,
     speed: 500,
-    slidesToShow: 5, // Masaüstü görünüşdə 6 məhsul göstər
+    slidesToShow: 5, 
     slidesToScroll: 3,
     responsive: [
       {
-        breakpoint: 1024, // Tablet
+        breakpoint: 1024, 
         settings: {
           slidesToShow: 3,
           slidesToScroll: 2,
         },
       },
       {
-        breakpoint: 768, // Kiçik ekranlar (mobil)
+        breakpoint: 768, 
         settings: {
           slidesToShow: 1,
           slidesToScroll: 1,
@@ -56,7 +56,7 @@ const Releated = () => {
     <div className="container ">
       <div className="row mt-5">
         <div className="d-flex justify-content-between mb-2">
-          <h3>Recommended for you</h3>
+          <h3>Recommended</h3>
           <Link to={"/allproduct"} className="d-flex align-items-center  ">
             view all
             <MdNavigateNext />

@@ -28,8 +28,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(
   cors({
-    origin: "http://localhost:5173", // frontend URL
-    credentials: true, // Cookie'leri göndermek için
+    origin: "http://localhost:5173",
+    credentials: true, 
   })
 );
 app.use(cookieParser());
@@ -50,7 +50,7 @@ io.on("connection", (socket) => {
 
     io.emit("receiveMessage", {
       senderId: data.senderId,
-      senderUsername: data.senderUsername, // Username əlavə etdik
+      senderUsername: data.senderUsername, 
       content: data.content,
       timestamp: new Date().toISOString(),
     });

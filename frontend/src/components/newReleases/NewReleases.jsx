@@ -1,9 +1,9 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllUsers } from "../../redux/features/userSlice";
-import Slider from "react-slick"; // 🔹 Slider kitabxanasını import et
-import "slick-carousel/slick/slick.css"; // 🔹 Slick stilini əlavə et
-import "slick-carousel/slick/slick-theme.css"; // 🔹 Tema stilini əlavə
+import Slider from "react-slick"; 
+import "slick-carousel/slick/slick.css"; 
+import "slick-carousel/slick/slick-theme.css"; 
 import "./NewRelases.css";
 
 const NewReleases = () => {
@@ -13,22 +13,19 @@ const NewReleases = () => {
   const allUsers = users?.users;
 
   useEffect(() => {
-    dispatch(getAllUsers()); // 🔹 Component yüklənəndə user-ləri götür
+    dispatch(getAllUsers()); 
   }, [dispatch]);
 
-  // `products`-u `createdAt`-a görə sıralamaq
   const sortedProducts = products
     ? [...products].sort(
         (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
       )
     : [];
 
-  // `users`-in `name`-i ilə uyğun olmayan `products`-ları süzgəcdən keçirmək
   const filteredProducts = sortedProducts.filter(
     (product) => !allUsers?.some((user) => user.name === product.author)
   );
 
-  // Slider üçün konfiqurasiya
   const settings = {
     dots: true,
     infinite: true,
@@ -36,9 +33,9 @@ const NewReleases = () => {
     slidesToShow: 1,
     slidesToScroll: 1,
   };
-  let descriptionLength = 100500; // Default to 500 characters
+  let descriptionLength = 100500; 
   if (window.innerWidth < 768) {
-    descriptionLength = 300; // On smaller screens, use 300 characters
+    descriptionLength = 300;
   }
   return (
     <div className="mt-2 releases-section shadow">
@@ -60,7 +57,6 @@ const NewReleases = () => {
                 key={product._id}
                 style={{ display: "flex ", alignItems: "center" }}
               >
-                {/* Şəkil sol tərəfdə */}
                 <div className=" releaseStart">
                   <div className="releaseImage">
                     <img
@@ -70,7 +66,6 @@ const NewReleases = () => {
                     />
                   </div>
 
-                  {/* Detallar sağ tərəfdə */}
                   <div className="releaseDetail">
                     <h2 className="releaseHead">{product.title}</h2>
                     <div className="releasDes">

@@ -16,9 +16,9 @@ import { productSchema } from "../../schema/ProductCreateSchema";
 import Table from "react-bootstrap/Table";
 import "./Admin.scss";
 import { SlClose } from "react-icons/sl";
-import Dropdown from "react-bootstrap/Dropdown"; // Bootstrap Dropdown əlavə et
+import Dropdown from "react-bootstrap/Dropdown"; 
 import { useNavigate } from "react-router-dom";
-import "react-toastify/dist/ReactToastify.css"; // React Toastify stilini əlavə edin
+import "react-toastify/dist/ReactToastify.css"; 
 import { toast } from "react-toastify";
 
 

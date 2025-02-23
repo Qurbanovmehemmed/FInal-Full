@@ -9,9 +9,9 @@ const Alladmins = () => {
     <div className="container mt-5">
       <div style={{ marginTop: "120px" }}></div>
       <div className="row mt-5" >
-        <div className="col-md-2">
+        <div className="col-lg-2 col-md-12">
           <div className="d-flex flex-column gap-2 justidy-content-center align-items-center">
-            <h3>Admin Panel</h3>
+            <h3 className="text-center">Admin Panel</h3>
             <div
               className={`tab-button ${
                 selectedTab === "books" ? "active" : ""
@@ -31,8 +31,7 @@ const Alladmins = () => {
           </div>
         </div>
 
-        {/* Tab Content */}
-        <div className="tab-content col-md-10">
+        <div className="tab-content col-lg-10 col-md-12">
           {selectedTab === "books" ? <Admin /> : <UsersAdmin />}
         </div>
       </div>

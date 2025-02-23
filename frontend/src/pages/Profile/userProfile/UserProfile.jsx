@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "../../../redux/features/userSlice";
 import axios from "axios";
 import "./UserProfile.css";
-import "react-toastify/dist/ReactToastify.css"; // React Toastify stilini əlavə edin
+import "react-toastify/dist/ReactToastify.css"; 
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 

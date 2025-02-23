@@ -16,6 +16,7 @@ const CategorySelect = ({ categories, selectedCategories, setSelectedCategories 
       getOptionValue={(e) => e.value}
       closeMenuOnSelect={false}
       placeholder="Choose categories"
+     
     />
   );
 };

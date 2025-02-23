@@ -7,14 +7,13 @@
 
 .carousel-item img {
   width: 100%;
-  height: auto; /* Şəkilin nisbətini qorumaq üçün */
-  object-fit: contain; /* Şəkilin tam görünməsi üçün */
+  height: auto; 
+  object-fit: contain; 
 }
 
-/* Tablet (768px və aşağısı) */
 @media (max-width: 768px) {
   .hero-section {
-    height: auto; /* Hündürlüyü avtomatik tənzimlə */
+    height: auto; 
   }
 
   .carousel-item img {
@@ -23,7 +22,6 @@
   }
 }
 
-/* Mobil (576px və aşağısı) */
 @media (max-width: 576px) {
   .hero-section {
     height: auto;
@@ -32,7 +30,7 @@
   .carousel-item img {
     width: 100%;
     height: auto;
-    object-fit: contain; /* Şəkil tam ekrana sığsın */
+    object-fit: contain; 
   }
 
  
@@ -43,9 +41,9 @@
   bottom: 10%;
   left: 50%;
   transform: translateX(-50%);
-  width: 80%; /* Daha yaxşı yerləşməsi üçün */
+  width: 80%; 
   text-align: center;
-  background-color: rgba(0, 0, 0, 0.6); /* Daha qaranlıq fon */
+  background-color: rgba(0, 0, 0, 0.6); 
   color: white;
   padding: 15px;
   border-radius: 10px;

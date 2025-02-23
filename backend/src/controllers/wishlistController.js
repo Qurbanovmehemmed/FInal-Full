@@ -2,18 +2,15 @@ import Product from "../models/productModel.js";
 import user from "../models/userModel.js";
 import Wishlist from "../models/wishlistModel.js";
 
-// 📌 Wishlist-ə kitab əlavə etmək
 export const addToWishlist = async (req, res) => {
   try {
     const { userId, productId, status } = req.body;
 
-    // Check if required fields are missing
     if (!userId || !productId) {
       return res.status(400).json({ message: "userId və productId tələb olunur" });
     }
 
-    // Fetch user and product data
-    const foundUser = await user.findById(userId); // `user` model search
+    const foundUser = await user.findById(userId); 
     const product = await Product.findById(productId);
 
     if (!foundUser) {
@@ -24,25 +21,21 @@ export const addToWishlist = async (req, res) => {
       return res.status(404).json({ message: "Product not found" });
     }
 
-    // Check if the product is already in the user's wishlist
     const existingWishlistItem = await Wishlist.findOne({
       user: userId,
       "product._id": productId,
     });
 
     if (existingWishlistItem) {
-      // If the product is already in the wishlist, update the status or remove it
       if (existingWishlistItem.status === status) {
         return res.status(400).json({ message: "Product already in wishlist with this status" });
       } else {
-        // Update the status if it is different
         existingWishlistItem.status = status;
         await existingWishlistItem.save();
         return res.status(200).json({ message: "Wishlist status updated", wishlistItem: existingWishlistItem });
       }
     }
 
-    // Create a new Wishlist item with product details
     const wishlistItem = new Wishlist({
       user: userId,
       product: {
@@ -55,7 +48,7 @@ export const addToWishlist = async (req, res) => {
         categories: product.categories,
         rating: product.rating,
       },
-      status: status || 'wantToRead', // Default to 'wantToRead' if no status provided
+      status: status || 'wantToRead', 
       addedAt: new Date()
     });
 
@@ -68,7 +61,6 @@ export const addToWishlist = async (req, res) => {
 };
 
 
-// 📌 İstifadəçinin Wishlist-də olan bütün kitablarını almaq
 export const getUserWishlist = async (req, res) => {
   try {
     const { userId } = req.params;
@@ -82,24 +74,20 @@ export const getUserWishlist = async (req, res) => {
   }
 };
 
-// 📌 Wishlist-də kitab statusunu dəyişmək
 export const updateWishlistStatus = async (req, res) => {
   try {
     const { userId, productId, status } = req.body;
 
-    // Giriş yoxlaması
     if (!userId || !productId || !status) {
       return res.status(400).json({ message: "User ID, Product ID, and status are required" });
     }
 
-    // Wishlist item tapırıq
     const wishlistItem = await Wishlist.findOne({ user: userId, "product._id": productId });
 
     if (!wishlistItem) {
       return res.status(404).json({ message: "Wishlist item not found" });
     }
 
-    // Statusu yeniləyirik
     wishlistItem.status = status;
     await wishlistItem.save();
 
@@ -111,7 +99,6 @@ export const updateWishlistStatus = async (req, res) => {
 };
 ;
 
-// 📌 Wishlist-dən kitabı silmək
 export const removeFromWishlist = async (req, res) => {
   try {
     const { wishlistId } = req.params;

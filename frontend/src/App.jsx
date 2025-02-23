@@ -2,10 +2,7 @@ import "./App.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Layout from "./components/layout/Layout";
 import Home from "./pages/Home";
-import Category from "./pages/Category";
-import Men from "./pages/Men";
-import Women from "./pages/Women";
-import Latest from "./pages/Latest";
+
 import Wishlist from "./pages/wishlist/Wishlist";
 import Register from "./pages/auth/register/Register";
 import Login from "./pages/auth/login/Login";
@@ -35,22 +32,7 @@ const router = createBrowserRouter([
         path: "/allproduct",
         element: <Product />,
       },
-      {
-        path: "/category",
-        element: <Category />,
-      },
-      {
-        path: "/men",
-        element: <Men />,
-      },
-      {
-        path: "/women",
-        element: <Women />,
-      },
-      {
-        path: "/latest",
-        element: <Latest />,
-      },
+   
       {
         path: "/productdetail/:id",
         element: <ProductDetail />,

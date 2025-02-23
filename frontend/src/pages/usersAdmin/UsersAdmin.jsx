@@ -7,7 +7,7 @@ import {
 } from "../../redux/features/userSlice";
 import Table from "react-bootstrap/Table";
 import Button from "react-bootstrap/Button";
-import "react-toastify/dist/ReactToastify.css"; // React Toastify stilini əlavə edin
+import "react-toastify/dist/ReactToastify.css"; 
 import { toast } from "react-toastify";
 
 const UsersAdmin = () => {
@@ -52,7 +52,7 @@ const UsersAdmin = () => {
           placeholder="Search..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          onKeyUp={handleSearch} // Axtarışı tətbiq et
+          onKeyUp={handleSearch}
         />
       </div>
 
@@ -77,7 +77,6 @@ const UsersAdmin = () => {
                 <td>{user.email}</td>
                 <td>{user.isAdmin ? "Admin" : "Not Admin"}</td>
                 <td className="d-flex gap-2">
-                  {/* Admin statusunu dəyişdirmək */}
                   <Button
                     variant={user.isAdmin ? "warning" : "success"}
                     onClick={() => handleSetAdmin(user._id)}
@@ -85,7 +84,6 @@ const UsersAdmin = () => {
                     {user.isAdmin ? "Remove Admin" : "Make Admin"}
                   </Button>
 
-                  {/* İstifadəçini silmək */}
                   <Button
                     variant="danger"
                     className="ms-2"

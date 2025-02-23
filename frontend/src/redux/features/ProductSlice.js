@@ -46,7 +46,6 @@ export const searchProduct = createAsyncThunk(
   }
 );
 
-// Create updateProduct asyncThunk
 export const updateProduct = createAsyncThunk(
   "product/updateProduct",
   async ({ id, updatedData }, { rejectWithValue }) => {
@@ -54,7 +53,7 @@ export const updateProduct = createAsyncThunk(
       const { data } = await axios.put(`${baseURL}/${id}`, updatedData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-      return data; // Return updated product data
+      return data;
     } catch (error) {
       console.error("Error updating product:", error.response?.data);
       return rejectWithValue(error.response?.data || "Xəta baş verdi");
@@ -94,7 +93,6 @@ export const productSlice = createSlice({
       state.products = action.payload;
     });
     builder.addCase(updateProduct.fulfilled, (state, action) => {
-      // Update the product in the products array after a successful update
       const index = state.products.findIndex(
         (product) => product._id === action.payload._id
       );

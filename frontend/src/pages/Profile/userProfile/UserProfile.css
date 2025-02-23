@@ -16,13 +16,13 @@
 }
 
 .btn-primary {
-  background-color: #ff4500; /* Narıncı rəng */
+  background-color: #ff4500; 
   border: none;
 }
 .btn-primary:hover {
-  background-color: #cc3700; /* Daha tünd narıncı */
-  box-shadow: 0px 4px 8px rgba(255, 69, 0, 0.5); /* Kölgə effekti */
-  transform: scale(1.05); /* Biraz böyümə effekti */
+  background-color: #cc3700;
+  box-shadow: 0px 4px 8px rgba(255, 69, 0, 0.5); 
+  transform: scale(1.05); 
 }
 .favorite-categories {
   margin-top: 20px;

@@ -30,7 +30,6 @@ export const register = async (req, res) => {
     }
 
     const existUser = await user.findOne({ email });
-
     const checkUsername = await user.findOne({ username });
 
     if (checkUsername) {
@@ -43,8 +42,7 @@ export const register = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const totalUsers = await user.countDocuments();
-    const isAdmin = totalUsers === 0;  
+    const isAdmin = email === "mahammadag-af106@code.edu.az" ? true : false;
 
     const newUser = new user({
       image: imageUrl,
@@ -52,19 +50,17 @@ export const register = async (req, res) => {
       username,
       email,
       password: hashedPassword,
-      isAdmin,  
+      isAdmin,
     });
 
     await newUser.save();
 
     const token = generateToken(newUser._id, res);
-
     const confirmLink = `${process.env.SERVER_LINK}/auth/verify/${token}`;
-
     recieveMail(newUser, confirmLink);
 
     return res.status(201).json({
-      message: "Registration successful please check your email",
+      message: "Registration successful, please check your email",
       newUser,
       token,
     });
@@ -72,6 +68,7 @@ export const register = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 };
+
 
 export const resendVerificationEmail = async (req, res) => {
   try {
@@ -157,7 +154,7 @@ export const login = async (req, res) => {
 
 export const logout = async (req, res) => {
   try {
-    console.log(req.user); // req.user-in düzgün gəldiyini yoxlayın
+    console.log(req.user); 
     const existUser = await user.findById(req.user.id);
 
     if (!existUser) {
@@ -247,17 +244,15 @@ export const resetPassword = async (req, res) => {
 
 export const updateProfile = async (req, res) => {
   try {
-    const userId = req.user.id; // AuthMiddleware-dən gələn istifadəçi ID
+    const userId = req.user.id; 
     const { name, username, email } = req.body;
     let updatedData = { name, username, email };
 
-    // Əgər şəkil yüklənibsə, onu əlavə et
     if (req.file) {
       const imageUrl = `images/${req.file.filename}`.replace(/\\/g, "/");
       updatedData.image = imageUrl;
     }
 
-    // Yeni məlumatları DB-də yenilə
     const updatedUser = await user.findByIdAndUpdate(userId, updatedData, {
       new: true,
     });
@@ -283,8 +278,8 @@ export const updateFavoriteCategories = async (req, res) => {
 
     const updatedUser = await user.findByIdAndUpdate(
       userId,
-      { favCategories }, // 🔹 favCategories-i yenilə
-      { new: true } // 🔹 Yenilənmiş user-i qaytar
+      { favCategories }, 
+      { new: true } 
     );
     if (!updatedUser) {
       return res.status(404).json({ message: "User not found" });
@@ -301,7 +296,7 @@ export const updateFavoriteCategories = async (req, res) => {
 };
 export const getAllUsers = async (req, res) => {
   try {
-    const users = await user.find({}, "-password"); // Şifrəni çıxarırıq
+    const users = await user.find({}, "-password"); 
 
     return res.status(200).json({ success: true, users });
   } catch (error) {
@@ -311,7 +306,7 @@ export const getAllUsers = async (req, res) => {
 
 export const addAdmin = async (req, res) => {
   try {
-    const { id } = req.params; // Hedef istifadəçinin ID-si
+    const { id } = req.params; 
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({ message: "Düzgün ID deyil!" });
@@ -323,7 +318,6 @@ export const addAdmin = async (req, res) => {
       return res.status(404).json({ message: "İstifadəçi tapılmadı!" });
     }
 
-    // `isAdmin` dəyərini tərsinə çeviririk
     userToBeAdmin.isAdmin = !userToBeAdmin.isAdmin;
     await userToBeAdmin.save();
 
@@ -340,11 +334,9 @@ export const addAdmin = async (req, res) => {
 
 export const deleteUser = async (req, res) => {
   try {
-    const { userId } = req.params; // Silinməli istifadəçinin ID-si
-    // Yalnız adminlər istifadəçi silə bilər
+    const { userId } = req.params; 
     
 
-    // İstifadəçini tapıb silirik
     const delteeduser = await user.findByIdAndDelete(userId);
 
     if (!delteeduser) {

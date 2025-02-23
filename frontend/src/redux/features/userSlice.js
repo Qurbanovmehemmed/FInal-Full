@@ -12,7 +12,6 @@ const initialState = {
   error: null,
 };
 
-// Bütün istifadəçiləri gətirmək
 export const getAllUsers = createAsyncThunk(
   "user/getAllUsers",
   async (_, { rejectWithValue }) => {
@@ -25,7 +24,6 @@ export const getAllUsers = createAsyncThunk(
   }
 );
 
-// Admin statusunu dəyişmək (true -> false, false -> true)
 export const setAdmin = createAsyncThunk(
   "user/setAdmin",
   async (userId, { rejectWithValue }) => {
@@ -38,13 +36,12 @@ export const setAdmin = createAsyncThunk(
   }
 );
 
-// İstifadəçini silmək
 export const deleteUser = createAsyncThunk(
   "user/deleteUser",
   async (userId, { rejectWithValue }) => {
     try {
       await axios.delete(`http://localhost:5000/api/users/${userId}`);
-      return userId; // Silinən istifadəçinin ID-sini qaytarırıq
+      return userId;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || error.message);
     }
@@ -66,7 +63,6 @@ export const userSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      // Bütün istifadəçiləri gətirərkən
       .addCase(getAllUsers.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -80,7 +76,6 @@ export const userSlice = createSlice({
         state.error = action.payload;
       })
 
-      // Admin statusunu dəyişərkən
       .addCase(setAdmin.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -101,7 +96,6 @@ export const userSlice = createSlice({
         state.error = action.payload;
       })
 
-      // İstifadəçini silərkən
       .addCase(deleteUser.pending, (state) => {
         state.loading = true;
         state.error = null;
