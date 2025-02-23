@@ -125,11 +125,11 @@ const Wishlist = () => {
                         width: "100%",
                         cursor: "pointer",
                       }}
-                      src={`http://localhost:5000/${item.product.image}`}
-                      alt={item.product.title}
+                      src={`http://localhost:5000/${item?.product?.image}`}
+                      alt={item?.product?.title}
                       className="wishlist-img"
                       onClick={() =>
-                        navigate(`/productdetail/${item.product._id}`)
+                        navigate(`/productdetail/${item?.product?._id}`)
                       }
                     />
                   </div>
@@ -140,24 +140,24 @@ const Wishlist = () => {
                           fontWeight: "bold",
                         }}
                       >
-                        {item.product.title}
+                        {item?.product?.title}
                       </h3>
                     </div>
-                    <p>Author: {item.product.author}</p>
+                    <p>Author: {item?.product?.author}</p>
                     <div className="d-flex gap-1 align-items-center ">
                       Rating:{" "}
                       {reviews[item.product._id] ? (
                         <>
                           <div className="d-flex gap-1 align-items-center ">
                             <StarRatings
-                              rating={reviews[item.product._id].rating}
+                              rating={reviews[item?.product?._id].rating}
                               starRatedColor="gold"
                               numberOfStars={5}
                               starDimension="20px"
                               starSpacing="1px"
                             />
                             <div>
-                              ({reviews[item.product._id].rating.toFixed(1)})
+                              ({reviews[item?.product?._id].rating.toFixed(1)})
                             </div>
                           </div>
                         </>
@@ -167,9 +167,9 @@ const Wishlist = () => {
                     </div>
 
                     <p style={{ color: "#595959", marginTop: "5px" }}>
-                      {item.product.description.length > 300
-                        ? item.product.description.slice(0, 300) + "..."
-                        : item.product.description}
+                      {item?.product?.description?.length > 300
+                        ? item?.product?.description.slice(0, 300) + "..."
+                        : item?.product?.description}
                     </p>
                     <div
                       className="d-flex gap-2 justify-content-between"
@@ -179,7 +179,7 @@ const Wishlist = () => {
                     >
                       <p className="d-flex gap-1">
                         Categories:
-                        {item.product?.categories.map((cat, index) => (
+                        {item?.product?.categories.map((cat, index) => (
                           <span key={index}>{cat}</span>
                         ))}
                       </p>
@@ -194,7 +194,7 @@ const Wishlist = () => {
                     </div>
 
                     <div className="d-flex gap-2 justify-content-end">
-                      <ButtonWishlist productId={item.product._id} />
+                      <ButtonWishlist productId={item?.product?._id} />
                       <button
                         className="btn btn-danger"
                         onClick={() => {handleRemove(item._id), toast.success("Book removed from shelf!")}}

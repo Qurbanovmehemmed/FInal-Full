@@ -18,7 +18,7 @@ const WishlistButtons = ({ productId }) => {
   const [showModal, setShowModal] = useState(false);
   const [selectedStatus, setSelectedStatus] = useState(null);
 
-  const wishlistItem = wishlist.find((item) => item.product._id === productId);
+  const wishlistItem = wishlist.find((item) => item?.product?._id === productId);
   const currentStatus = wishlistItem?.status || null;
   const wishlistItemId = wishlistItem?._id;
 

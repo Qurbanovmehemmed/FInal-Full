@@ -13,7 +13,7 @@ const ButtonWishlist = ({ productId }) => {
 
   const [selectedStatus, setSelectedStatus] = useState(null); 
 
-  const currentStatus = wishlist.find(item => item.product._id === productId)?.status || null;
+  const currentStatus = wishlist.find(item => item?.product?._id === productId)?.status || null;
 
   useEffect(() => {
     setSelectedStatus(currentStatus); 
